@@ -1,0 +1,15 @@
+@Library('datacommons-jenkins-shared-library') _
+oneClickDeploy(
+    label: "slave-ncias-q2944-c",
+    parameterName: "DeployTag",
+    codeRepoUrl: "https://github.com/CBIIT/gmb-deployments.git",
+    checkoutDirectory: "gmb-deployments",
+    deploymentFile: "gmb-deployments/deployments.yaml",
+    jobPath: "_default/_lower/GMB/OneClickDeployment/_jobs/",
+    slackSecretPath: "notification/slack",
+    slackSecretName: "gmb_slack_url",
+    useDockerAgent: true,
+    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
+    dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
+    registryCredentialsId: "ncidockerhub"
+)

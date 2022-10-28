@@ -1,0 +1,23 @@
+pipeline {
+    agent {
+        node {
+            label "slave-ncias-q2944-c"
+        }
+    }
+    stages {
+        stage('Test') {
+            agent {
+                docker{
+                    image "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible"
+                    registryUrl "https://ncidockerhub.nci.nih.gov"
+                    registryCredentialsId "ncidockerhub"
+                    args "--net=host -u root"
+                    reuseNode true
+                }
+            }
+            steps {
+                sh 'ansible --version'
+            }
+        }
+    }
+}

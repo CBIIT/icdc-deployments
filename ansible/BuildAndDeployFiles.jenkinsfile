@@ -1,0 +1,28 @@
+@Library('datacommons-jenkins-shared-library') _
+buildAndDeploy(
+    label: "slave-ncias-q2944-c",
+    parameterName: "FilesTag",
+    codeRepoUrl: "https://github.com/CBIIT/bento-files",
+    checkoutDirectory: "gmb-files",
+    buildPlaybook: "build-files-microservice.yml",
+    deployPlaybook: "deploy-files-microservice.yml",
+    inventory: "hosts",
+    tier: "${params.Environment}",
+    projectName: "${params.ProjectName}",
+    slackSecretPath: "notification/slack",
+    slackSecretName: "gmb_slack_url",
+    appVersionName: "FILES_VERSION",
+    deploymentRepoUrl: "https://github.com/CBIIT/gmb-deployments",
+    deploymentCheckoutDirectory: "gmb-deployments",
+    deploymentFile: "gmb-deployments/deployments.yaml",
+    service: "files",
+    extraAnsibleVars: [
+        iam_prefix: "power-user",
+        subdomain: "gmbq",
+        domain_name: "ccr.cancer.gov"
+    ],
+    useDockerAgent: true,
+    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
+    dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
+    registryCredentialsId: "ncidockerhub"
+)
