@@ -1,5 +1,5 @@
 - name: ctdc deploy pipeline
-  hosts: bento
+  hosts: localhost
   connection: local
   gather_facts: yes
   #become: yes

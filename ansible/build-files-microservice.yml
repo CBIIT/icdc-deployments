@@ -1,5 +1,5 @@
 - name: files microservice pipeline
-  hosts: bento
+  hosts: localhost
   connection: local
   gather_facts: no
   #become: yes
