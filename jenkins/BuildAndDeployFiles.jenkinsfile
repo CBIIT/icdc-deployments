@@ -4,8 +4,8 @@ buildAndDeploy(
     parameterName: "FilesTag",
     codeRepoUrl: "https://github.com/CBIIT/bento-files",
     checkoutDirectory: "icdc-files",
-	playbookRepoUrl: "https://github.com/CBIIT/icdc-deployments",
-	playbookRepoBranch: "main"
+    playbookRepoUrl: "https://github.com/CBIIT/icdc-deployments",
+    playbookRepoBranch: "main"
     buildPlaybook: "ansible/build-files-microservice.yml",
     deployPlaybook: "ansible/deploy-files-microservice.yml",
     inventory: "hosts",
