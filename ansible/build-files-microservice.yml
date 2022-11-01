@@ -2,7 +2,7 @@
   hosts: bento
   connection: local
   gather_facts: no
-  become: yes
+  #become: yes
 
   tasks:
     - name: install aws collection

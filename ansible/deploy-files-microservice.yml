@@ -2,7 +2,7 @@
   hosts: bento
   connection: local
   gather_facts: yes
-  become: yes
+  #become: yes
 
   tasks:
     #install collections
