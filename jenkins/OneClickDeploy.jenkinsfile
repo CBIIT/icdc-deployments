@@ -5,7 +5,7 @@ oneClickDeploy(
     codeRepoUrl: "https://github.com/CBIIT/icdc-deployments.git",
     checkoutDirectory: "icdc-deployments",
     deploymentFile: "icdc-deployments/deployments.yaml",
-    jobPath: "Bento/build_and_deploy/",
+    jobPath: "_default/_lower/ICDC/_one_click/_jobs/",
     slackSecretPath: "notification/slack",
     slackSecretName: "icdc_slack_url",
 )
