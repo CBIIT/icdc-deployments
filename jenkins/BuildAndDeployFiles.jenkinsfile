@@ -24,8 +24,8 @@ buildAndDeploy(
         subdomain: "caninecommons",
         domain_name: "cancer.gov"
     ],
-    useDockerAgent: false,
-    //agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
+    useDockerAgent: true,
+    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
     dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
     registryCredentialsId: "ncidockerhub"
 )
