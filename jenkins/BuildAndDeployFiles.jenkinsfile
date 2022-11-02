@@ -9,7 +9,7 @@ buildAndDeploy(
     playbookRepoBranch: "main",
     buildPlaybook: "ansible/playbooks/build-files-microservice.yml",
     deployPlaybook: "ansible/playbooks/deploy-files-microservice.yml",
-    inventory: "hosts",
+    inventory: "ansible/playbooks/hosts",
     tier: "${params.Environment}",
     projectName: "${params.ProjectName}",
     slackSecretPath: "notification/slack",
