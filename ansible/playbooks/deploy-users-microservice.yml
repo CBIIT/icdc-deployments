@@ -1,0 +1,96 @@
+- name: deploy users microservice
+  hosts: all
+  connection: local
+  gather_facts: no
+
+  tasks:
+    #install collections
+    - name: install aws collection
+      command: ansible-galaxy collection install {{item}}
+      loop:
+        - community.docker
+        - amazon.aws
+        - community.aws:<=3.2.0
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
+
+    #docker login
+    - name: docker login
+      include_role:
+        name: bento.common.ecr_login
+      vars:
+        region: us-east-1
+
+
+    #deploy backend
+    - name: deploy stage for users microservice
+      include_role:
+        name: bento.common.ecs
+      vars:
+        execution_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-execution-role{% else %}{{ project_name }}-{{ tier }}-task-execution-role{% endif %}"
+        task_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-role{% else %}{{ project_name }}-{{ tier }}-task-role{% endif %}"
+        cookie_secret: "{{ lookup('amazon.aws.aws_secret', 'auth/provider/google.cookie_secret', nested=true, region='us-east-1' ) }}"
+        users_version: "{{ lookup('env','USERS_VERSION') }}"
+        region: "us-east-1"
+        email_user: "{{ lookup('amazon.aws.aws_secret', 'smtp.email_user', nested=true, region='us-east-1' ) }}"
+        email_password: "{{ lookup('amazon.aws.aws_secret', 'smtp.email_password', nested=true, region='us-east-1' ) }}"
+        #mysql
+        mysql_host: "{{ lookup('amazon.aws.aws_secret', 'bento/{{project_name}}/{{tier}}.mysql_host', nested=true, region='us-east-1' ) }}"
+        mysql_user: "{{ lookup('amazon.aws.aws_secret', 'bento/{{project_name}}/{{tier}}.mysql_user', nested=true, region='us-east-1' ) }}"
+        mysql_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{project_name}}/{{tier}}.mysql_password', nested=true, region='us-east-1' ) }}"
+        mysql_database: "{{ lookup('amazon.aws.aws_secret', 'bento/{{project_name}}/{{tier}}.mysql_database', nested=true, region='us-east-1' ) }}"
+        ansible_python_interpreter: /usr/bin/python3
+        project_name: "{{project_name}}"
+        platform: aws
+        container_name: "users"
+        image_version: "{{users_version }}"
+        tier: "{{ tier }}"
+        ecs_cluster_name: "{{ project_name }}-{{ tier }}-ecs"
+        neo4j_ip: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
+        neo4j_user: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_user', nested=true, region='us-east-1' ) }}"
+        neo4j_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_password', nested=true, region='us-east-1' ) }}"
+        newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1' ) }}"
+        sumo_collector_endpoint: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.sumo_collector_endpoint', nested=true, region='us-east-1' ) }}"
+        sumo_collector_token: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.sumo_collector_token_users', nested=true, region='us-east-1' ) }}"
+        container_port: "8083"
+        container_memory: "1024"
+        container_cpu: "256"
+        container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
+        #Environment
+        container_env:
+        - name: NEO4J_URI
+          value: "bolt://{{neo4j_ip}}:7687"
+        - name: NEO4J_USER
+          value: "{{neo4j_user}}"
+        - name: NEO4J_PASSWORD
+          value: "{{neo4j_password}}"
+        - name: VERSION
+          value: "{{users_version}}"
+        - name: COOKIE_SECRET
+          value: "{{cookie_secret}}"
+        - name: SESSION_TIMEOUT
+          value: "1800"
+        # MySQL Configuration
+        - name: MYSQL_HOST
+          value: "{{mysql_host}}"
+        - name: MYSQL_PORT
+          value: "3306"
+        - name: MYSQL_PASSWORD
+          value: "{{mysql_password}}"
+        - name: MYSQL_USER
+          value: "{{mysql_user}}"
+        - name: MYSQL_DATABASE
+          value: "{{mysql_database}}"
+        # Email Notification Config
+        - name: EMAIL_SMTP_HOST
+          value: email-smtp.us-east-1.amazonaws.com
+        - name: EMAIL_SMTP_PORT
+          value: "465"
+        # If Sent From AWS SMTP
+        - name: EMAIL_USER
+          value: "{{email_user}}"
+        - name: EMAIL_PASSWORD
+          value: "{{email_password}}"
+        - name: EMAILS_ENABLED
+          value: "true"
+        - name: SEED_DATA_FILE
+          value: "yaml/seed-data-gmb.yaml"

@@ -1,0 +1,143 @@
+- name: deploy auth microservice
+  hosts: all
+  connection: local
+  gather_facts: no
+
+  tasks:
+    #install collections
+    - name: install aws collection
+      command: ansible-galaxy collection install {{ item }}
+      loop:
+        - community.docker
+        - amazon.aws
+        - community.aws:<=3.2.0
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
+
+    #docker login
+    - name: docker login
+      include_role:
+        name: bento.common.ecr_login
+      vars:
+        region: us-east-1
+
+    #deploy backend
+    - name: deploy stage for backend microservice
+      include_role:
+        name: bento.common.ecs
+      vars:
+        execution_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-execution-role{% else %}{{ project_name }}-{{ tier }}-task-execution-role{% endif %}"
+        task_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-role{% else %}{{ project_name }}-{{ tier }}-task-role{% endif %}"
+        auth_version: "{{ lookup('env','AUTH_VERSION') }}"
+        region: "us-east-1"
+        idp_provider: "{{ lookup('amazon.aws.aws_secret', 'auth/provider/google.idp_provider', nested=true, region='us-east-1' ) }}"
+        idp_client_id: "{{ lookup('amazon.aws.aws_secret', 'auth/provider/google.idp_client_id', nested=true, region='us-east-1' ) }}"
+        idp_client_secret: "{{ lookup('amazon.aws.aws_secret', 'auth/provider/google.idp_client_secret', nested=true, region='us-east-1' ) }}"
+        cookie_secret: "{{ lookup('amazon.aws.aws_secret', 'auth/provider/google.cookie_secret', nested=true, region='us-east-1' ) }}"
+
+        email_user: "{{ lookup('amazon.aws.aws_secret', 'smtp.email_user', nested=true, region='us-east-1' ) }}"
+        email_password: "{{ lookup('amazon.aws.aws_secret', 'smtp.email_password', nested=true, region='us-east-1' ) }}"
+        #mysql
+        mysql_host: "{{ lookup('amazon.aws.aws_secret', 'bento/{{project_name}}/{{tier}}.mysql_host', nested=true, region='us-east-1' ) }}"
+        mysql_user: "{{ lookup('amazon.aws.aws_secret', 'bento/{{project_name}}/{{tier}}.mysql_user', nested=true, region='us-east-1' ) }}"
+        mysql_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{project_name}}/{{tier}}.mysql_password', nested=true, region='us-east-1' ) }}"
+        mysql_database: "{{ lookup('amazon.aws.aws_secret', 'bento/{{project_name}}/{{tier}}.mysql_database', nested=true, region='us-east-1' ) }}"
+        #nih
+        nih_client_id: "{{ lookup('amazon.aws.aws_secret', 'auth/provider/nih.nih_client_id', nested=true, region='us-east-1' ) }}"
+        nih_client_secret: "{{ lookup('amazon.aws.aws_secret', 'auth/provider/nih.nih_client_secret', nested=true, region='us-east-1' ) }}"
+        ansible_python_interpreter: /usr/bin/python3
+        project_name: "{{project_name}}"
+        platform: aws
+        container_name: "auth"
+        image_version: "{{ auth_version }}"
+        tier: "{{ tier }}"
+        ecs_cluster_name: "{{ project_name }}-{{ tier }}-ecs"
+        neo4j_user: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_user', nested=true, region='us-east-1' ) }}"
+        neo4j_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_password', nested=true, region='us-east-1' ) }}"
+        neo4j_ip: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
+
+        newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1' ) }}"
+        sumo_collector_endpoint: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.sumo_collector_endpoint', nested=true, region='us-east-1' ) }}"
+        sumo_collector_token: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.sumo_collector_token_auth', nested=true, region='us-east-1' ) }}"
+        container_port: "8082"
+        container_memory: "1024"
+        container_cpu: "256"
+        container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
+        #Environment
+        container_env:
+          - name: NEO4J_URI
+            value: "bolt://{{neo4j_ip}}:7687"
+          - name: NEO4J_USER
+            value: "{{neo4j_user}}"
+          - name: NEO4J_PASSWORD
+            value: "{{neo4j_password}}"
+          - name: VERSION
+            value: "{{auth_version}}"
+          - name: COOKIE_SECRET
+            value: "{{cookie_secret}}"
+          - name: SESSION_TIMEOUT
+            value: "1800"
+          - name: IDP
+            value: "{{idp_provider}}"
+          - name: GOOGLE_CLIENT_ID
+            value: "{{idp_client_id}}"
+          - name: GOOGLE_CLIENT_SECRET
+            value: "{{idp_client_secret}}"
+          - name: DATE
+            value: "{{ansible_date_time.date}}"
+          - name: PROJECT
+            value: "{{project_name}}"
+          - name: GOOGLE_REDIRECT_URL
+            value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}{% endif %}"
+          - name: NEW_RELIC_LICENSE_KEY
+            value: "{{ newrelic_license_key }}"
+          - name: NEW_RELIC_APP_NAME
+            value: "{{project_name}}-{{tier}}-auth"
+          # MySQL Configuration
+          - name: MYSQL_HOST
+            value: "{{mysql_host}}"
+          - name: MYSQL_PORT
+            value: "3306"
+          - name: MYSQL_PASSWORD
+            value: "{{mysql_password}}"
+          - name: MYSQL_USER
+            value: "{{mysql_user}}"
+          - name: MYSQL_DATABASE
+            value: "{{mysql_database}}"
+          # Email Notification Config
+          - name: EMAIL_SMTP_HOST
+            value: email-smtp.us-east-1.amazonaws.com
+          - name: EMAIL_SMTP_PORT
+            value: "465"
+          # If Sent From AWS SMTP
+          - name: EMAIL_USER
+            value: "{{email_user}}"
+          - name: EMAIL_PASSWORD
+            value: "{{email_user}}"
+          # NIH LOGIN Config
+          - name: NIH_CLIENT_ID
+            value: "{{nih_client_id}}"
+          - name: NIH_CLIENT_SECRET
+            value: "{{nih_client_secret}}"
+          - name: NIH_BASE_URL
+            value: https://stsstg.nih.gov
+          - name: NIH_REDIRECT_URL
+            value: https://bento-dev.bento-tools.org
+          - name: NIH_USERINFO_URL
+            value: https://stsstg.nih.gov/openid/connect/v1/userinfo
+          - name: NIH_AUTHORIZE_URL
+            value: https://stsstg.nih.gov/auth/oauth/v2/authorize
+          - name: NIH_TOKEN_URL
+            value: https://stsstg.nih.gov/auth/oauth/v2/token
+          - name: NIH_LOGOUT_URL
+            value: https://stsstg.nih.gov/connect/session/logout
+          - name: NIH_SCOPE
+            value: "openid email profile"
+          - name: NIH_PROMPT
+            value: login
+          - name: AUTHORIZATION_ENABLED
+            value: "true"
+          - name: AUTHORIZATION_URL
+            value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/api/users/graphql{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/users/graphql{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/users/graphql{% endif %}"
+          - name: EMAILS_ENABLED
+            value: "true"
+
