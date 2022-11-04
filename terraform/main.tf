@@ -132,7 +132,7 @@ module "cloudfront" {
 
 #monitoring
 module "monitoring" {
-  source = "git::https://github.com/CBIIT/datacommons-devops.git//alert_updates/terraform/modules/monitoring"
+  source = "git::https://github.com/CBIIT/datacommons-devops/tree/alert_updates/terraform/modules/monitoring"
   app                  = var.stack_name
   tags                 = var.tags
   sumologic_access_id  = var.sumologic_access_id
@@ -143,7 +143,7 @@ module "monitoring" {
 
 #secrets
 module "secrets" {
-  source = "git::https://github.com/CBIIT/datacommons-devops.git//alert_updates/terraform/modules/monitoring"
+  source = "git::https://github.com/CBIIT/datacommons-devops/tree/alert_updates/terraform/modules/monitoring"
   app                        = var.stack_name
   es_endpoint                = module.opensearch.opensearch_endpoint
   neo4j_password             = var.neo4j_password
