@@ -129,27 +129,3 @@ module "cloudfront" {
   target_account_cloudone = var.target_account_cloudone
   public_key_path = file("${path.module}/workspace/gmb/gmb_public_key.pem")
 }
-
-#monitoring
-module "monitoring" {
-  source = "git::https://github.com/CBIIT/datacommons-devops/tree/alert_updates/terraform/modules/monitoring"
-  app                  = var.stack_name
-  tags                 = var.tags
-  sumologic_access_id  = var.sumologic_access_id
-  sumologic_access_key = var.sumologic_access_key
-  newrelic_account_id  = var.newrelic_account_id
-  newrelic_api_key     = var.newrelic_api_key
-}
-
-#secrets
-module "secrets" {
-  source = "git::https://github.com/CBIIT/datacommons-devops/tree/alert_updates/terraform/modules/monitoring"
-  app                        = var.stack_name
-  es_endpoint                = module.opensearch.opensearch_endpoint
-  neo4j_password             = var.neo4j_password
-  db_instance                = var.db_instance
-  indexd_url                 = var.indexd_url
-  sumo_collector_token_be    = module.monitoring.backend_source_url
-  sumo_collector_token_fe    = module.monitoring.frontend_source_url
-  sumo_collector_token_files = module.monitoring.files_source_url
-}
