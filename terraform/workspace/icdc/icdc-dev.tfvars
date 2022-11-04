@@ -97,6 +97,8 @@ create_cloudwatch_log_policy = true
 
 #neo4j db is created by cloudone
 create_db_instance = false
+db_instance =
+neo4j_password =
 
 #dns is managed by cloudone
 create_dns_record = false
@@ -122,3 +124,9 @@ alarms = {
   }
 }
 slack_secret_name = "cloudfront-slack"
+
+#monitoring
+sumologic_access_id =
+sumologic_access_key =
+newrelic_account_id =
+newrelic_api_key =
