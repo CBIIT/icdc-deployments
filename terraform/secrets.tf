@@ -12,6 +12,12 @@ variable "indexd_url" {
   description = "indexd url"
 }
 
+variable "github_token" {
+  type        = string
+  description = "github token"
+  sensitive   = true
+}
+
 module "secrets" {
   source                        = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/secrets?ref=terraform_modules"
   app                           = var.stack_name
@@ -19,6 +25,7 @@ module "secrets" {
   neo4j_password                = var.neo4j_password
   neo4j_ip                      = var.neo4j_ip
   indexd_url                    = var.indexd_url
+  github_token                  = var.github_token
   sumo_collector_token_frontend = module.monitoring.frontend_source_url
   sumo_collector_token_backend  = module.monitoring.backend_source_url
   sumo_collector_token_files    = module.monitoring.files_source_url

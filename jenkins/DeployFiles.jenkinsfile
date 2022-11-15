@@ -1,6 +1,7 @@
 @Library('datacommons-jenkins-shared-library') _
 deployApp(
-    label: "commons-docker-ncias-p2236-v",
+    //label: "commons-docker-ncias-p2236-v",
+	label: "slave-ncias-d2940-c",
     parameterName: "FilesTag",
     repoName: "icdc-files",
     playbook: "deploy-files-microservice.yml",
