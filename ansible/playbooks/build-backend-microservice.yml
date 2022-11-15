@@ -44,4 +44,8 @@
         dockerfile_path: "{{ workspace }}/{{ dockerfile_path }} | default('{{ workspace }}/playbooks/docker/dockerfiles/backend-microservice-dockerfile')"
         container_image: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}:{{ image_version }}s"
         container_registry_url: "{{ ecr_repo }}"
-        auth_enabled: "true"
+        auth_enabled: "false"
+        # Redis
+        redis_schema_file: "redis-schema.graphql"
+        redis_init_queries_file: "redis-filter-config.bento.yaml"
+        test_queries_file: "test-queries.1k.bento.yaml"
