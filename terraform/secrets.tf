@@ -33,7 +33,7 @@ module "secrets" {
   neo4j_ip                      = var.neo4j_ip
   indexd_url                    = var.indexd_url
   github_token                  = var.github_token
-  sumo_collector_token_frontend = module.monitoring.frontend_source_url
-  sumo_collector_token_backend  = module.monitoring.backend_source_url
-  sumo_collector_token_files    = module.monitoring.files_source_url
+  sumo_collector_token_frontend = module.monitoring.sumo_source_urls[frontend]     #frontend_source_url
+  sumo_collector_token_backend  = module.monitoring.sumo_source_urls[backend]      #backend_source_url
+  sumo_collector_token_files    = module.monitoring.sumo_source_urls[files]        #files_source_url
 }
