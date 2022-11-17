@@ -9,19 +9,19 @@ variable "sumologic_access_key" {
   sensitive   = true
 }
 
-variable "microservices" {
-  type = map(object({
-    name                      = string
-    port                      = number
-    health_check_path         = string
-    priority_rule_number      = number
-    image_url                 = string
-    cpu                       = number
-    memory                    = number
-    path                      = list(string)
-    number_container_replicas = number
-  }))
-}
+#variable "microservices" {
+#  type = map(object({
+#    name                      = string
+#    port                      = number
+#    health_check_path         = string
+#    priority_rule_number      = number
+#    image_url                 = string
+#    cpu                       = number
+#    memory                    = number
+#    path                      = list(string)
+#    number_container_replicas = number
+#  }))
+#}
 
 module "monitoring" {
   source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/monitoring?ref=terraform_modules"
