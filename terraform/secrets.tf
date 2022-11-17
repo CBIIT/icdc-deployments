@@ -1,4 +1,10 @@
 #secrets
+variable "create_shared_secrets" {
+  type        = bool
+  default     = false
+  description = "shared secrets are created in this tier"
+}
+
 variable "neo4j_password" {
   type        = string
   description = "neo4j password"
@@ -20,6 +26,7 @@ variable "github_token" {
 
 module "secrets" {
   source                        = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/secrets?ref=terraform_modules"
+  create_shared_secrets         = var.create_shared_secrets
   app                           = var.stack_name
   es_host                       = var.create_opensearch_cluster ? module.opensearch[0].opensearch_endpoint : ""
   neo4j_password                = var.neo4j_password
