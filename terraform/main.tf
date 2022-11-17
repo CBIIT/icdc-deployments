@@ -25,7 +25,7 @@ module "s3" {
 }
 
 module "ecs" {
-  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/ecs"
+  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/ecs?ref=terraform_modules"
   stack_name = var.stack_name
   tags = var.tags
   vpc_id = var.vpc_id
