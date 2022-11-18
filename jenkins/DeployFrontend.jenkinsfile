@@ -1,10 +1,13 @@
 @Library('datacommons-jenkins-shared-library') _
 deployApp(
-    label: "commons-docker-ncias-p2236-v",
+    //label: "commons-docker-ncias-p2236-v",
+	label: "slave-ncias-d2940-c",
     parameterName: "FrontendTag",
     repoName: "icdc-frontend",
-    playbook: "deploy-frontend-microservice.yml",
-    inventory: "hosts",
+    playbookRepoUrl: "https://github.com/CBIIT/icdc-deployments",
+    playbookRepoBranch: "main",
+    playbook: "ansible/playbooks/deploy-files-microservice.yml",
+    inventory: "ansible/playbooks/hosts",
     tier: "${params.Environment}",
     projectName: "${params.ProjectName}",
     slackSecretPath: "notification/slack",
@@ -18,8 +21,8 @@ deployApp(
         subdomain: "caninecommons",
         domain_name: "cancer.gov"
      ],
-    useDockerAgent: false,
-    //agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
+    useDockerAgent: true,
+    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
     dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
     registryCredentialsId: "ncidockerhub"
 )

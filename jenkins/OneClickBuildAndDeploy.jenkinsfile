@@ -1,6 +1,7 @@
 @Library('datacommons-jenkins-shared-library') _
 oneClickDeploy(
-    label: "commons-docker-ncias-p2236-v",
+    //label: "commons-docker-ncias-p2236-v",
+	label: "slave-ncias-d2940-c",
     parameterName: "DeployTag",
     codeRepoUrl: "https://github.com/CBIIT/icdc-deployments.git",
     checkoutDirectory: "icdc-deployments",
@@ -8,8 +9,8 @@ oneClickDeploy(
     jobPath: "_default/_lower/ICDC/_one_click/_jobs/",
     slackSecretPath: "notification/slack",
     slackSecretName: "icdc_slack_url",
-    useDockerAgent: false,
-    //agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
+    useDockerAgent: true,
+    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
     dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
     registryCredentialsId: "ncidockerhub"
 )
