@@ -4,8 +4,10 @@ deployApp(
 	label: "slave-ncias-d2940-c",
     parameterName: "FilesTag",
     repoName: "icdc-files",
-    playbook: "deploy-files-microservice.yml",
-    inventory: "hosts",
+    playbookRepoUrl: "https://github.com/CBIIT/icdc-deployments",
+    playbookRepoBranch: "main",
+    playbook: "ansible/playbooks/deploy-files-microservice.yml",
+    inventory: "ansible/playbooks/hosts",
     tier: "${params.Environment}",
     projectName: "${params.ProjectName}",
     slackSecretPath: "notification/slack",
@@ -19,8 +21,8 @@ deployApp(
         subdomain: "caninecommons",
         domain_name: "cancer.gov"
     ],
-    useDockerAgent: false,
-    //agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
+    useDockerAgent: true,
+    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
     dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
     registryCredentialsId: "ncidockerhub"
 )
