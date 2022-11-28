@@ -1,7 +1,8 @@
 - name: build backend microservice
   hosts: all
-  gather_facts: no
   connection: local
+  gather_facts: no
+  
   tasks:
     - debug: var=ansible_python_version
     #install collections
