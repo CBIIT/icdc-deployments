@@ -24,7 +24,7 @@ buildAndDeploy(
         subdomain: "caninecommons",
         domain_name: "cancer.gov"
     ],
-    useDockerAgent: false,
+    useDockerAgent: true,
     nodeMemory: "4096",
     //agentImage: "ncidockerhub.nci.nih.gov/icdc/cicd-microservices-ecs",
     agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
