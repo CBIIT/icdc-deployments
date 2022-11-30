@@ -42,28 +42,64 @@
         container_memory: "512"
         container_cpu: "256"
         container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
-        about_content_url: "https://raw.githubusercontent.com/CBIIT/bento-frontend/master/src/content/{{ tier }}/aboutPagesContent.yaml"
+        backend_google_analytics_id: "UA-154442677-1"
         newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1' ) }}"
-        app_google_client_id: "{{ lookup('amazon.aws.aws_secret', 'auth/provider/google.idp_client_id', nested=true, region='us-east-1' ) }}"
+        ## Static Content ##
+        react_app_landing_data:
+          dev: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/landingView.yaml"
+          qa: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/landingView.yaml"
+          qa2: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/landingView.yaml"
+          stage: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/stage/landingView.yaml"
+          prod: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/production/landingView.yaml"
+
+        react_app_news_data:
+          dev: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/newsView.yaml"
+          qa: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/newsView.yaml"
+          qa2: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/newsView.yaml"
+          stage: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/stage/newsView.yaml"
+          prod: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/production/newsView.yaml"
+
+        react_app_about_data:
+          dev: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/aboutPagesContent.yaml"
+          qa: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/aboutPagesContent.yaml"
+          qa2: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/aboutPagesContent.yaml"
+          stage: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/stage/aboutPagesContent.yaml"
+          prod: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/production/aboutPagesContent.yaml"
+
+        ## readme data ##
+        react_app_readme_url:
+          dev: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/Data_Model_Navigator_README.md"
+          qa: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/Data_Model_Navigator_README.md"
+          qa2: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/Data_Model_Navigator_README.md"
+          stage: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/stage/Data_Model_Navigator_README.md"
+          prod: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/prod/Data_Model_Navigator_README.md"
         container_env:
+          # API URLs
           - name: REACT_APP_BACKEND_API
             value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/v1/graphql/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/v1/graphql/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/v1/graphql/{% endif %}"
+          - name: REACT_APP_BACKEND_GETUSERINFO_API
+            value: "{{ backend_user_info }}"
           - name: REACT_APP_FILE_SERVICE_API
             value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/api/files/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/files/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/files//{% endif %}"
-          - name: REACT_APP_BE_VERSION
-            value: "{{ backend_version }}"
-          - name: REACT_APP_FE_VERSION
-            value: "{{ frontend_version }}"
+          - name: REACT_APP_LOGIN_URL
+            value: "{{ backend_fence_login }}"
+          - name: REACT_APP_USER_LOGOUT_URL
+            value: "{{ backend_fence_logout }}"
+          # Static Content
           - name: REACT_APP_ABOUT_CONTENT_URL
-            value: "{{ about_content_url }}"
-          - name: REACT_APP_AUTH_SERVICE_API
-            value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/api/auth/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/auth/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/auth/{% endif %}"
-          - name: REACT_APP_USER_SERVICE_API
-            value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/api/users/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/users/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/users/{% endif %}"
-          - name: REACT_APP_NIH_CLIENT_ID
-            value: "{{ lookup('amazon.aws.aws_secret', 'auth/provider/nih.nih_client_id', nested=true, region='us-east-1' ) }}"
-          - name: REACT_APP_NIH_AUTH_URL
-            value: "{{ lookup('amazon.aws.aws_secret', 'auth/provider/nih.nih_client_url', nested=true, region='us-east-1' ) }}"
+            value: "{{ react_app_about_data[tier] }}"
+          - name: REACT_APP_LANDING_DATA
+            value: "{{ react_app_landing_data[tier] }}"
+          - name: REACT_APP_NEWS_DATA
+            value: "{{ react_app_news_data[tier] }}"
+          - name: REACT_APP_DMN_README
+            value: "{{ react_app_readme_url[tier] }}"
+          # Data Model
+          - name: REACT_APP_DATA_MODEL
+            value: "{% if tier == 'prod' %}https://raw.githubusercontent.com/CBIIT/icdc-model-tool/{{data_model_branch | default('master')}}/model-desc/icdc-model.yml{% else %}https://raw.githubusercontent.com/CBIIT/icdc-model-tool/{{data_model_branch | default('develop')}}/model-desc/icdc-model.yml{% endif %}"
+          - name: REACT_APP_DATA_MODEL_PROPS
+            value: "{% if tier == 'prod' %}https://raw.githubusercontent.com/CBIIT/icdc-model-tool/{{data_model_branch | default('master')}}/model-desc/icdc-model-props.yml{% else %}https://raw.githubusercontent.com/CBIIT/icdc-model-tool/{{data_model_branch | default('develop')}}/model-desc/icdc-model-props.yml{% endif %}"
+          # New Relic
           - name: NEW_RELIC_LICENSE_KEY
             value: "{{ newrelic_license_key }}"
           - name: NEW_RELIC_APP_NAME
@@ -76,9 +112,12 @@
             value: "true"
           - name: NEW_RELIC_LABELS
             value: "Project:{{ project_name }};Environment:{{ tier }}"
-          - name: REACT_APP_GOOGLE_CLIENT_ID
-            value: "{{ app_google_client_id }}"
-          - name: REACT_APP_BACKEND_PUBLIC_API
-            value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/v1/public-graphql/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/v1/public-graphql/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/v1/public-graphql/{% endif %}"
-          - name: REACT_APP_AUTH_API
-            value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}{% endif %}"
+          # Versions
+          - name: REACT_APP_BE_VERSION
+            value: "{{ backend_version }}"
+          - name: REACT_APP_FE_VERSION
+            value: "{{ frontend_version }}"
+          # Analytics
+          - name: REACT_APP_GA_TRACKING_ID
+            value: "{{ backend_google_analytics_id }}"
+
