@@ -6,7 +6,7 @@ deployApp(
     repoName: "bento-backend",
     playbookRepoUrl: "https://github.com/CBIIT/icdc-deployments",
     playbookRepoBranch: "main",
-    playbook: "ansible/playbooks/deploy-files-microservice.yml",
+    playbook: "ansible/playbooks/deploy-backend-microservice.yml",
     inventory: "ansible/playbooks/hosts",
     tier: "${params.Environment}",
     projectName: "${params.ProjectName}",
