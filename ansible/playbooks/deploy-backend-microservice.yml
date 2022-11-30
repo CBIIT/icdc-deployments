@@ -11,7 +11,7 @@
         - community.docker
         - amazon.aws
         - community.aws:<=3.2.0
-        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
 
     #docker login
     - name: docker login
@@ -19,7 +19,6 @@
         name: bento.common.ecr_login
       vars:
         region: us-east-1
-
 
     #deploy backend
     - name: deploy stage for backend microservice
@@ -63,18 +62,35 @@
           - 'wget "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip" -O newrelic-java.zip && rm -rf newrelic && unzip -o newrelic-java.zip && bin/catalina.sh run'
         #Environment
         container_env:
+          ## Database
           - name: NEO4J_URL
             value: "bolt://{{ neo4j_ip }}:7687"
           - name: NEO4J_USER
             value: "{{ neo4j_user }}"
           - name: NEO4J_PASSWORD
             value: "{{ neo4j_password }}"
-          - name: BENTO_API_VERSION
-            value: "{{ image_version }}"
-          - name: AUTH_ENDPOINT
-            value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/api/auth{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/auth{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/auth{% endif %}"
+          - name: NEO4J_GRAPHQL_ENDPOINT
+            value: "http://{{ neo4j_ip }}:7474/graphql/"
+          #- name: NEO4J_AUTHORIZATION
+          #  value: "{{ neo4j_bearer }}"
+          ## Opensearch
           - name: ES_HOST
             value: "{{ es_host }}"
+          ## Versions
+          - name: BENTO_API_VERSION
+            value: "{{ image_version }}"
+          ## Redis
+          - name: REDIS_ENABLE
+            value: "{{ enable_redis }}"
+          - name: REDIS_USE_CLUSTER
+            value: "{{ use_cluster }}"
+          - name: REDIS_HOST
+            value: "{{ redis_host }}"
+          - name: REDIS_PORT
+            value: "{{ redis_port }}"
+          - name: REDIS_FILTER_ENABLE
+            value: "false"
+          ## New Relic
           - name: NEW_RELIC_LICENSE_KEY
             value: "{{ newrelic_license_key }}"
           - name: NEW_RELIC_APP_NAME
@@ -87,15 +103,6 @@
             value: "STDOUT"
           - name: NEW_RELIC_LABELS
             value: "Project:{{ project_name }};Environment:{{ tier }}"
+          ## Java
           - name: JAVA_OPTS
             value: "-javaagent:/usr/local/tomcat/newrelic/newrelic.jar"
-          - name: REDIS_ENABLE
-            value: "{{ enable_redis }}"
-          - name: REDIS_USE_CLUSTER
-            value: "{{ use_cluster }}"
-          - name: REDIS_HOST
-            value: "{{ redis_host }}"
-          - name: REDIS_PORT
-            value: "{{ redis_port }}"
-          - name: REDIS_FILTER_ENABLE
-            value: "false"
