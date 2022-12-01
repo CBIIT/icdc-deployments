@@ -80,7 +80,7 @@
           - name: REACT_APP_BACKEND_GETUSERINFO_API
             value: "https://caninecommons.cancer.gov/fence/login/"
           - name: REACT_APP_FILE_SERVICE_API
-            value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/api/files/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/files/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/files//{% endif %}"
+            value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/api/files/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/files/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/files/{% endif %}"
           #- name: REACT_APP_LOGIN_URL
           #  value: "{{ backend_fence_login }}"
           #- name: REACT_APP_USER_LOGOUT_URL
