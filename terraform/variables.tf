@@ -52,9 +52,6 @@ variable "lb_type" {
 variable "aws_account_id" {
   type = map(string)
   description = "aws account to allow for alb s3 logging"
-  default = {
-    us-east-1 = "127311923021"
-  }
 }
 variable "public_subnet_ids" {
   description = "Provide list of public subnets to use in this VPC. Example 10.0.1.0/24,10.0.2.0/24"
