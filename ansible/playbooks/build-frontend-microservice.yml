@@ -24,6 +24,8 @@
     - name: build frontend
       include_role:
         name: bento.common.build_frontend
+      environment:
+        NODE_OPTIONS: "--max-old-space-size=4096"
       vars:
         ansible_python_interpreter: /usr/bin/python3
         workspace: "{{ lookup('env','WORKSPACE') }}"
