@@ -45,7 +45,7 @@ pipeline {
 			[[url: 'https://github.com/CBIIT/bento-icdc-frontend']]])
 
   		checkout([$class: 'GitSCM',
-			branches: [[name: main]],
+			branches: [[name: '*/main']],
 			doGenerateSubmoduleConfigurations: false,
 			extensions: [[$class: 'RelativeTargetDirectory',
 			relativeTargetDir: 'playbooks']],
