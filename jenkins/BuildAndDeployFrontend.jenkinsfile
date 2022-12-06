@@ -26,7 +26,7 @@ buildAndDeploy(
         domain_name: "cancer.gov"
     ],
     useDockerAgent: true,
-    nodeMemory: "4096",
+    nodeMemory: "8192",
     agentImage: "ncidockerhub.nci.nih.gov/icdc/cicd-microservices-ecs",
     //agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
 	//agentImage: "cbiitssrepo/cicd-ansible_4.0",
