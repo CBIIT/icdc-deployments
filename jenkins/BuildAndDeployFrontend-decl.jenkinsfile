@@ -1,0 +1,89 @@
+pipeline {
+	agent {
+		node {
+			label 'commons-docker-ncias-p2236-v'
+		}
+	}
+	parameters {
+    extendedChoice(
+        name: 'Environment',
+        defaultValue: 'dev',
+        description: 'Choose the environment to build',
+        type: 'PT_SINGLE_SELECT',
+        value: 'dev,qa,qa2,stage,prod')
+	string(
+	    defaultValue: 'icdc',
+		description: 'The project this build is for',
+		name: 'ProjectName')
+	gitParameter(branchFilter: 'origin/(.*)', 
+        defaultValue: 'master', 
+        name: 'FrontendTag', 
+        type: 'GitParameterDefinition',
+        quickFilterEnabled: true, 
+        selectedValue: 'DEFAULT', 
+        sortMode: 'ASCENDING_SMART', 
+        tagFilter: '*', 
+        useRepository: 'https://github.com/CBIIT/bento-icdc-frontend')
+	booleanParam(
+		defaultValue: true,
+		name: 'UpdateDeploymentVersion')
+  }
+  options {
+  	ansiColor('xterm')
+  }
+  stages{
+  	stage('checkout'){
+  		steps {
+
+		checkout([$class: 'GitSCM',
+			branches: [[name: "${params.Frontend_Tag}"]],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: 'icdc-frontend']],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/bento-icdc-frontend']]])
+
+  		checkout([$class: 'GitSCM',
+			branches: [[name: main]],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: 'playbooks']],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+
+        }
+
+  	}
+
+  	stage('build'){
+      environment{
+        FE_VERSION = "${params.Frontend_Tag}-${BUILD_NUMBER}"
+        BE_VERSION = "${params.Backend_Tag}-${BUILD_NUMBER}"
+      }
+ 		steps {
+ 			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
+                ansiblePlaybook(
+                    playbook: '${WORKSPACE}/playbooks/ansible/playbooks/build-frontend-microservice.yml', 
+            		inventory: '${WORKSPACE}/playbooks/ansible/playbooks/hosts'
+                    extraVars: [
+                        tier: "${params.Environment}",
+						project_name: "${params.ProjectName}",
+						auth_enabled: false
+						],
+                    colorized: true)
+    }
+ 			}
+ 		}
+  	}
+
+  }
+  post {
+    cleanup {
+
+    cleanWs()
+
+    }
+  }
+}
