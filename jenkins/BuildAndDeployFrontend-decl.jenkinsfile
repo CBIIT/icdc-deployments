@@ -73,7 +73,6 @@ pipeline {
 						auth_enabled: false
 						],
                     colorized: true)
-    }
  			}
  		}
   	}
