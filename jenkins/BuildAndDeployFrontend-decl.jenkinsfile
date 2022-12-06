@@ -4,6 +4,11 @@ pipeline {
 			label 'icdc-docker'
 		}
 	}
+	
+	environment {
+        NODE_OPTIONS = '--max-old-space-size=8192'
+    }
+	
 	parameters {
     extendedChoice(
         name: 'Environment',
