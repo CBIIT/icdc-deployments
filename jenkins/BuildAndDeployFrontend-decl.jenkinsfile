@@ -36,7 +36,7 @@ pipeline {
   		steps {
 
 		checkout([$class: 'GitSCM',
-			branches: [[name: "${params.Frontend_Tag}"]],
+			branches: [[name: "${params.FrontendTag}"]],
 			doGenerateSubmoduleConfigurations: false,
 			extensions: [[$class: 'RelativeTargetDirectory',
 			relativeTargetDir: 'icdc-frontend']],
