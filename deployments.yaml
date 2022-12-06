@@ -6,9 +6,9 @@ services:
     image: 14.5.1.13
     buildNumber: '13'
   frontend:
-    version: v3.42.0.13
-    image: v3.42.0.13
-    buildNumber: '13'
+    version: v3.42.0.40
+    image: v3.42.0.40
+    buildNumber: '40'
   files:
     version: main.38
     image: main.38
