@@ -66,7 +66,7 @@ pipeline {
  			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
                 ansiblePlaybook(
                     playbook: '${WORKSPACE}/playbooks/ansible/playbooks/build-frontend-microservice.yml', 
-            		inventory: '${WORKSPACE}/playbooks/ansible/playbooks/hosts'
+            		inventory: '${WORKSPACE}/playbooks/ansible/playbooks/hosts',
                     extraVars: [
                         tier: "${params.Environment}",
 						project_name: "${params.ProjectName}",
