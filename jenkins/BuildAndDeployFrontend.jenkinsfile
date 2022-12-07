@@ -30,8 +30,8 @@ buildAndDeploy(
     //agentImage: "ncidockerhub.nci.nih.gov/icdc/cicd-microservices-ecs",
     //agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
 	agentImage: "cbiitssrepo/cicd-ansible_4.0",
-    dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
+    //dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
     registryCredentialsId: "ncidockerhub"
-	//dockerRegistryUrl: "https://registry.hub.docker.com/",
+	dockerRegistryUrl: "https://registry.hub.docker.com/",
     //registryCredentialsId: "vdonkor"
 )
