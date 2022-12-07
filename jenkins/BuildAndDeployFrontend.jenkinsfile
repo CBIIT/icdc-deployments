@@ -1,6 +1,5 @@
 @Library('datacommons-jenkins-shared-library@icdc_test') _
 buildAndDeploy(
-    //label: "commons-docker-ncias-p2236-v",
     label: "slave-ncias-d2940-c",
 	//label: "icdc-docker",
     parameterName: "FrontendTag",
@@ -25,13 +24,10 @@ buildAndDeploy(
         subdomain: "caninecommons",
         domain_name: "cancer.gov"
     ],
-    useDockerAgent: false,
+    useDockerAgent: true,
     nodeMemory: "8192",
     //agentImage: "ncidockerhub.nci.nih.gov/icdc/cicd-microservices-ecs",
-    //agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
-	agentImage: "cbiitssrepo/cicd-ansible_4.0"
-    //dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
-    //registryCredentialsId: "ncidockerhub"
-	//dockerRegistryUrl: "https://registry.hub.docker.com/",
-    //registryCredentialsId: "vdonkor"
+    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
+    dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
+    registryCredentialsId: "ncidockerhub"
 )
