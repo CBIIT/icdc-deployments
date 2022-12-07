@@ -1,8 +1,8 @@
 @Library('datacommons-jenkins-shared-library@icdc_test') _
 buildAndDeploy(
     //label: "commons-docker-ncias-p2236-v",
-    label: "slave-ncias-d2940-c",
-	//label: "icdc-docker",
+    //label: "slave-ncias-d2940-c",
+	label: "icdc-docker",
     parameterName: "FrontendTag",
     codeRepoUrl: "https://github.com/CBIIT/bento-icdc-frontend",
     checkoutDirectory: "icdc-frontend",
@@ -25,7 +25,7 @@ buildAndDeploy(
         subdomain: "caninecommons",
         domain_name: "cancer.gov"
     ],
-    useDockerAgent: true,
+    useDockerAgent: false,
     nodeMemory: "8192",
     //agentImage: "ncidockerhub.nci.nih.gov/icdc/cicd-microservices-ecs",
     //agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
