@@ -21,6 +21,12 @@ deployApp(
         subdomain: "caninecommons",
         domain_name: "cancer.gov"
     ],
+	postBuildJobs: [
+	    [
+		    jobPath: "_default/_lower/Data Processing/opensearch-loader",
+			jobParams: "gitParameter(name: 'Opensearch_Branch', value: 'master'), gitParameter(name: 'Frontend_Branch', value: '${params.Frontend_Tag}'), gitParameter(name: 'Backend_Branch', value: '${params.Backend_Tag}'), extendedChoice(name: 'Environment', value: '${params.Environment}')"
+		]
+    ],
     useDockerAgent: true,
     agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
     dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
