@@ -1,4 +1,4 @@
-@Library('datacommons-jenkins-shared-library') _
+@Library('datacommons-jenkins-shared-library@post_build_jobs') _
 deployApp(
     //label: "commons-docker-ncias-p2236-v",
 	label: "slave-ncias-d2940-c",
