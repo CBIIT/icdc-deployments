@@ -32,7 +32,7 @@
         model_file1: "{{ workspace }}/config/{{ model_file1_name }}"
         #model_file2: "{{workspace}}/{{project_name}}-model/model-desc/{{model_file_2}}"
         model_file2_name: "{{ model_file_2 }}"
-        model_file2: "{{ workspace }}/config/{{ model_file_2_name }}"
+        model_file2: "{{ workspace }}/config/{{ model_file2_name }}"
         property_file: "config/{{ property_File }}"
         frontendRepo: "{{ frontendRepoUrl }}"
         #about_file: "{{ workspace }}/{{project_name}}-frontend/src/content/{{ tier }}/aboutPagesContent.yaml"
