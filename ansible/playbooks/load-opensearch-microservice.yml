@@ -37,6 +37,12 @@
         frontendRepo: "{{ frontendRepoUrl }}"
         #about_file: "{{ workspace }}/{{project_name}}-frontend/src/content/{{ tier }}/aboutPagesContent.yaml"
         about_file_name: "aboutPagesContent.yaml"
+        about_file_url:
+          dev: "https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}"
+          qa: "https://github.com/CBIIT/bento-icdc-static-content/blob/qa/{{ about_file_name }}"
+          qa2: "https://github.com/CBIIT/bento-icdc-static-content/blob/qa/{{ about_file_name }}"
+          stage: "https://github.com/CBIIT/bento-icdc-static-content/blob/stage/{{ about_file_name }}"
+          prod: "https://github.com/CBIIT/bento-icdc-static-content/blob/production/{{ about_file_name }}"
         about_file: "config/{{ about_file_name }}"
         backendRepo: "{{ backendRepoUrl }}"
         #indices_file: "{{ workspace }}/{{project_name}}-backend/src/main/resources/yaml/{{indices_File}}"
