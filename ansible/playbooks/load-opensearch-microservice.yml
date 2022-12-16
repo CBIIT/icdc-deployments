@@ -47,7 +47,7 @@
         backendRepo: "{{ backendRepoUrl }}"
         #indices_file: "{{ workspace }}/{{project_name}}-backend/src/main/resources/yaml/{{indices_File}}"
         indices_file_name: "{{ indices_File }}"
-        indices_file: "{{ workspace }}/config/{{ indices_file_name }}"
+        indices_file: "config/{{ indices_file_name }}"
         neo4j_user: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_user', nested=true, region='us-east-1' ) }}"
         neo4j_ip: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
         neo4j_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_password', nested=true, region='us-east-1' ) }}"
