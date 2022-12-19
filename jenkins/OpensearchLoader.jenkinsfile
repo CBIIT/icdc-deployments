@@ -1,6 +1,7 @@
 @Library('datacommons-jenkins-shared-library@icdc_test') _
 loadOpensearch(
-    label: "slave-ncias-d2940-c",
+    //label: "slave-ncias-d2940-c",
+	label: "slave-ncias-d2789-c",
     playbookRepoUrl: "https://github.com/CBIIT/icdc-deployments",
     playbookRepoBranch: "main",
 	playbook: "ansible/playbooks/load-opensearch-microservice.yml",
