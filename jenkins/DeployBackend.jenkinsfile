@@ -24,7 +24,7 @@ deployApp(
 	postBuildJobs: [
 	    [
 		    jobPath: "_default/_lower/Data Processing/opensearch-loader",
-			jobParams: "gitParameter(name: 'Opensearch_Branch', value: 'master'), gitParameter(name: 'Frontend_Branch', value: '${params.Frontend_Tag}'), gitParameter(name: 'Backend_Branch', value: '${params.BackendTag}'), extendedChoice(name: 'Environment', value: '${params.Environment}')"
+			jobParams: "extendedChoice(name: 'Environment', value: '${params.Environment}'), extendedChoice(name: 'ProjectName', value: '${params.projectName}')"
 		]
     ],
     useDockerAgent: true,
