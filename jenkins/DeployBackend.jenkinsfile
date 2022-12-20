@@ -23,10 +23,7 @@ deployApp(
     ],
 	postBuildJobs: [
 	    [
-		    //jobPath: "_default/_lower/Data Processing/opensearch-loader",
 			jobPath: "_default/_lower/ICDC/_one_click/_jobs/OpensearchLoader",
-			//jobParams: [['$class': "'extendedChoiceValue'", 'name': "'Environment'", 'value': "'${params.Environment}'"], ['$class': "'extendedChoiceValue'", 'name': "'ProjectName'", 'value': "'${projectName}'"]]
-			//jobParams: [['$class': "'StringParameterValue'", 'name': "'Environment'", 'value': "'${params.Environment}'"], ['$class': "'StringParameterValue'", 'name': "'ProjectName'", 'value': "'${projectName}'"]]
 			jobParams: [string(name: 'Environment', value: "${params.Environment}"), string(name: 'ProjectName', value: "${projectName}")]
 		]
     ],
