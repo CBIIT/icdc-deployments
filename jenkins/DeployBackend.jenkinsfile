@@ -24,8 +24,8 @@ deployApp(
 	postBuildJobs: [
 	    [
 		    jobPath: "_default/_lower/Data Processing/opensearch-loader",
-			//jobParams: [['$class': "'extendedChoice'", 'name': "'Environment'", 'value': "'${params.Environment}'"], ['$class': "'extendedChoice'", 'name': "'ProjectName'", 'value': "'${projectName}'"]]
-			jobParams: ["string(name: 'Environment', value: '${params.Environment}')", "string(name: 'ProjectName', value: '${projectName}')"]
+			jobParams: [['$class': "'ExtendedChoiceValue'", 'name': "'Environment'", 'value': "'${params.Environment}'"], ['$class': "'ExtendedChoiceValue'", 'name': "'ProjectName'", 'value': "'${projectName}'"]]
+			//jobParams: ["string(name: 'Environment', value: '${params.Environment}')", "string(name: 'ProjectName', value: '${projectName}')"]
 		]
     ],
     useDockerAgent: true,
