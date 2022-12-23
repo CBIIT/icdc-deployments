@@ -24,9 +24,6 @@
     - name: build frontend
       include_role:
         name: bento.common.build_frontend
-#        apply:
-#          environment:
-#            NODE_OPTIONS: "--max-old-space-size=4096"
       vars:
         ansible_python_interpreter: /usr/bin/python3
         workspace: "{{ lookup('env','WORKSPACE') }}"
@@ -35,6 +32,5 @@
         image_version: "{{ lookup('env','FE_VERSION') }}"
         container_name: "frontend"
         container_build_path: "{{ workspace }}/{{ project_name }}-frontend"
-        #dockerfile_path: "{{ workspace }}/{{ dockerfile_path }} | default('{{ workspace }}/playbooks/docker/dockerfiles/frontend-microservice-dockerfile')"
         dockerfile_path: "{{ workspace }}/playbooks/docker/dockerfiles/frontend-icdc-dockerfile"
         container_registry_url: "{{ ecr_repo }}"
