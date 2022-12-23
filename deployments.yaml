@@ -10,6 +10,6 @@ services:
     image: v3.42.0.109
     buildNumber: '109'
   files:
-    version: main.38
-    image: main.38
-    buildNumber: '38'
+    version: 1.4.0.39
+    image: 1.4.0.39
+    buildNumber: '39'
