@@ -49,7 +49,7 @@
         container_memory: "512"
         container_cpu: "256"
         container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
-        url_src: "indexd"
+        url_src: "{% if tier == 'prod' or tier == 'stage' %}CLOUD_FRONT{% else %}indexd{% endif %}"
         indexd_url: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.indexd_url', nested=true, region='us-east-1') }}"
         auth_enabled: "false"
         newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1') }}"
