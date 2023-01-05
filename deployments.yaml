@@ -13,3 +13,7 @@ services:
     version: v1.4.0.41
     image: v1.4.0.41
     buildNumber: '41'
+  interoperation:
+    version: v1.4.0.41
+    image: v1.4.0.41
+    buildNumber: '1'
