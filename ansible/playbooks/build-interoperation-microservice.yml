@@ -1,0 +1,35 @@
+- name: interoperation microservice pipeline
+  hosts: bento
+  connection: local
+  gather_facts: no
+
+  tasks:
+    #install collections
+    - name: install aws collection
+      command: ansible-galaxy collection install --force {{ item }}
+      loop:
+        - community.docker
+        #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
+
+    #docker login
+    - name: docker login
+      include_role:
+        name: bento.common.ecr_login
+      vars:
+        region: us-east-1
+
+    #build interoperation
+    - name: build stage for interoperation microservice
+      include_role:
+        name: bento.common.build_interoperation
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+        workspace: "{{ lookup('env','WORKSPACE') }}"
+        build_number: "{{ lookup('env','BUILD_NUMBER') }}"
+        project_name: "{{ project_name }}"
+        image_version: "{{ lookup('env','INTEROPERATION_VERSION') }}"
+        container_name: "interoperation"
+        container_build_path: "{{ workspace }}/{{ project_name }}-interoperation"
+        dockerfile_path: "{{ workspace }}/playbooks/docker/dockerfiles/interoperation-microservice-dockerfile"
+        container_registry_url: "{{ ecr_repo }}"

@@ -1,0 +1,31 @@
+@Library('datacommons-jenkins-shared-library') _
+buildAndDeploy(
+    //label: "commons-docker-ncias-p2236-v",
+	label: "slave-ncias-d2940-c",
+    parameterName: "InteroperationTag",
+    codeRepoUrl: "https://github.com/CBIIT/bento-icdc-interoperation",
+    checkoutDirectory: "icdc-interoperation",
+    playbookRepoUrl: "https://github.com/CBIIT/icdc-deployments",
+    playbookRepoBranch: "main",
+    buildPlaybook: "ansible/playbooks/build-interoperation-microservice.yml",
+    deployPlaybook: "ansible/playbooks/deploy-interoperation-microservice.yml",
+    inventory: "ansible/playbooks/hosts",
+    tier: "${params.Environment}",
+    projectName: "${params.ProjectName}",
+    slackSecretPath: "notification/slack",
+    slackSecretName: "icdc_slack_url",
+    appVersionName: "FILES_VERSION",
+    deploymentRepoUrl: "https://github.com/CBIIT/icdc-deployments",
+    deploymentCheckoutDirectory: "icdc-deployments",
+    deploymentFile: "icdc-deployments/deployments.yaml",
+    service: "interoperation",
+    extraAnsibleVars: [
+		iam_prefix: "power-user",
+        subdomain: "caninecommons",
+        domain_name: "cancer.gov"
+    ],
+    useDockerAgent: true,
+    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
+    dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
+    registryCredentialsId: "ncidockerhub"
+)
