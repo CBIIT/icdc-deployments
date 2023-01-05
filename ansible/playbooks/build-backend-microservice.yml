@@ -4,14 +4,11 @@
   gather_facts: no
   
   tasks:
-    - debug: var=ansible_python_version
     #install collections
     - name: install aws collection
       command: ansible-galaxy collection install {{ item }}
       loop:
         - community.docker
-        - amazon.aws
-        - community.aws:<=3.2.0
         #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
         - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
 
@@ -37,13 +34,9 @@
         bento_api_version: "{{ image_version }}"
         container_name: "backend"
         schema_file: "{%if project_name == 'bento' %}{{ project_name }}-extended.graphql{% else %}{{ project_name }}.graphql{% endif %}"
-        #es_schema_file: "{{ project_name }}-private-es-schema.graphql"
         es_schema_file: "es-schema-{{ project_name }}.graphql"
-        #public_schema_file: "{%if project_name == 'bento' %}{{ project_name }}-extended-public.graphql{% else %}{{ project_name }}-public.graphql{% endif %}"
-        #public_es_schema_file: "{{ project_name }}-public-es-schema.graphql"
         es_host: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.es_host', nested=true, region='us-east-1' ) }}"
         test_queries_file: "not_needed.txt"
-        #dockerfile_path: "{{ workspace }}/{{ dockerfile_path }} | default('{{ workspace }}/playbooks/docker/dockerfiles/backend-microservice-dockerfile')"
         dockerfile_path: "{{ workspace }}/playbooks/docker/dockerfiles/backend-icdc-dockerfile"
         container_image: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}:{{ image_version }}"
         container_registry_url: "{{ ecr_repo }}"

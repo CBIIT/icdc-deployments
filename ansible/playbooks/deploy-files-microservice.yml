@@ -1,5 +1,5 @@
-- name: ctdc deploy pipeline
-  hosts: bento
+- name: deploy files microservice
+  hosts: all
   connection: local
   gather_facts: true
 
@@ -11,7 +11,8 @@
         - community.docker
         - amazon.aws
         - community.aws:<=3.2.0
-        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
+        #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
 
 
     #docker login
@@ -22,7 +23,7 @@
         region: us-east-1
 
     #deploy files
-    - name: deploy stage files
+    - name: deploy stage for {{ project }} files
       include_role:
         name: bento.common.ecs
       vars:
@@ -34,8 +35,6 @@
         ansible_python_interpreter: "/usr/bin/python3"
         execution_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-execution-role{% else %}{{ project_name }}-{{ tier }}-task-execution-role{% endif %}"
         task_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-role{% else %}{{ project_name }}-{{ tier }}-task-role{% endif %}"
-#        cloudfront_key_group_name: "{{project_name}}-{{tier}}-pub-key"
-#        cloudfront_private_key: "{{ lookup('aws_ssm', 'bento_files_cloudfront_private_key', region='us-east-1' ) }}"
         project_name: "{{ project_name }}"
         region: "us-east-1"
         container_name: "files"

@@ -2,7 +2,7 @@
   hosts: all
   connection: local
   gather_facts: no
-  become: yes
+  #become: yes
 
   tasks:
     #install collections
