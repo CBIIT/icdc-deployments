@@ -14,7 +14,7 @@ buildAndDeploy(
     projectName: "${params.ProjectName}",
     slackSecretPath: "notification/slack",
     slackSecretName: "icdc_slack_url",
-    appVersionName: "INTEROPERATION_VERSION",
+    appVersionName: "IO_VERSION",
     deploymentRepoUrl: "https://github.com/CBIIT/icdc-deployments",
     deploymentCheckoutDirectory: "icdc-deployments",
     deploymentFile: "icdc-deployments/deployments.yaml",
