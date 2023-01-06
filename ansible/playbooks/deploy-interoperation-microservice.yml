@@ -33,7 +33,7 @@
         project_name: "{{ project_name }}"
         region: "us-east-1"
         container_name: "interoperation"
-        interoperation_version: "{{ lookup('env','INTEROPERATION_VERSION') }}"
+        interoperation_version: "{{ lookup('env','IO_VERSION') }}"
         image_version: "{{ interoperation_version }}"
         tier: "{{ tier }}"
         ecs_cluster_name: "{{ project_name }}-{{ tier }}-ecs"
