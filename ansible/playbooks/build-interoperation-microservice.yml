@@ -1,5 +1,5 @@
 - name: interoperation microservice pipeline
-  hosts: bento
+  hosts: all
   connection: local
   gather_facts: no
 
