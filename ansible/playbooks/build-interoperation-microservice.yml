@@ -1,8 +1,7 @@
-- name: interoperation microservice pipeline
+- name: build interoperation microservice
   hosts: all
   connection: local
   gather_facts: no
-  debugger: on_failed
 
   tasks:
     #install collections
