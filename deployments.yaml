@@ -6,10 +6,14 @@ services:
     image: 14.5.1.19
     buildNumber: '19'
   frontend:
-    version: v3.48.0.10
-    image: v3.48.0.10
-    buildNumber: '10'
+    version: v3.49.0.12
+    image: v3.49.0.12
+    buildNumber: '12'
   files:
     version: v1.4.0.41
     image: v1.4.0.41
     buildNumber: '41'
+  interoperation:
+    version: main.15
+    image: main.15
+    buildNumber: '15'
