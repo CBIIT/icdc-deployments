@@ -12,12 +12,18 @@
         #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
         - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
 
-    #docker login
-    - name: docker login
-      include_role:
-        name: bento.common.ecr_login
-      vars:
-        region: us-east-1
+#    #docker login
+#    - name: docker login
+#      include_role:
+#        name: bento.common.ecr_login
+#      vars:
+#        region: us-east-1
+
+    - name: log into ncidockerhub
+      docker_login:
+        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_user', nested=true, region='us-east-1') }}"
+        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_password', nested=true, region='us-east-1') }}"
+        registry: https://ncidockerhub.nci.nih.gov
 
     #build files
     - name: build stage for files microservice
@@ -32,4 +38,7 @@
         container_name: "files"
         container_build_path: "{{ workspace }}/{{ project_name }}-files"
         dockerfile_path: "{{ workspace }}/playbooks/docker/dockerfiles/files-microservice-dockerfile"
-        container_registry_url: "{{ ecr_repo }}"
+        ###################################################################################
+        #container_registry_url: "{{ ecr_repo }}"
+        container_registry_url: "ncidockerhub.nci.nih.gov/icdc"
+        ###################################################################################
