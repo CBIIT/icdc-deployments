@@ -9,7 +9,7 @@
     - name: install collections
       command: ansible-galaxy collection install {{ item }}
       loop:
-        - community.docker
+        - community.docker:<=3.3.2
         #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
         - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
 
