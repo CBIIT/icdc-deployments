@@ -8,7 +8,7 @@
     - name: install aws collection
       command: ansible-galaxy collection install {{ item }}
       loop:
-        - community.docker
+        - community.docker:<=3.3.2
         #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
         - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
 
@@ -18,6 +18,12 @@
         name: bento.common.ecr_login
       vars:
         region: us-east-1
+
+    - name: log into ncidockerhub
+      docker_login:
+        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_user', nested=true, region='us-east-1') }}"
+        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_password', nested=true, region='us-east-1') }}"
+        registry: https://ncidockerhub.nci.nih.gov
 
     #build backend
     - name: build {{ project_name }} backend
@@ -39,7 +45,10 @@
         test_queries_file: "not_needed.txt"
         dockerfile_path: "{{ workspace }}/playbooks/docker/dockerfiles/backend-icdc-dockerfile"
         container_image: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}:{{ image_version }}"
-        container_registry_url: "{{ ecr_repo }}"
+        ###################################################################################
+        #container_registry_url: "{{ ecr_repo }}"
+        container_registry_url: "ncidockerhub.nci.nih.gov/icdc"
+        ###################################################################################
         auth_enabled: "false"
         ##### Redis
         redis_schema_file: "redis-schema.graphql"

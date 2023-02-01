@@ -8,7 +8,7 @@
     - name: install aws collection
       command: ansible-galaxy collection install {{item}}
       loop:
-        - community.docker
+        - community.docker:<=3.3.2
         - amazon.aws
         - community.aws:<=3.2.0
         #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
@@ -20,6 +20,12 @@
         name: bento.common.ecr_login
       vars:
         region: us-east-1
+
+    - name: log into ncidockerhub
+      docker_login:
+        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_user', nested=true, region='us-east-1') }}"
+        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_password', nested=true, region='us-east-1') }}"
+        registry: https://ncidockerhub.nci.nih.gov
 
     #deploy backend
     - name: deploy stage for backend microservice
@@ -46,7 +52,10 @@
         container_port: 8080
         container_memory: 1024
         container_cpu: 512
-        container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
+        ###################################################################################
+        #container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
+        container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
+        ###################################################################################
         #Elasticsearch
         es_host: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.es_host', nested=true, region='us-east-1' ) }}"
         es_schema: "{% if project_name == 'bento' %}es-schema.graphql{% else %}es-schema-{{ project_name }}.graphql{% endif %}"
