@@ -10,9 +10,9 @@ services:
     image: v3.49.0.12
     buildNumber: '12'
   files:
-    version: v1.4.0.41
-    image: v1.4.0.41
-    buildNumber: '41'
+    version: 1.4.0.50
+    image: 1.4.0.50
+    buildNumber: '50'
   interoperation:
     version: main.15
     image: main.15
