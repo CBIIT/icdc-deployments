@@ -20,6 +20,12 @@
       vars:
         region: us-east-1
 
+    - name: log into ncidockerhub
+      docker_login:
+        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_user', nested=true, region='us-east-1') }}"
+        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_password', nested=true, region='us-east-1') }}"
+        registry: https://ncidockerhub.nci.nih.gov
+
     #frontend build
     - name: build frontend
       include_role:
@@ -33,4 +39,7 @@
         container_name: "frontend"
         container_build_path: "{{ workspace }}/{{ project_name }}-frontend"
         dockerfile_path: "{{ workspace }}/playbooks/docker/dockerfiles/frontend-icdc-dockerfile"
-        container_registry_url: "{{ ecr_repo }}"
+        ###################################################################################
+        #container_registry_url: "{{ ecr_repo }}"
+        container_registry_url: "ncidockerhub.nci.nih.gov/icdc"
+        ###################################################################################

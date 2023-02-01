@@ -21,6 +21,12 @@
       vars:
         region: us-east-1
 
+    - name: log into ncidockerhub
+      docker_login:
+        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_user', nested=true, region='us-east-1') }}"
+        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_password', nested=true, region='us-east-1') }}"
+        registry: https://ncidockerhub.nci.nih.gov
+
     #deploy frontend
     - name: deploy stage for frontend microservice
       include_role:
@@ -42,7 +48,10 @@
         container_port: 80
         container_memory: "512"
         container_cpu: "256"
-        container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
+        ###################################################################################
+        #container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
+        container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
+        ###################################################################################
         backend_google_analytics_id: "UA-154442677-1"
         newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1' ) }}"
         ## Static Content ##
