@@ -1,8 +1,8 @@
 @Library('datacommons-jenkins-shared-library') _
 buildAndDeploy(
     //label: "commons-docker-ncias-p2236-v",
-	//label: "slave-ncias-d2940-c",
-	label: "icdc-docker",
+	label: "slave-ncias-d2940-c",
+	//label: "icdc-docker",
     parameterName: "BackendTag",
     codeRepoUrl: "https://github.com/CBIIT/bento-backend",
     checkoutDirectory: "workspace",
