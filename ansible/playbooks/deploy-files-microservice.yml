@@ -15,12 +15,12 @@
         - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
 
 
-#    #docker login
-#    - name: docker login
-#      include_role:
-#        name: bento.common.ecr_login
-#      vars:
-#        region: us-east-1
+    #docker login
+    - name: docker login
+      include_role:
+        name: bento.common.ecr_login
+      vars:
+        region: us-east-1
 
     - name: log into ncidockerhub
       docker_login:
