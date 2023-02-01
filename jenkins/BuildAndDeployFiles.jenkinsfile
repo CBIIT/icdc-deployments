@@ -25,7 +25,8 @@ buildAndDeploy(
         domain_name: "cancer.gov"
     ],
     useDockerAgent: true,
-    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
+    //agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
+	agentImage: "cbiitssrepo/cicd-ansible_4.0",
     dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
     registryCredentialsId: "ncidockerhub"
 )
