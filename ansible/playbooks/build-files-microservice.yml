@@ -4,6 +4,12 @@
   gather_facts: no
 
   tasks:
+    - name: log into ncidockerhub
+      docker_login:
+        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_user', nested=true, region='us-east-1') }}"
+        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_password', nested=true, region='us-east-1') }}"
+        registry: https://ncidockerhub.nci.nih.gov
+
     #install collections
     - name: install aws collection
       command: ansible-galaxy collection install --force {{ item }}
@@ -18,12 +24,6 @@
 #        name: bento.common.ecr_login
 #      vars:
 #        region: us-east-1
-
-    - name: log into ncidockerhub
-      docker_login:
-        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_user', nested=true, region='us-east-1') }}"
-        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_password', nested=true, region='us-east-1') }}"
-        registry: https://ncidockerhub.nci.nih.gov
 
     #build files
     - name: build stage for files microservice
