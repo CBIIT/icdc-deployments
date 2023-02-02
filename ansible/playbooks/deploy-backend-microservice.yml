@@ -21,11 +21,11 @@
       vars:
         region: us-east-1
 
-    - name: log into ncidockerhub
-      community.docker.docker_login:
-        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_user', nested=true, region='us-east-1') }}"
-        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_password', nested=true, region='us-east-1') }}"
-        registry: https://ncidockerhub.nci.nih.gov
+#    - name: log into ncidockerhub
+#      community.docker.docker_login:
+#        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.username', nested=true, region='us-east-1') }}"
+#        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.password', nested=true, region='us-east-1') }}"
+#        registry: https://ncidockerhub.nci.nih.gov
 
     #deploy backend
     - name: deploy stage for backend microservice
@@ -55,6 +55,7 @@
         ###################################################################################
         #container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
         container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
+        credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
         ###################################################################################
         #Elasticsearch
         es_host: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.es_host', nested=true, region='us-east-1' ) }}"
