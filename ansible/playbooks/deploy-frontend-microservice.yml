@@ -84,6 +84,15 @@
           qa2: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/Data_Model_Navigator_README.md"
           stage: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/stage/Data_Model_Navigator_README.md"
           prod: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/prod/Data_Model_Navigator_README.md"
+        
+        ## privacy policy ##
+        react_app_footer_privacy_policy:
+          dev: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/Privacy_Policy.md"
+          qa: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/Privacy_Policy.md"
+          qa2: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/Privacy_Policy.md"
+          stage: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/stage/Privacy_Policy.md"
+          prod: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/prod/Privacy_Policy.md"
+        
         container_env:
           # API URLs
           - name: REACT_APP_BACKEND_API
@@ -105,6 +114,8 @@
             value: "{{ react_app_news_data[tier] }}"
           - name: REACT_APP_DMN_README
             value: "{{ react_app_readme_url[tier] }}"
+          - name: REACT_APP_FOOTER_PRIVACY_POLICY
+            value: "{{ react_app_footer_privacy_policy }}"
           # Data Model
           - name: REACT_APP_DATA_MODEL
             value: "{% if tier == 'prod' %}https://raw.githubusercontent.com/CBIIT/icdc-model-tool/{{data_model_branch | default('master')}}/model-desc/icdc-model.yml{% else %}https://raw.githubusercontent.com/CBIIT/icdc-model-tool/{{data_model_branch | default('develop')}}/model-desc/icdc-model.yml{% endif %}"
