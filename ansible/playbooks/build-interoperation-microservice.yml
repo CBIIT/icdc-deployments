@@ -8,16 +8,22 @@
     - name: install aws collection
       command: ansible-galaxy collection install --force {{ item }}
       loop:
-        - community.docker
+        - community.docker:<=3.3.2
         #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
         - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
 
-    #docker login
-    - name: docker login
-      include_role:
-        name: bento.common.ecr_login
-      vars:
-        region: us-east-1
+#    #docker login
+#    - name: docker login
+#      include_role:
+#        name: bento.common.ecr_login
+#      vars:
+#        region: us-east-1
+
+    - name: log into ncidockerhub
+      community.docker.docker_login:
+        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_user', nested=true, region='us-east-1') }}"
+        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_password', nested=true, region='us-east-1') }}"
+        registry: https://ncidockerhub.nci.nih.gov
 
     #build interoperation
     - name: build stage for interoperation microservice
@@ -32,4 +38,7 @@
         container_name: "interoperation"
         container_build_path: "{{ workspace }}/{{ project_name }}-interoperation"
         dockerfile_path: "{{ workspace }}/playbooks/docker/dockerfiles/interoperation-microservice-dockerfile"
-        container_registry_url: "{{ ecr_repo }}"
+        ###################################################################################
+        #container_registry_url: "{{ ecr_repo }}"
+        container_registry_url: "ncidockerhub.nci.nih.gov/icdc"
+        ###################################################################################

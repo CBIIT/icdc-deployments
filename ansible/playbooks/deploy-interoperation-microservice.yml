@@ -8,7 +8,7 @@
     - name: install aws collection
       command: ansible-galaxy collection install {{item}}
       loop:
-        - community.docker
+        - community.docker:<=3.3.2
         - amazon.aws
         - community.aws:<=3.2.0
         #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
@@ -42,7 +42,11 @@
         container_port: "4030"
         container_memory: "512"
         container_cpu: "256"
-        container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
+        ###################################################################################
+        #container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
+        container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
+        credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
+        ###################################################################################
         newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1') }}"
         container_env:
         - name: VERSION
