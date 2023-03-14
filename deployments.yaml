@@ -6,9 +6,9 @@ services:
     image: 14.5.1.25
     buildNumber: '25'
   frontend:
-    version: ICDC-3044.31
-    image: ICDC-3044.31
-    buildNumber: '31'
+    version: update-trackId.32
+    image: update-trackId.32
+    buildNumber: '32'
   files:
     version: 1.4.0.59
     image: 1.4.0.59
