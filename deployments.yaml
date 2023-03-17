@@ -6,9 +6,9 @@ services:
     image: 14.5.1.25
     buildNumber: '25'
   frontend:
-    version: Develop.34
-    image: Develop.34
-    buildNumber: '34'
+    version: v3.52.0.36
+    image: v3.52.0.36
+    buildNumber: '36'
   files:
     version: 1.4.0.59
     image: 1.4.0.59
