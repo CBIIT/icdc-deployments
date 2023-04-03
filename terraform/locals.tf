@@ -10,7 +10,7 @@ locals {
   neo4j_bolt = 7687
   redis = "6379"
   integration_server_profile_name = "${var.iam_prefix}-integration-server-profile"
-  permissions_boundary            = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/PermissionBoundary_PowerUser"
+  permissions_boundary            = terraform.workspace == "dev" || terraform.workspace == "qa" ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/PermissionBoundary_PowerUser" : null
   cert_types = var.cloud_platform == "leidos" ? "AMAZON_ISSUED" : "IMPORTED"
   #nih_ip_cidrs =  terraform.workspace == "prod" || terraform.workspace == "stage" || var.cloud_platform == "leidos" ? ["0.0.0.0/0"]: [ "129.43.0.0/16" , "137.187.0.0/16"  , "165.112.0.0/16" , "156.40.0.0/16"  , "128.231.0.0/16" , "130.14.0.0/16" , "157.98.0.0/16"]
   nih_ip_cidrs  = ["0.0.0.0/0"]
