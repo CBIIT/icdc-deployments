@@ -21,8 +21,8 @@
 
     - name: log into ncidockerhub
       community.docker.docker_login:
-        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_user', nested=true, region='us-east-1') }}"
-        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.docker_password', nested=true, region='us-east-1') }}"
+        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.username', nested=true, region='us-east-1') }}"
+        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.password', nested=true, region='us-east-1') }}"
         registry: https://ncidockerhub.nci.nih.gov
 
     #build backend
