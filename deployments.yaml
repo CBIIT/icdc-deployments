@@ -6,9 +6,9 @@ services:
     image: ICDC-3053.29
     buildNumber: '29'
   frontend:
-    version: v3.54.1.43
-    image: v3.54.1.43
-    buildNumber: '43'
+    version: ICDC-3053.44
+    image: ICDC-3053.44
+    buildNumber: '44'
   files:
     version: 1.4.0.59
     image: 1.4.0.59
