@@ -4,7 +4,7 @@ buildAndDeploy(
 	//label: "slave-ncias-d2940-c",
 	label: "icdc-docker",
     parameterName: "BackendTag",
-    codeRepoUrl: "https://github.com/CBIIT/bento-backend",
+    codeRepoUrl: "https://github.com/CBIIT/bento-icdc-backend",
     checkoutDirectory: "workspace",
 	playbookRepoUrl: "https://github.com/CBIIT/icdc-deployments",
     playbookRepoBranch: "main",
