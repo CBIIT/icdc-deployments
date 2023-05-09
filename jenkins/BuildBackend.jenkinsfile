@@ -62,6 +62,8 @@ pipeline {
 			userRemoteConfigs:
 			[[url: 'https://github.com/CBIIT/bento-icdc-backend']]])
 
+        sh "cd ${env.PROJECT}-backend && git submodule update --init --recursive"
+
   		checkout([$class: 'GitSCM',
 			branches: [[name: '*/main']],
 			doGenerateSubmoduleConfigurations: false,
