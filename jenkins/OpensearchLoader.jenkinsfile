@@ -1,25 +1,133 @@
-@Library('datacommons-jenkins-shared-library@icdc_test') _
-loadOpensearch(
-	label: "slave-ncias-d2789-c",
-    playbookRepoUrl: "https://github.com/CBIIT/icdc-deployments",
-    playbookRepoBranch: "main",
-	playbook: "ansible/playbooks/load-opensearch-microservice.yml",
-    inventory: "ansible/playbooks/hosts",
-    tier: "${params.Environment}",
-    projectName: "${params.ProjectName}",
-    model_file1: "icdc-model.yml",
-    model_file2: "icdc-model-props.yml",
-    property_file: "props-icdc.yml",
-    indices_file: "es_indices_icdc.yml",
-    slackSecretPath: "notification/slack",
-    slackSecretName: "icdc_slack_url",
-	modelRepoUrl: "https://raw.githubusercontent.com/CBIIT/icdc-model-tool",
-    //frontendRepoUrl: "https://github.com/CBIIT/bento-icdc-frontend",
-	backendRepoUrl: "https://raw.githubusercontent.com/CBIIT/bento-backend",
-    useDockerAgent: true,
-    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
-    dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
-    registryCredentialsId: "ncidockerhub",
-    useCustomBranch: "yes",
-    customBranch: "main"
-)
+pipeline {
+	agent {
+		node {
+			//label 'data-loader'
+			//label 'slave-ncias-d2320-c'
+			label 'slave-ncias-d2789-c'
+		}
+	}
+	parameters {
+	extendedChoice(
+            name: 'Environment',
+            defaultValue: 'dev',
+            description: 'Choose the environment to build',
+            type: 'PT_SINGLE_SELECT',
+            value: 'dev,qa' )
+    gitParameter(branchFilter: 'origin/(.*)', 
+        defaultValue: 'master',
+        name: 'Dataloader_Branch', 
+        type: 'PT_BRANCH_TAG',
+        quickFilterEnabled: false, 
+        selectedValue: 'DEFAULT', 
+        sortMode: 'ASCENDING_SMART', 
+        tagFilter: '*', 
+        useRepository: 'https://github.com/CBIIT/icdc-dataloader')
+    gitParameter(branchFilter: 'origin/(.*)', 
+        defaultValue: 'master', 
+        name: 'Backend_Branch', 
+        type: 'PT_BRANCH_TAG',
+        quickFilterEnabled: false, 
+        selectedValue: 'DEFAULT', 
+        sortMode: 'ASCENDING_SMART', 
+        tagFilter: '*', 
+        useRepository: 'https://github.com/CBIIT/bento-backend')
+    gitParameter(branchFilter: 'origin/(.*)', 
+        defaultValue: 'main',
+        name: 'Frontend_Branch', 
+        type: 'PT_BRANCH_TAG',
+        quickFilterEnabled: false, 
+        selectedValue: 'DEFAULT', 
+        sortMode: 'ASCENDING_SMART', 
+        tagFilter: '*', 
+        useRepository: 'https://github.com/CBIIT/bento-icdc-frontend')
+    gitParameter(branchFilter: 'origin/(.*)',
+            defaultValue: 'master',
+            name: 'Model_Branch',
+            type: 'PT_BRANCH_TAG',
+            quickFilterEnabled: false,
+            selectedValue: 'DEFAULT',
+            sortMode: 'ASCENDING_SMART',
+            tagFilter: '*',
+            useRepository: 'https://github.com/CBIIT/icdc-model-tool')
+    }
+    options {
+      ansiColor('xterm')
+    }
+    tools {
+  	  maven 'Default' 
+      jdk 'Default' 
+    }
+    stages {
+  	  stage('checkout'){
+  		steps {
+  			checkout([$class: 'GitSCM', 
+  				branches: [[name: "${params.Dataloader_Branch}"]], 
+  				doGenerateSubmoduleConfigurations: 
+  				false, extensions: [], submoduleCfg: [], 
+                recursiveSubmodules: true,
+  				userRemoteConfigs: 
+  				[[url: 'https://github.com/CBIIT/icdc-dataloader']]])
+
+			checkout([$class: 'GitSCM',
+				branches: [[name: "${params.Frontend_Branch}"]],
+				doGenerateSubmoduleConfigurations: false,
+				extensions: [[$class: 'RelativeTargetDirectory',
+				relativeTargetDir: 'icdc-frontend']],
+				submoduleCfg: [],
+				userRemoteConfigs: 
+				[[url: 'https://github.com/CBIIT/bento-icdc-frontend']]])
+			
+			checkout([$class: 'GitSCM',
+				branches: [[name: "${params.Backend_Branch}"]],
+				doGenerateSubmoduleConfigurations: false,
+				extensions: [[$class: 'RelativeTargetDirectory',
+				relativeTargetDir: 'bento-backend']],
+				submoduleCfg: [],
+				userRemoteConfigs: 
+				[[url: 'https://github.com/CBIIT/bento-backend']]])
+            
+			dir('icdc-model'){
+                git branch: "${params.Model_Branch}",
+                url: 'https://github.com/CBIIT/icdc-model-tool'}
+			
+			sh 'git submodule update --init'
+  			
+			checkout([$class: 'GitSCM',
+				branches: [[name: "master"]],
+				doGenerateSubmoduleConfigurations: false,
+				extensions: [[$class: 'RelativeTargetDirectory',
+				relativeTargetDir: 'icdc-devops']],
+				submoduleCfg: [],
+				userRemoteConfigs: 
+				[[url: 'https://github.com/CBIIT/icdc-devops']]])
+
+  		}
+  	  }
+	
+  	stage('load-es-data'){
+ 		environment {
+ 			SLACK_URL = "${SLACK_URL}"
+		    TIER = "${params.Environment}"
+			PROJECT_NAME = "icdc"
+ 		}
+ 		steps {
+ 			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
+			ansiblePlaybook( 
+            	playbook: '${WORKSPACE}/icdc-devops/ansible/icdc-opensearch-loader.yml',
+					inventory: '${WORKSPACE}/icdc-devops/ansible/hosts',
+            		colorized: true) 
+ 			}
+ 		}
+    }
+	
+ }
+ 
+  post {
+
+    always {
+	  cleanWs()
+    }
+
+  }
+
+}
