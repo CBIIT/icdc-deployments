@@ -99,6 +99,8 @@ pipeline {
 				userRemoteConfigs: 
 				[[url: 'https://github.com/CBIIT/icdc-deployments']]])
 
+			sh 'whoami'
+
   		}
   	  }
 	
