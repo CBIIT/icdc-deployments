@@ -56,6 +56,9 @@ pipeline {
       jdk 'Default' 
     }
     stages {
+	
+	dockerNode('cbiitssrepo/cicd-ansible_4.0') {
+	
   	  stage('checkout'){
   		steps {
   			checkout([$class: 'GitSCM', 
@@ -109,7 +112,7 @@ pipeline {
 			PROJECT_NAME = "icdc"
  		}
  		steps {
- 			dockerNode('cbiitssrepo/cicd-ansible_4.0') {
+ 			
 			
 			    wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
 			    ansiblePlaybook( 
