@@ -10,9 +10,9 @@
     - name: install aws collection
       command: ansible-galaxy collection install {{item}} --force-with-deps
       loop:
-        -  amazon.aws:<=5.4.0
-        -  community.aws:<=3.2.0
-        -  community.docker:==2.7.1
+        -  amazon.aws:5.4.0
+        -  community.aws:3.2.0
+        -  community.docker:2.7.1
         -  git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,collections_v1.2
 
 #    #get db ip
