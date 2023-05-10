@@ -105,12 +105,12 @@ pipeline {
   	  }
 	
   	stage('load-es-data'){
-	    agent {
-            docker {
-                image 'cbiitssrepo/cicd-ansible_4.0'
-                reuseNode true
-            }
-		}
+//	    agent {
+//            docker {
+//                image 'cbiitssrepo/cicd-ansible_4.0'
+//                reuseNode true
+//            }
+//		}
  		environment {
  			SLACK_URL = "${SLACK_URL}"
 		    TIER = "${params.Environment}"
