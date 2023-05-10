@@ -1,8 +1,6 @@
 pipeline {
 	agent {
 		node {
-			//label 'data-loader'
-			//label 'slave-ncias-d2320-c'
 			label 'slave-ncias-d2789-c'
 		}
 	}
@@ -96,10 +94,10 @@ pipeline {
 				branches: [[name: "master"]],
 				doGenerateSubmoduleConfigurations: false,
 				extensions: [[$class: 'RelativeTargetDirectory',
-				relativeTargetDir: 'icdc-devops']],
+				relativeTargetDir: 'icdc-deployments']],
 				submoduleCfg: [],
 				userRemoteConfigs: 
-				[[url: 'https://github.com/CBIIT/icdc-devops']]])
+				[[url: 'https://github.com/CBIIT/icdc-deployments']]])
 
   		}
   	  }
@@ -113,7 +111,7 @@ pipeline {
  		steps {
  			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
 			ansiblePlaybook( 
-            	playbook: '${WORKSPACE}/icdc-devops/ansible/icdc-opensearch-loader.yml',
+            	playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/icdc-opensearch-loader.yml',
 					inventory: '${WORKSPACE}/icdc-devops/ansible/hosts',
             		colorized: true) 
  			}
