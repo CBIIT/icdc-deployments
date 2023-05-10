@@ -56,9 +56,6 @@ pipeline {
       jdk 'Default' 
     }
     stages {
-	
-	dockerNode('cbiitssrepo/cicd-ansible_4.0') {
-	
   	  stage('checkout'){
   		steps {
   			checkout([$class: 'GitSCM', 
@@ -106,22 +103,24 @@ pipeline {
   	  }
 	
   	stage('load-es-data'){
+	    agent {
+            docker {
+                image 'cbiitssrepo/cicd-ansible_4.0'
+                reuseNode true
+            }
+		}
  		environment {
  			SLACK_URL = "${SLACK_URL}"
 		    TIER = "${params.Environment}"
 			PROJECT_NAME = "icdc"
  		}
  		steps {
- 			
-			
 			    wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
 			    ansiblePlaybook( 
 					playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/icdc-opensearch-loader.yml',
 						inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
 						colorized: true) 
 				}
-				
-			}
  		}
     }
 	
