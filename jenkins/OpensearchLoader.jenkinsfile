@@ -109,12 +109,16 @@ pipeline {
 			PROJECT_NAME = "icdc"
  		}
  		steps {
- 			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
-			ansiblePlaybook( 
-            	playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/icdc-opensearch-loader.yml',
-					inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
-            		colorized: true) 
- 			}
+ 			dockerNode('cbiitssrepo/cicd-ansible_4.0') {
+			
+			    wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
+			    ansiblePlaybook( 
+					playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/icdc-opensearch-loader.yml',
+						inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
+						colorized: true) 
+				}
+				
+			}
  		}
     }
 	
