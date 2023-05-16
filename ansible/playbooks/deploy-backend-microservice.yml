@@ -117,3 +117,6 @@
           ## Java
           - name: JAVA_OPTS
             value: "-javaagent:/usr/local/tomcat/newrelic/newrelic.jar"
+          ## MySQL
+          - name: MYSQL_SESSION_ENABLED
+            value: "false"
