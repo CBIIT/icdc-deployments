@@ -2,9 +2,9 @@ Notes: Jenkins pipeline
 project: icdc
 services:
   backend:
-    version: main.66
-    image: main.66
-    buildNumber: '66'
+    version: opensearch-port-config.67
+    image: opensearch-port-config.67
+    buildNumber: '67'
   frontend:
     version: v3.54.2.47
     image: v3.54.2.47
