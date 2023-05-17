@@ -30,7 +30,8 @@
     #deploy backend
     - name: deploy stage for backend microservice
       include_role:
-        name: bento.common.ecs
+        #name: bento.common.ecs
+        name: bento.common.ecs_cloudwatch
       vars:
         ansible_python_interpreter: /usr/bin/python3
         execution_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-execution-role{% else %}{{ project_name }}-{{ tier }}-task-execution-role{% endif %}"
