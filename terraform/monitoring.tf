@@ -24,8 +24,7 @@ variable "sumologic_access_key" {
 #}
 
 module "monitoring" {
-  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/monitoring"
-  resource_prefix  = "my-monitor"
+  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/monitoring?ref=v1.3"
   app                  = var.stack_name
   tags                 = var.tags
   sumologic_access_id  = var.sumologic_access_id

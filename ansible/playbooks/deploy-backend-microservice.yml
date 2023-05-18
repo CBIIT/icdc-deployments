@@ -73,6 +73,8 @@
           - 'wget "https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip" -O newrelic-java.zip && rm -rf newrelic && unzip -o newrelic-java.zip && bin/catalina.sh run'
         #Environment
         container_env:
+          - name: AUTH_ENABLED
+            value: "false"
           ## Database
           - name: NEO4J_URL
             value: "bolt://{{ neo4j_ip }}:7687"

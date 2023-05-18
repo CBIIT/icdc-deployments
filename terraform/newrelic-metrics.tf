@@ -29,8 +29,7 @@ variable "newrelic_s3_bucket" {
 
 module "new_relic_metric_pipeline" {
   count = var.create_newrelic_pipeline ? 1: 0
-  source = "github.com/CBIIT/datacommons-devops/terraform/modules/firehose-metrics/"
-  resource_prefix  = "my-metric"
+  source = "github.com/CBIIT/datacommons-devops/terraform/modules/firehose-metrics/?ref=v1.3"
   account_id                = data.aws_caller_identity.current.account_id
   app                       = var.stack_name
   http_endpoint_access_key  = var.newrelic_api_key

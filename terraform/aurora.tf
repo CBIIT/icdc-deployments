@@ -1,7 +1,6 @@
 module "aurora" {
   count = var.create_aurora_rds ? 1: 0
-  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/aurora"
-  resource_prefix  = "my-aurora"
+  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/aurora?ref=v1.3"
   env    =  terraform.workspace
   stack_name = var.stack_name
   tags = var.tags
