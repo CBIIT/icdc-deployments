@@ -10,8 +10,8 @@ locals {
         sumo_collector_token_backend  = module.monitoring.sumo_source_urls.backend[0]
         sumo_collector_token_files    = module.monitoring.sumo_source_urls.files[0]
         sumo_collector_token_interoperation  = module.monitoring.sumo_source_urls.interoperation[0]
-        mysql_host                    = module.aurora[0].cluster_endpoint
-        mysql_password                = nonsensitive(module.aurora[0].db_password)
+        #mysql_host                    = module.aurora[0].cluster_endpoint
+        #mysql_password                = nonsensitive(module.aurora[0].db_password)
       }
     }
   }
