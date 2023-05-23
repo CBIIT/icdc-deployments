@@ -1,5 +1,5 @@
 module "ecs" {
-  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/ecs?ref=v1.3"
+  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/ecs?ref=v1.2"
   stack_name = var.stack_name
   tags = var.tags
   vpc_id = var.vpc_id
