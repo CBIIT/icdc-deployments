@@ -1,6 +1,6 @@
 module "ecs" {
   source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/ecs?ref=temp_icdc"
-  stack_name = var.stack_name
+  resource_prefix = ""
   tags = var.tags
   vpc_id = var.vpc_id
   add_opensearch_permission = var.add_opensearch_permission
