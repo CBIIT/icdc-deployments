@@ -14,6 +14,6 @@ services:
     image: 1.4.0.59
     buildNumber: '59'
   interoperation:
-    version: main.29
-    image: main.29
-    buildNumber: '29'
+    version: ICDC-3060.30
+    image: ICDC-3060.30
+    buildNumber: '30'
