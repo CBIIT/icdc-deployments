@@ -99,3 +99,5 @@
           value: "{{ cloudfront_domain }}"
         - name: SIGNED_URL_EXPIRY_SECONDS
           value: "86400"
+        - name: AWS_REGION
+          value: "us-east-1"
