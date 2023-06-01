@@ -42,6 +42,18 @@
         container_port: "4030"
         container_memory: "512"
         container_cpu: "256"
+        #Redis vars
+        enable_redis: "false"
+        redis_port: "6379"
+        use_cluster: "true"
+        redis_host: localhost
+        #Cloudfront & s3
+        s3_access_key_id: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.s3_access_key_id', nested=true, region='us-east-1') }}"
+        s3_secret_access_key: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.s3_secret_access_key', nested=true, region='us-east-1') }}"
+        file_manifest_bucket_name: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.file_manifest_bucket_name', nested=true, region='us-east-1') }}"
+        cloudfront_key_pair_id: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_key_pair_id', nested=true, region='us-east-1') }}"
+        cloudfront_private_key: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_private_key', nested=true, region='us-east-1') }}"
+        cloudfront_domain: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_domain', nested=true, region='us-east-1') }}"
         ###################################################################################
         #container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
         container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
@@ -61,3 +73,29 @@
           value: "{{ newrelic_license_key }}"
         - name: NEW_RELIC_APP_NAME
           value: "{{ project_name }}-{{ tier }}-interoperation-{{ ansible_hostname }}"
+        ## Redis
+        - name: REDIS_ENABLE
+          value: "{{ enable_redis }}"
+        - name: REDIS_USE_CLUSTER
+          value: "{{ use_cluster }}"
+        - name: REDIS_HOST
+          value: "{{ redis_host }}"
+        - name: REDIS_PORT
+          value: "{{ redis_port }}"
+        - name: REDIS_FILTER_ENABLE
+          value: "false"
+        ## Clodfront & s3
+        - name: S3_ACCESS_KEY_ID
+          value: "{{ s3_access_key_id }}"
+        - name: S3_SECRET_ACCESS_KEY
+          value: "{{ s3_secret_access_key }}"
+        - name: FILE_MANIFEST_BUCKET_NAME
+          value: "{{ file_manifest_bucket_name }}"
+        - name: CLOUDFRONT_KEY_PAIR_ID
+          value: "{{ cloudfront_key_pair_id }}"
+        - name: CLOUDFRONT_PRIVATE_KEY
+          value: "{{ cloudfront_private_key }}"
+        - name: CLOUDFRONT_DOMAIN
+          value: "{{ cloudfront_domain }}"
+        - name: SIGNED_URL_EXPIRY_SECONDS
+          value: "86400"
