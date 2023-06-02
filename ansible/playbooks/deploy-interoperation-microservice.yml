@@ -52,7 +52,7 @@
         s3_secret_access_key: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.s3_secret_access_key', nested=true, region='us-east-1') }}"
         file_manifest_bucket_name: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.file_manifest_bucket_name', nested=true, region='us-east-1') }}"
         cloudfront_key_pair_id: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_key_pair_id', nested=true, region='us-east-1') }}"
-        cloudfront_private_key: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_private_key', nested=true, region='us-east-1') }}"
+        #cloudfront_private_key: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_private_key', nested=true, region='us-east-1') }}"
         cloudfront_domain: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_domain', nested=true, region='us-east-1') }}"
         ###################################################################################
         #container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
@@ -93,8 +93,8 @@
           value: "{{ file_manifest_bucket_name }}"
         - name: CLOUDFRONT_KEY_PAIR_ID
           value: "{{ cloudfront_key_pair_id }}"
-        - name: CLOUDFRONT_PRIVATE_KEY
-          value: "{{ cloudfront_private_key }}"
+        #- name: CLOUDFRONT_PRIVATE_KEY
+          #value: "{{ cloudfront_private_key }}"
         - name: CLOUDFRONT_DOMAIN
           value: "{{ cloudfront_domain }}"
         - name: SIGNED_URL_EXPIRY_SECONDS
