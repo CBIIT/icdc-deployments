@@ -14,6 +14,6 @@ services:
     image: 1.4.0.59
     buildNumber: '59'
   interoperation:
-    version: main.33
-    image: main.33
-    buildNumber: '33'
+    version: main.34
+    image: main.34
+    buildNumber: '34'
