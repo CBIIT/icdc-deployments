@@ -51,7 +51,7 @@
         s3_access_key_id: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.s3_access_key_id', nested=true, region='us-east-1') }}"
         s3_secret_access_key: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.s3_secret_access_key', nested=true, region='us-east-1') }}"
         file_manifest_bucket_name: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.file_manifest_bucket_name', nested=true, region='us-east-1') }}"
-        cloudfront_key_pair_id: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_key_pair_id', nested=true, region='us-east-1') }}"
+        #cloudfront_key_pair_id: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_key_pair_id', nested=true, region='us-east-1') }}"
         #cloudfront_private_key: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_private_key', nested=true, region='us-east-1') }}"
         cloudfront_domain: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_domain', nested=true, region='us-east-1') }}"
         ###################################################################################
