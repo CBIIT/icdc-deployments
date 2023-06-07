@@ -14,6 +14,6 @@ services:
     image: 1.4.0.59
     buildNumber: '59'
   interoperation:
-    version: debug-manifest-query.38
-    image: debug-manifest-query.38
-    buildNumber: '38'
+    version: main.39
+    image: main.39
+    buildNumber: '39'
