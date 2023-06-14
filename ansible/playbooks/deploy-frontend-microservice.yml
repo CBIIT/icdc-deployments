@@ -56,7 +56,6 @@
         backend_google_analytics_id: "UA-154442677-1"
         newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1' ) }}"
         ## Readme Content ##
-        #REACT_APP_FILE_CENTRIC_CART_README:
         react_app_file_centric_cart_readme:
           dev: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/My_Files_Cart_Page_README.md"
           qa: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/My_Files_Cart_Page_README.md"
@@ -151,4 +150,6 @@
           # Analytics
           - name: REACT_APP_GA_TRACKING_ID
             value: "{{ backend_google_analytics_id }}"
-
+          # Readme Content
+          - name: REACT_APP_FILE_CENTRIC_CART_README
+            value: "{{ react_app_file_centric_cart_readme[tier] }}"
