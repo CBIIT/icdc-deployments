@@ -56,7 +56,11 @@
         backend_google_analytics_id: "UA-154442677-1"
         newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1' ) }}"
         ## Readme Content ##
-        REACT_APP_FILE_CENTRIC_CART_README: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.react_app_file_centric_cart_readme', nested=true, region='us-east-1') }}"
+        REACT_APP_FILE_CENTRIC_CART_README:
+          dev: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/My_Files_Cart_Page_README.md"
+          qa: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/My_Files_Cart_Page_README.md"
+          stage: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/stage/My_Files_Cart_Page_README.md"
+          prod: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/prod/My_Files_Cart_Page_README.md"
         ## Static Content ##
         react_app_landing_data:
           dev: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/landingView.yaml"
