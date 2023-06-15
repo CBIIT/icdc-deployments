@@ -6,9 +6,9 @@ services:
     image: main.71
     buildNumber: '71'
   frontend:
-    version: v3.55.1.51
-    image: v3.55.1.51
-    buildNumber: '51'
+    version: v3.55.1.52
+    image: v3.55.1.52
+    buildNumber: '52'
   files:
     version: 1.4.0.59
     image: 1.4.0.59
