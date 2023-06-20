@@ -14,6 +14,6 @@ services:
     image: 1.4.0.59
     buildNumber: '59'
   interoperation:
-    version: debug-fe-cors.47
-    image: debug-fe-cors.47
-    buildNumber: '47'
+    version: debug-fe-cors.48
+    image: debug-fe-cors.48
+    buildNumber: '48'
