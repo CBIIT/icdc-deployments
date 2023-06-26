@@ -14,6 +14,6 @@ services:
     image: 1.4.0.59
     buildNumber: '59'
   interoperation:
-    version: bugfix-tcia-error-response.52
-    image: bugfix-tcia-error-response.52
-    buildNumber: '52'
+    version: bugfix-tcia-error-response.53
+    image: bugfix-tcia-error-response.53
+    buildNumber: '53'
