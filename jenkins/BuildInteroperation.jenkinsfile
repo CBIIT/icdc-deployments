@@ -45,7 +45,7 @@ pipeline {
 
       PROJECT    = 'icdc'
       INTEROPERATION_VERSION = "${params.InteroperationBranch}"
-	  JOB_PATH   = '_default/_lower/ICDC/OneClickDeployment/_jobs'
+	  JOB_PATH   = '_default/_lower/ICDC/_jobs'
 
   }
 
