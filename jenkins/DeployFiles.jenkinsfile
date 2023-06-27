@@ -31,7 +31,6 @@ pipeline {
   environment {
 
       PROJECT    = 'icdc'
-      JOB_PATH   = '_default/_lower/ICDC/OneClickDeployment/_jobs'
 
   }
 
