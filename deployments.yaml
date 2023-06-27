@@ -2,18 +2,18 @@ Notes: Jenkins pipeline
 project: icdc
 services:
   backend:
-    version: main.72
-    image: main.72
-    buildNumber: '72'
+    version: ICDC-3087.74
+    image: ICDC-3087.74
+    buildNumber: '74'
   frontend:
-    version: v3.55.1.51
-    image: v3.55.1.51
-    buildNumber: '51'
+    version: v3.56.0.54
+    image: v3.56.0.54
+    buildNumber: '54'
   files:
     version: 1.4.0.59
     image: 1.4.0.59
     buildNumber: '59'
   interoperation:
-    version: debug-manifest-query.46
-    image: debug-manifest-query.46
-    buildNumber: '46'
+    version: bugfix-tcia-error-response.54
+    image: bugfix-tcia-error-response.54
+    buildNumber: '54'
