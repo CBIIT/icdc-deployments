@@ -6,9 +6,9 @@ services:
     image: ICDC-3087.74
     buildNumber: '74'
   frontend:
-    version: v3.56.0.54
-    image: v3.56.0.54
-    buildNumber: '54'
+    version: v3.56.0.55
+    image: v3.56.0.55
+    buildNumber: '55'
   files:
     version: 1.4.0.59
     image: 1.4.0.59
