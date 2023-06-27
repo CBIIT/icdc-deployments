@@ -1,28 +1,109 @@
-@Library('datacommons-jenkins-shared-library') _
-deployApp(
-    //label: "commons-docker-ncias-p2236-v",
-	label: "slave-ncias-d2940-c",
-    parameterName: "FilesTag",
-    repoName: "icdc-files",
-    playbookRepoUrl: "https://github.com/CBIIT/icdc-deployments",
-    playbookRepoBranch: "main",
-    playbook: "ansible/playbooks/deploy-files-microservice.yml",
-    inventory: "ansible/playbooks/hosts",
-    tier: "${params.Environment}",
-    projectName: "${params.ProjectName}",
-    slackSecretPath: "notification/slack",
-    slackSecretName: "icdc_slack_url",
-    deploymentRepoUrl: "https://github.com/CBIIT/icdc-deployments",
-    deploymentCheckoutDirectory: "icdc-deployments",
-    deploymentFile: "icdc-deployments/deployments.yaml",
-    service: "files",
-    extraAnsibleVars: [
-        iam_prefix: "power-user",
-        subdomain: "caninecommons",
-        domain_name: "cancer.gov"
-    ],
-    useDockerAgent: true,
-    agentImage: "ncidockerhub.nci.nih.gov/icdc/jenkins-agent-ansible",
-    dockerRegistryUrl: "https://ncidockerhub.nci.nih.gov",
-    registryCredentialsId: "ncidockerhub"
-)
+@Library('datacommons-jenkins-shared-library@v1.1') _
+
+pipeline {
+	agent {
+		node {
+			label 'icdc-docker'
+		}
+	}
+
+	parameters {
+
+        string(
+	        defaultValue: '',
+		    description: 'The image tag to deploy',
+		    name: 'Files_Tag')
+
+		extendedChoice(
+            name: 'Environment',
+            defaultValue: 'dev',
+            description: 'Choose the environment to build',
+            type: 'PT_SINGLE_SELECT',
+            value: 'dev,qa,stage,prod')
+
+  }
+
+  options {
+  	ansiColor('xterm')
+	timestamps()
+  }
+
+  environment {
+
+      PROJECT    = 'icdc'
+
+  }
+
+  stages{
+  	stage('checkout'){
+  		steps {
+
+  		checkout([$class: 'GitSCM',
+			branches: [[name: '*/main']],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "playbooks"]],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+
+        checkout([$class: 'GitSCM',
+			branches: [[name: "${params.Environment}"]],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "${env.PROJECT}-deployments"]],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+
+        }
+
+  	}
+
+  	stage('Deploy'){
+	    environment {
+            FILES_VERSION = "${params.Files_Tag}"
+        }
+
+ 		steps {
+
+			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
+                ansiblePlaybook(
+					playbook: "${WORKSPACE}/playbooks/ansible/playbooks/deploy-files-microservice.yml", 
+            		inventory: "${WORKSPACE}/playbooks/ansible/playbooks/hosts",
+                    extraVars: [
+                        tier: "${params.Environment}",
+						project_name: "${PROJECT}",
+						iam_prefix: "power-user",
+						subdomain: "caninecommons",
+						domain_name: "cancer.gov",
+						auth_enabled: true
+						],
+                    colorized: true)
+ 			}
+ 		}
+
+  	}
+
+  }
+
+  post {
+
+    always {
+
+        notify(
+            secretPath: "notification/slack",
+            secretName: "icdc_slack_url"
+        ) 
+
+    }
+
+    cleanup {
+
+        cleanWs()
+
+    }
+
+  }
+
+}

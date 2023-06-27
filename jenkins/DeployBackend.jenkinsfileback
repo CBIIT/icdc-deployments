@@ -3,7 +3,7 @@
 pipeline {
 	agent {
 		node {
-			label 'icdc-docker'
+			label 'slave-ncias-d2940-c'
 		}
 	}
 
@@ -12,7 +12,7 @@ pipeline {
         string(
 	        defaultValue: '',
 		    description: 'The image tag to deploy',
-		    name: 'Frontend_Tag')
+		    name: 'Backend_Tag')
 
 		extendedChoice(
             name: 'Environment',
@@ -62,15 +62,14 @@ pipeline {
 
   	stage('Deploy'){
 	    environment {
-            FE_VERSION = "${params.Frontend_Tag}"
-            BE_VERSION = getVersion(service: "backend",deploymentFile: "${PROJECT}-deployments/deployments.yaml")
+            BE_VERSION = "${params.Backend_Tag}"
         }
 
  		steps {
 
 			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
                 ansiblePlaybook(
-					playbook: "${WORKSPACE}/playbooks/ansible/playbooks/deploy-frontend-microservice.yml", 
+					playbook: "${WORKSPACE}/playbooks/ansible/playbooks/deploy-backend-microservice.yml", 
             		inventory: "${WORKSPACE}/playbooks/ansible/playbooks/hosts",
                     extraVars: [
                         tier: "${params.Environment}",
@@ -78,11 +77,9 @@ pipeline {
 						iam_prefix: "power-user",
 						subdomain: "caninecommons",
 						domain_name: "cancer.gov",
-						auth_enabled: true
 						],
                     colorized: true)
  			}
-
  		}
 
   	}

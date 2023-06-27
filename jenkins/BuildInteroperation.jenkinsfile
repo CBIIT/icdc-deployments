@@ -1,0 +1,176 @@
+@Library('datacommons-jenkins-shared-library@v1.1') _
+
+pipeline {
+	agent {
+		node {
+			label 'icdc-docker'
+		}
+	}
+
+	parameters {
+
+        extendedChoice(
+            name: 'Environment',
+            defaultValue: 'dev',
+            description: 'Choose the environment to build',
+            type: 'PT_SINGLE_SELECT',
+            value: 'dev,qa,stage,prod')
+
+        gitParameter(branchFilter: 'origin/(.*)',
+            defaultValue: 'master',
+            name:'InteroperationBranch',
+            type: 'GitParameterDefinition',
+            quickFilterEnabled: true,
+            selectedValue: 'DEFAULT',
+            sortMode: 'ASCENDING_SMART',
+            tagFilter: '*',
+            useRepository: 'https://github.com/CBIIT/bento-icdc-interoperation')
+
+        booleanParam(
+            defaultValue: true,
+            name: 'UpdateDeploymentVersion')
+
+        booleanParam(
+            defaultValue: true,
+            name: 'RunDeployStage')
+
+  }
+
+  options {
+  	ansiColor('xterm')
+	timestamps()
+  }
+
+  environment {
+
+      PROJECT    = 'icdc'
+      INTEROPERATION_VERSION = "${params.InteroperationBranch}"
+	  JOB_PATH   = '_default/_lower/ICDC/OneClickDeployment/_jobs'
+
+  }
+
+  stages{
+  	stage('checkout'){
+  		steps {
+
+		checkout([$class: 'GitSCM',
+			branches: [[name: "${params.InteroperationBranch}"]],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "${env.PROJECT}-interoperation"]],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/bento-icdc-interoperation']]])
+
+  		sh "cd ${env.PROJECT}-interoperation && git submodule update --init --recursive"
+		
+		checkout([$class: 'GitSCM',
+			branches: [[name: '*/main']],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "playbooks"]],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+
+  		checkout([$class: 'GitSCM',
+			branches: [[name: "${params.Environment}"]],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "${env.PROJECT}-deployments"]],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+
+        }
+
+  	}
+
+  	stage('Build'){
+
+ 		steps {
+ 			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
+                ansiblePlaybook(
+					playbook: "${WORKSPACE}/playbooks/ansible/playbooks/build-interoperation-microservice.yml", 
+            		inventory: "${WORKSPACE}/playbooks/ansible/playbooks/hosts",
+                    extraVars: [
+						project_name: "${PROJECT}",
+						auth_enabled: true
+						],
+                   colorized: true)
+ 			}
+ 		}
+
+  	}
+
+  	stage('Update Deployment Manifest'){
+
+ 		steps {
+ 			
+			script {
+                if (params.UpdateDeploymentVersion) {
+                    writeDeployment(
+                        version: "${env.INTEROPERATION_VERSION}.${BUILD_NUMBER}",
+                        image:  "${env.INTEROPERATION_VERSION}.${BUILD_NUMBER}",
+                        service: "interoperation",
+                        deploymentFile: "${PROJECT}-deployments/deployments.yaml",
+                        deploymentRepoUrl: "https://github.com/CBIIT/${PROJECT}-deployments",
+                        deploymentCheckoutDirectory: "${PROJECT}-deployments"
+                    )
+                }
+            }
+
+ 		}
+
+  	}
+
+  	stage('Update Code Tag'){
+
+ 		steps {
+ 			
+			script {
+
+                tagRepo ( 
+                    gitTag: "${params.InteroperationBranch}",
+                    gitUrl: "github.com/CBIIT/bento-icdc-interoperation",
+                    checkoutDirectory: "${env.PROJECT}-interoperation"
+                )
+
+            }
+
+ 		}
+
+  	}
+
+  }
+
+  post {
+
+    success {
+
+		script {
+			if (params.RunDeployStage) {
+				echo 'Run the deployment for this sevice'
+				build job: "$JOB_PATH/DeployInteroperation", parameters: [string(name: 'Interoperation_Tag', value: "${params.InteroperationBranch}.$BUILD_NUMBER"), extendedChoice(name: 'Environment', value: "${params.Environment}")]
+			}
+		}
+    }
+
+    always {
+
+        notify(
+            secretPath: "notification/slack",
+            secretName: "icdc_slack_url"
+        ) 
+
+    }
+
+    cleanup {
+
+        cleanWs()
+
+    }
+
+  }
+
+}
