@@ -10,9 +10,9 @@ services:
     image: v3.56.0.55
     buildNumber: '55'
   files:
-    version: 1.4.0.59
-    image: 1.4.0.59
-    buildNumber: '59'
+    version: main.63
+    image: main.63
+    buildNumber: '63'
   interoperation:
     version: bugfix-tcia-error-response.54
     image: bugfix-tcia-error-response.54
