@@ -45,7 +45,7 @@ pipeline {
 
       PROJECT    = 'gmb'
       FE_VERSION = "${params.FrontendBranch}"
-	  JOB_PATH   = '_default/_lower/ICDC/OneClickDeployment/_jobs'
+	  JOB_PATH   = '_default/_lower/ICDC/_jobs'
 
   }
 
