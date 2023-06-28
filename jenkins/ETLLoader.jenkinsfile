@@ -59,7 +59,7 @@ pipeline {
   				[[url: 'https://github.com/CBIIT/gmb-etl']]])
           sh 'git submodule update --init'
   			dir('icdc-deployments'){
-  				git branch: 'master',
+  				git branch: 'main',
     				url: 'https://github.com/CBIIT/icdc-deployments.git'
   			}
   		}
