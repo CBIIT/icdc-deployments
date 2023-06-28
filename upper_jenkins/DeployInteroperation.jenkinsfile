@@ -62,7 +62,7 @@ pipeline {
 
   	stage('Deploy'){
 	    environment {
-            INTEROPERATION_VERSION = "${params.Interoperation_Tag}"
+            IO_VERSION = "${params.Interoperation_Tag}"
         }
 
  		steps {
