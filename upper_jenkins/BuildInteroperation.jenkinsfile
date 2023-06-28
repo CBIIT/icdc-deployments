@@ -44,7 +44,7 @@ pipeline {
   environment {
 
       PROJECT    = 'icdc'
-      INTEROPERATION_VERSION = "${params.InteroperationBranch}"
+      IO_VERSION = "${params.InteroperationBranch}"
 	  JOB_PATH   = '_default/_lower/ICDC/_jobs'
 
   }
@@ -110,8 +110,8 @@ pipeline {
 			script {
                 if (params.UpdateDeploymentVersion) {
                     writeDeployment(
-                        version: "${env.INTEROPERATION_VERSION}.${BUILD_NUMBER}",
-                        image:  "${env.INTEROPERATION_VERSION}.${BUILD_NUMBER}",
+                        version: "${env.IO_VERSION}.${BUILD_NUMBER}",
+                        image:  "${env.IO_VERSION}.${BUILD_NUMBER}",
                         service: "interoperation",
                         deploymentFile: "${PROJECT}-deployments/deployments.yaml",
                         deploymentRepoUrl: "https://github.com/CBIIT/${PROJECT}-deployments",
