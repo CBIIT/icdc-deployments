@@ -58,9 +58,9 @@ pipeline {
   				userRemoteConfigs:
   				[[url: 'https://github.com/CBIIT/gmb-etl']]])
           sh 'git submodule update --init'
-  			dir('icdc-devops'){
+  			dir('icdc-deployments'){
   				git branch: 'master',
-    				url: 'https://github.com/CBIIT/icdc-devops.git'
+    				url: 'https://github.com/CBIIT/icdc-deployments.git'
   			}
   		}
   	}
@@ -74,8 +74,8 @@ pipeline {
  		steps {
  			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
  					ansiblePlaybook(
-            			playbook: '${WORKSPACE}/icdc-devops/ansible/gmb-etl-extract.yml',
-            			inventory: '${WORKSPACE}/icdc-devops/ansible/hosts',
+            			playbook: '${WORKSPACE}/icdc-deployments/ansible/gmb-etl-extract.yml',
+            			inventory: '${WORKSPACE}/icdc-deployments/ansible/hosts',
             			extraVars: [
                           rave_env: "${params.RaveEnvironment}",
                           project_name: "${params.ProjectName}",
@@ -95,8 +95,8 @@ pipeline {
     steps {
       wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
           ansiblePlaybook(
-                  playbook: '${WORKSPACE}/icdc-devops/ansible/gmb-etl.yml',
-                  inventory: '${WORKSPACE}/icdc-devops/ansible/hosts',
+                  playbook: '${WORKSPACE}/icdc-deployments/ansible/gmb-etl.yml',
+                  inventory: '${WORKSPACE}/icdc-deployments/ansible/hosts',
                   extraVars: [
                           rave_env: "${params.RaveEnvironment}",
                           project_name: "${params.ProjectName}",
@@ -117,8 +117,8 @@ pipeline {
      		steps {
      			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
      					ansiblePlaybook(
-                			playbook: '${WORKSPACE}/icdc-devops/ansible/gmb-etl-transform.yml',
-                			inventory: '${WORKSPACE}/icdc-devops/ansible/hosts',
+                			playbook: '${WORKSPACE}/icdc-deployments/ansible/gmb-etl-transform.yml',
+                			inventory: '${WORKSPACE}/icdc-deployments/ansible/hosts',
                 			extraVars: [
                               rave_env: "${params.RaveEnvironment}",
                               project_name: "${params.ProjectName}",
