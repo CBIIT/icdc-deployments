@@ -30,7 +30,7 @@ pipeline {
 
   environment {
 
-      PROJECT    = 'interoperation'
+      PROJECT    = 'icdc'
 
   }
 
