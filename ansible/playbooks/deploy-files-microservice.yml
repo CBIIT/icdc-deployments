@@ -53,6 +53,9 @@
         container_port: "8081"
         container_memory: "512"
         container_cpu: "256"
+        neo4j_user: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_user', nested=true, region='us-east-1' ) }}"
+        neo4j_ip: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
+        neo4j_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_password', nested=true, region='us-east-1' ) }}"
         ###################################################################################
         #container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
         container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
@@ -63,6 +66,15 @@
         auth_enabled: "false"
         newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1') }}"
         container_env:
+        ## Database
+        - name: NEO4J_URL
+          value: "bolt://{{ neo4j_ip }}:7687"
+        - name: NEO4J_USER
+          value: "{{ neo4j_user }}"
+        - name: NEO4J_PASSWORD
+          value: "{{ neo4j_password }}"
+        - name: NEO4J_GRAPHQL_ENDPOINT
+          value: "http://{{ neo4j_ip }}:7474/graphql/"
         - name: VERSION
           value: "{{ files_version }}"
         - name: DATE
