@@ -6,7 +6,7 @@
   tasks:
     #install collections
     - name: install aws collection
-      command: ansible-galaxy collection install {{item}}
+      shell: "ansible-galaxy collection install {{ item | quote }} --force"
       loop:
         - community.docker:<=3.4.3
         - amazon.aws:<=5.4.0
@@ -34,7 +34,7 @@
         project_name: "{{ project_name }}"
         region: "us-east-1"
         container_name: "interoperation"
-        interoperation_version: "{{ lookup('env','IO_VERSION') }}"
+        interoperation_version: "{{ lookup('env','INTEROPERATION_VERSION') }}"
         image_version: "{{ interoperation_version }}"
         tier: "{{ tier }}"
         ecs_cluster_name: "{{ project_name }}-{{ tier }}-ecs"
