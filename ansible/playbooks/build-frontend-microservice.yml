@@ -7,7 +7,7 @@
   tasks:
     #install collections
     - name: install collections
-      command: ansible-galaxy collection install {{ item }}
+      shell: "ansible-galaxy collection install {{ item | quote }} --force"
       loop:
         - community.docker:<=3.4.3
         - amazon.aws:<=5.4.0
