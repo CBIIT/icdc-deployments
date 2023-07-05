@@ -6,9 +6,9 @@ services:
     image: main.75
     buildNumber: '75'
   frontend:
-    version: export-to-cgc.65
-    image: export-to-cgc.65
-    buildNumber: '65'
+    version: v3.58.0.66
+    image: v3.58.0.66
+    buildNumber: '66'
   files:
     version: 2.3.1.66
     image: 2.3.1.66
