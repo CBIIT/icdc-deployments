@@ -6,14 +6,14 @@ services:
     image: main.75
     buildNumber: '75'
   frontend:
-    version: v3.56.0.55
-    image: v3.56.0.55
-    buildNumber: '55'
+    version: v3.58.0.66
+    image: v3.58.0.66
+    buildNumber: '66'
   files:
     version: 2.3.1.66
     image: 2.3.1.66
     buildNumber: '66'
   interoperation:
-    version: bugfix-tcia-error-response.66
-    image: bugfix-tcia-error-response.66
-    buildNumber: '66'
+    version: store-manifest-debug.70
+    image: store-manifest-debug.70
+    buildNumber: '70'
