@@ -32,7 +32,7 @@
     - name: deploy stage for {{ project }} files
       include_role:
         #name: bento.common.ecs
-        name: bento.common.ecs_cloudwatch
+        name: bento.common.ecs
       vars:
         cloudfront_key_group_name: "{% if tier == 'prod' or tier == 'stage' %}{{ lookup('amazon.aws.aws_secret', 'cloudfront.key_group_name', nested=true, region='us-east-1' ) }}{% else %}''{% endif %}"
         cloudfront_origin_id: "{% if tier == 'prod' or tier == 'stage' %}{{ lookup('amazon.aws.aws_secret', 'cloudfront.origin_id', nested=true, region='us-east-1' ) }}{% else %}''{% endif %}"
