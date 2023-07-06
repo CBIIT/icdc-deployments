@@ -10,9 +10,9 @@ services:
     image: v3.58.0.66
     buildNumber: '66'
   files:
-    version: 2.3.1.67
-    image: 2.3.1.67
-    buildNumber: '67'
+    version: 2.3.1.68
+    image: 2.3.1.68
+    buildNumber: '68'
   interoperation:
     version: store-manifest-debug.70
     image: store-manifest-debug.70
