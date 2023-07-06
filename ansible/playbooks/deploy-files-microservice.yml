@@ -48,6 +48,8 @@
         files_version: "{{ lookup('env','FILES_VERSION') }}"
         image_version: "{{ files_version }}"
         tier: "{{ tier }}"
+        neo4j_user: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_user', nested=true, region='us-east-1' ) }}"
+        neo4j_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_password', nested=true, region='us-east-1' ) }}"
         ecs_cluster_name: "{{ project_name }}-{{ tier }}-ecs"
         sumo_collector_endpoint: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.sumo_collector_endpoint', nested=true, region='us-east-1') }}"
         sumo_collector_token: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.sumo_collector_token_files', nested=true, region='us-east-1') }}"
@@ -65,6 +67,12 @@
         newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1') }}"
         container_env:
         ## Database
+        - name: NEO4J_URI
+          value: "bolt://{{ neo4j_ip }}:7687"
+        - name: NEO4J_USER
+          value: "{{ neo4j_user }}"
+        - name: NEO4J_PASSWORD
+          value: "{{ neo4j_password }}"
         - name: VERSION
           value: "{{ files_version }}"
         - name: DATE
