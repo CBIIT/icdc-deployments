@@ -12,7 +12,7 @@ pipeline {
         string(
 	        defaultValue: '',
 		    description: 'The image tag to deploy',
-		    name: 'Frontend_Tag')
+		    name: 'FrontendTag')
 
 		extendedChoice(
             name: 'Environment',
@@ -62,7 +62,7 @@ pipeline {
 
   	stage('Deploy'){
 	    environment {
-            FE_VERSION = "${params.Frontend_Tag}"
+            FE_VERSION = "${params.FrontendTag}"
             BE_VERSION = getVersion(service: "backend",deploymentFile: "${PROJECT}-deployments/deployments.yaml")
         }
 

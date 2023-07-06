@@ -12,7 +12,7 @@ pipeline {
         string(
 	        defaultValue: '',
 		    description: 'The image tag to deploy',
-		    name: 'Files_Tag')
+		    name: 'FilesTag')
 
 		extendedChoice(
             name: 'Environment',
@@ -62,7 +62,7 @@ pipeline {
 
   	stage('Deploy'){
 	    environment {
-            FILES_VERSION = "${params.Files_Tag}"
+            FILES_VERSION = "${params.FilesTag}"
         }
 
  		steps {

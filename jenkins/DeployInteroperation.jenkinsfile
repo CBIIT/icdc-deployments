@@ -12,7 +12,7 @@ pipeline {
         string(
 	        defaultValue: '',
 		    description: 'The image tag to deploy',
-		    name: 'Interoperation_Tag')
+		    name: 'InteroperationTag')
 
 		extendedChoice(
             name: 'Environment',
@@ -62,7 +62,7 @@ pipeline {
 
   	stage('Deploy'){
 	    environment {
-            INTEROPERATION_VERSION = "${params.Interoperation_Tag}"
+            INTEROPERATION_VERSION = "${params.InteroperationTag}"
         }
 
  		steps {
