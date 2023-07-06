@@ -149,7 +149,7 @@ pipeline {
 		script {
 			if (params.RunDeployStage) {
 				echo 'Run the deployment for this sevice'
-				build job: "$JOB_PATH/DeployFrontend", parameters: [string(name: 'Frontend_Tag', value: "${params.FrontendBranch}.$BUILD_NUMBER"), extendedChoice(name: 'Environment', value: "${params.Environment}")]
+				build job: "$JOB_PATH/DeployFrontend", parameters: [string(name: 'FrontendTag', value: "${params.FrontendBranch}.$BUILD_NUMBER"), extendedChoice(name: 'Environment', value: "${params.Environment}")]
 			}
 		}
     }
