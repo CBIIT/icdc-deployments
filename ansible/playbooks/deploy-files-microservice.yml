@@ -44,6 +44,7 @@
         task_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-role{% else %}{{ project_name }}-{{ tier }}-task-role{% endif %}"
         project_name: "{{ project_name }}"
         region: "us-east-1"
+        #container_name: "files"
         container_name: "filedownloader"
         files_version: "{{ lookup('env','FILES_VERSION') }}"
         image_version: "{{ files_version }}"
