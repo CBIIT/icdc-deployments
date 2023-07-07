@@ -14,6 +14,6 @@ services:
     image: 2.3.1.69
     buildNumber: '69'
   interoperation:
-    version: store-manifest-debug.70
-    image: store-manifest-debug.70
-    buildNumber: '70'
+    version: store-manifest-debug.71
+    image: store-manifest-debug.71
+    buildNumber: '71'
