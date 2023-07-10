@@ -10,9 +10,9 @@ services:
     image: v3.59.1.71
     buildNumber: '71'
   files:
-    version: 2.3.1.69
-    image: 2.3.1.69
-    buildNumber: '69'
+    version: 1.4.0.59
+    image: 1.4.0.59
+    buildNumber: '59'
   interoperation:
     version: store-manifest-debug.71
     image: store-manifest-debug.71
