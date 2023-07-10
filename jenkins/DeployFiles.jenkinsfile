@@ -77,7 +77,7 @@ pipeline {
 						iam_prefix: "power-user",
 						subdomain: "caninecommons",
 						domain_name: "cancer.gov",
-						auth_enabled: true
+						auth_enabled: false
 						],
                     colorized: true)
  			}
