@@ -14,7 +14,7 @@ pipeline {
             defaultValue: 'dev',
             description: 'Choose the environment to build',
             type: 'PT_SINGLE_SELECT',
-            value: 'dev,qa,stage,prod')
+            value: 'dev')
 
         gitParameter(branchFilter: 'origin/(.*)',
             defaultValue: 'main',
@@ -172,7 +172,7 @@ pipeline {
 		script {
 			if (params.RunDeployStage) {
 				echo 'Run the deployment for this sevice'
-				build job: "$JOB_PATH/DeployBackend", parameters: [string(name: 'Backend_Tag', value: "${params.BackendBranch}.$BUILD_NUMBER"), extendedChoice(name: 'Environment', value: "${params.Environment}")]
+				build job: "$JOB_PATH/DeployBackend", parameters: [string(name: 'BackendTag', value: "${params.BackendBranch}.$BUILD_NUMBER"), extendedChoice(name: 'Environment', value: "${params.Environment}")]
 			}
 		}
     }

@@ -14,7 +14,7 @@ pipeline {
             defaultValue: 'dev',
             description: 'Choose the environment to build',
             type: 'PT_SINGLE_SELECT',
-            value: 'dev,qa,stage,prod')
+            value: 'dev')
 
         gitParameter(branchFilter: 'origin/(.*)',
             defaultValue: 'master',
@@ -45,7 +45,7 @@ pipeline {
 
       PROJECT    = 'icdc'
       INTEROPERATION_VERSION = "${params.InteroperationBranch}"
-	  JOB_PATH   = '_default/_lower/ICDC/OneClickDeployment/_jobs'
+	  JOB_PATH   = '_default/_lower/ICDC/_jobs'
 
   }
 
