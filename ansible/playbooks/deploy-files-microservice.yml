@@ -37,7 +37,7 @@
         cloudfront_key_group_name: "{% if tier == 'prod' or tier == 'stage' %}{{ lookup('amazon.aws.aws_secret', 'cloudfront.key_group_name', nested=true, region='us-east-1' ) }}{% else %}''{% endif %}"
         cloudfront_origin_id: "{% if tier == 'prod' or tier == 'stage' %}{{ lookup('amazon.aws.aws_secret', 'cloudfront.origin_id', nested=true, region='us-east-1' ) }}{% else %}''{% endif %}"
         cloudfront_domain_name: "{% if tier == 'prod' or tier == 'stage' %}{{ lookup('amazon.aws.aws_secret', 'cloudfront.domain_name', nested=true, region='us-east-1' ) }}{% else %}''{% endif %}"
-        cloudfront_key_group_id: "{% if tier == 'prod' or tier == 'stage' %}{{ lookup('amazon.aws.aws_secret', 'cloudfront.key_group_id', nested=true, region='us-east-1' ) }}{% else %}''{% endif %}"
+        cloudfront_key_pair_id: "{% if tier == 'prod' or tier == 'stage' %}{{ lookup('amazon.aws.aws_secret', 'cloudfront.CF_key_pair_id', nested=true, region='us-east-1' ) }}{% else %}''{% endif %}"
         cloudfront_private_key: "{% if tier == 'prod' or tier == 'stage' %}{{ lookup('amazon.aws.aws_secret', 'cloudfront.privatekey', nested=true, region='us-east-1' ) }}{% else %}''{% endif %}"
         ansible_python_interpreter: "/usr/bin/python3"
         execution_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-execution-role{% else %}{{ project_name }}-{{ tier }}-task-execution-role{% endif %}"
@@ -85,7 +85,7 @@
         - name: CF_PRIVATE_KEY
           value: "{{ cloudfront_private_key }}"
         - name: CF_KEY_PAIR_ID
-          value: "{{ cloudfront_key_group_id }}"
+          value: "{{ cloudfront_key_pair_id }}"
         - name: URL_SRC
           value: "{{ url_src }}"
         - name: AUTH_ENABLED
