@@ -85,6 +85,8 @@
           value: "{{ redis_port }}"
         - name: REDIS_FILTER_ENABLE
           value: "false"
+        - name: REDIS_AUTH_ENABLED
+          value: "true"
         ## Clodfront & s3
         - name: S3_ACCESS_KEY_ID
           value: "{{ s3_access_key_id }}"

@@ -1,0 +1,11 @@
+@Library('datacommons-jenkins-shared-library') _
+oneClickDeploy(
+	label: "ncias-p2790-c",
+    parameterName: "DeployTag",
+    codeRepoUrl: "https://github.com/CBIIT/icdc-deployments.git",
+    checkoutDirectory: "icdc-deployments",
+    deploymentFile: "icdc-deployments/deployments.yaml",
+    jobPath: "_default/_lower/ICDC/_jobs/",
+    slackSecretPath: "notification/slack",
+    slackSecretName: "icdc_slack_url",
+)
