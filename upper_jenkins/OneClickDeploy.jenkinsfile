@@ -1,6 +1,6 @@
 @Library('datacommons-jenkins-shared-library') _
 oneClickDeploy(
-	label: "ncias-p2790-c",
+	label: "commons-docker-ncias-p2790-c",
     parameterName: "DeployTag",
     codeRepoUrl: "https://github.com/CBIIT/icdc-deployments.git",
     checkoutDirectory: "icdc-deployments",
