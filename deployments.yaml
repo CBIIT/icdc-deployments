@@ -2,9 +2,9 @@ Notes: Jenkins pipeline
 project: icdc
 services:
   backend:
-    version: 14.8.0.79
-    image: 14.8.0.79
-    buildNumber: '79'
+    version: 14.8.0.80
+    image: 14.8.0.80
+    buildNumber: '80'
   frontend:
     version: Bento-4.0.84
     image: Bento-4.0.84
