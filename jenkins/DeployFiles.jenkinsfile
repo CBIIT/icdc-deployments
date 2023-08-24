@@ -61,6 +61,10 @@ pipeline {
   	}
 
   	stage('Deploy'){
+<<<<<<< HEAD
+=======
+
+>>>>>>> parent of 8188079 (updated)
 		agent {
             docker {
                 image 'cbiitssrepo/cicd-ansible_4.0'
@@ -68,6 +72,10 @@ pipeline {
                 reuseNode true
             }
         }
+<<<<<<< HEAD
+=======
+		
+>>>>>>> parent of 8188079 (updated)
 	    environment {
             FILES_VERSION = "${params.FilesTag}"
         }
