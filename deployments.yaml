@@ -6,9 +6,9 @@ services:
     image: 14.8.0.80
     buildNumber: '80'
   frontend:
-    version: Bento-4.0.84
-    image: Bento-4.0.84
-    buildNumber: '84'
+    version: v4.0.0.1.85
+    image: v4.0.0.1.85
+    buildNumber: '85'
   files:
     version: 1.4.0.59
     image: 1.4.0.59
