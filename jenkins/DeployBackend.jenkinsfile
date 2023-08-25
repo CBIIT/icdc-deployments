@@ -34,8 +34,7 @@ pipeline {
 	  CLUSTER      = "${env.PROJECT}-${params.Environment}-ecs" 
 	  SERVICE      = "${env.PROJECT}-${params.Environment}-backend"
 	  REGION       = "us-east-1"
-
-
+	  
   }
 
   stages{
