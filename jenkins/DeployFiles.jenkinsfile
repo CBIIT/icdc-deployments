@@ -3,7 +3,7 @@
 pipeline {
 	agent {
 		node {
-			label 'icdc-docker'
+			label 'docker-ncias-d2940-c'
 		}
 	}
 
