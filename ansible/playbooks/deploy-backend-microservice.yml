@@ -76,7 +76,7 @@
           - name: AUTH_ENABLED
             value: "false"
           ## Database
-          - name: NEO4J_URI
+          - name: NEO4J_URL
             value: "bolt://{{ neo4j_ip }}:7687"
           - name: NEO4J_USER
             value: "{{ neo4j_user }}"
