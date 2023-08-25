@@ -31,8 +31,8 @@ pipeline {
   environment {
 
       PROJECT    = 'icdc'
-	  CLUSTER      = "${env.PROJECT}-${env.ENV}-ecs" 
-	  SERVICE      = "${env.PROJECT}-${env.ENV}-${env.APP}"
+	  CLUSTER      = "${env.PROJECT}-${env.tier}-ecs" 
+	  SERVICE      = "${env.PROJECT}-${env.tier}-backend"
 	  REGION       = "us-east-1"
 
 
