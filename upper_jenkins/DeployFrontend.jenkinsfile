@@ -62,13 +62,13 @@ pipeline {
 
   	stage('Deploy'){
 
-		agent {
+		/*agent {
             docker {
                 image 'cbiitssrepo/cicd-ansible_4.0'
                 args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
                 reuseNode true
             }
-        }
+        }*/
 		
 	    environment {
             FE_VERSION = "${params.Frontend_Tag}"
