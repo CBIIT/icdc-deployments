@@ -1,0 +1,70 @@
+@Library('datacommons-jenkins-shared-library@v1.1') _
+
+pipeline {
+	agent {
+		node {
+			label 'commons-docker-ncias-p2790-c'
+		}
+	}
+
+	
+  options {
+  	ansiColor('xterm')
+	timestamps()
+  }
+
+  
+
+  stages{
+  	stage('test'){
+
+		// agent {
+        //     docker {
+        //         image 'cbiitssrepo/cicd-ansible_4.0'
+        //         args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
+        //         reuseNode true
+        //     }
+        // }
+
+
+ 		steps {
+
+			 script {
+
+			    sh label: 'test-Deploy', script: '''#!/bin/bash
+
+                whoami
+
+				groups
+
+
+			docker ps
+
+			docker pull cbiitssrepo/cicd-ansible_4.0
+
+				'''
+
+			}
+
+
+ 		}
+
+  	}
+
+
+
+  }
+
+  post {
+
+
+
+    cleanup {
+
+        cleanWs()
+
+    }
+
+  }
+
+}
