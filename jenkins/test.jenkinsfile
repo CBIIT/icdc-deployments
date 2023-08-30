@@ -3,8 +3,8 @@
 pipeline {
 	agent {
 		node {
-			//label 'commons-docker-ncias-p2790-c'
-			label 'ncias-p2790-c'
+			label 'commons-docker-ncias-p2790-c'
+			//label 'ncias-p2790-c'
 		}
 	}
 
@@ -19,13 +19,15 @@ pipeline {
   stages{
   	stage('test'){
 
-		// agent {
-        //     docker {
-        //         image 'cbiitssrepo/cicd-ansible_4.0'
-        //         args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
-        //         reuseNode true
-        //     }
-        // }
+		agent {
+            docker {
+                image 'cbiitssrepo/cicd-ansible_4.0'
+				registryUrl 'https://index.docker.io/v1'
+                registryCredentialsId 'dockerhub'
+                args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
+                reuseNode true
+            }
+        }
 
 
  		steps {
