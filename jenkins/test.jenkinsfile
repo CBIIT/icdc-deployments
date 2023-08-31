@@ -15,10 +15,36 @@ pipeline {
   }
 
 //   tools {
-//   	git '/usr/bin/git'
+//   	git 'git ncias-p2790-c'
 //   }
 
   stages{
+  	
+	stage('checkout'){
+  		steps {
+
+  		checkout([$class: 'GitSCM',
+			branches: [[name: '*/main']],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "playbooks"]],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+
+        checkout([$class: 'GitSCM',
+			branches: [[name: '*/main']],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "${env.PROJECT}-deployments"]],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+
+        }
+
+  	}
+
   	stage('test'){
 
 		// agent {
