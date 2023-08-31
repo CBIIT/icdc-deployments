@@ -151,7 +151,7 @@ pipeline {
 		script {
 			if (params.RunDeployStage) {
 				echo 'Run the deployment for this sevice'
-				build job: "$JOB_PATH/DeployInteroperation", parameters: [string(name: 'Interoperation_Tag', value: "${params.InteroperationBranch}.$BUILD_NUMBER"), extendedChoice(name: 'Environment', value: "${params.Environment}")]
+				build job: "$JOB_PATH/DeployInteroperation", parameters: [string(name: 'InteroperationTag', value: "${params.InteroperationBranch}.$BUILD_NUMBER"), extendedChoice(name: 'Environment', value: "${params.Environment}")]
 			}
 		}
     }
