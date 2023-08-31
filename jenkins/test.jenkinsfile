@@ -14,9 +14,9 @@ pipeline {
 	timestamps()
   }
 
-//   tools {
-//   	git 'git ncias-p2790-c'
-//   }
+  tools {
+  	git 'git ncias-p2790-c'
+  }
 
   stages{
   	
