@@ -3,8 +3,8 @@
 pipeline {
 	agent {
 		node {
-			label 'commons-docker-ncias-p2790-c'
-			//label 'ncias-p2790-c'
+			//label 'commons-docker-ncias-p2790-c'
+			label 'ncias-p2790-c'
 		}
 	}
 
@@ -41,9 +41,9 @@ pipeline {
 				groups
 
 
-			docker ps
+			    which git
 
-			docker pull cbiitssrepo/cicd-ansible_4.0
+				git --version
 
 				'''
 
