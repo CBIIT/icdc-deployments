@@ -14,9 +14,9 @@ pipeline {
 	timestamps()
   }
 
-  tools {
-  	git '/usr/bin/git'
-  }
+//   tools {
+//   	git '/usr/bin/git'
+//   }
 
   stages{
   	stage('test'){
