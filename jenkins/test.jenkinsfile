@@ -4,8 +4,8 @@ pipeline {
 	agent {
 		node {
 			//label 'commons-docker-ncias-p2790-c'
-			//label 'ncias-p2790-c'
-			label 'slave-ncias-d2940-c'
+			label 'ncias-p2790-c'
+			//label 'slave-ncias-d2940-c'
 		}
 	}
 
@@ -15,10 +15,12 @@ pipeline {
 	timestamps()
   }
 
-  tools {
-  	git "git ncias-p2790-c"
-  }
+//   tools {
+//   	git "git ncias-p2790-c"
+//   }
 
+  tool name: 'git ncias-p2790-c', type: 'git'
+  
   stages{
   	
 	// stage('checkout'){
@@ -70,9 +72,9 @@ pipeline {
 				groups
 
 
-			    which docker
+			    #which docker
 
-				docker --version
+				#docker --version
 
 
 				'''
