@@ -19,34 +19,35 @@ pipeline {
 //   	git "git ncias-p2790-c"
 //   }
 
-  tool name: 'git ncias-p2790-c', type: 'git'
-  
   stages{
   	
-	// stage('checkout'){
-  	// 	steps {
+	stage('checkout'){
 
-  	// 	checkout([$class: 'GitSCM',
-	// 		branches: [[name: '*/main']],
-	// 		doGenerateSubmoduleConfigurations: false,
-	// 		extensions: [[$class: 'RelativeTargetDirectory',
-	// 		relativeTargetDir: "playbooks"]],
-	// 		submoduleCfg: [],
-	// 		userRemoteConfigs:
-	// 		[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+		tool name: 'git ncias-p2790-c', type: 'git'
 
-    //     checkout([$class: 'GitSCM',
-	// 		branches: [[name: '*/main']],
-	// 		doGenerateSubmoduleConfigurations: false,
-	// 		extensions: [[$class: 'RelativeTargetDirectory',
-	// 		relativeTargetDir: "${env.PROJECT}-deployments"]],
-	// 		submoduleCfg: [],
-	// 		userRemoteConfigs:
-	// 		[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+  		steps {
 
-    //     }
+  		checkout([$class: 'GitSCM',
+			branches: [[name: '*/main']],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "playbooks"]],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
 
-  	// }
+        checkout([$class: 'GitSCM',
+			branches: [[name: '*/main']],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "${env.PROJECT}-deployments"]],
+			submoduleCfg: [],
+			userRemoteConfigs:
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+
+        }
+
+  	}
 
   	stage('test'){
 
