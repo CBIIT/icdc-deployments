@@ -71,6 +71,8 @@ pipeline {
 
 			    which docker
 
+				docker --version
+
 
 				'''
 
