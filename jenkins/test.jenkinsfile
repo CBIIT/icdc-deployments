@@ -3,8 +3,8 @@
 pipeline {
 	agent {
 		node {
-			//label 'commons-docker-ncias-p2790-c'
-			label 'ncias-p2790-c'
+			label 'commons-docker-ncias-p2790-c'
+			//label 'ncias-p2790-c'
 		}
 	}
 
