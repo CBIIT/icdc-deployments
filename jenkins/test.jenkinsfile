@@ -23,8 +23,6 @@ pipeline {
   	
 	stage('checkout'){
 
-		tool name: 'git ncias-p2790-c', type: 'git'
-
   		steps {
 
   		checkout([$class: 'GitSCM',
