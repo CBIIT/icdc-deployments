@@ -68,9 +68,9 @@ pipeline {
                 args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
                 reuseNode true
             }
-        }*/
-		
-	    environment {
+        }
+		*/
+        environment {
             FE_VERSION = "${params.Frontend_Tag}"
             BE_VERSION = getVersion(service: "backend",deploymentFile: "${PROJECT}-deployments/deployments.yaml")
         }
