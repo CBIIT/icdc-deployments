@@ -55,7 +55,7 @@
         redis_port: "6379"
         use_cluster: "true"
         #Cloudfront & s3
-        redis_host: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
+        redis_host: "{{ lookup('amazon.aws.aws_secret', 'bento/icdc/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
         s3_access_key_id: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.s3_access_key_id', nested=true, region='us-east-1') }}"
         s3_secret_access_key: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.s3_secret_access_key', nested=true, region='us-east-1') }}"
         file_manifest_bucket_name: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.file_manifest_bucket_name', nested=true, region='us-east-1') }}"
