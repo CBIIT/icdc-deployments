@@ -16,12 +16,19 @@
 
 
     #docker login
-    - name: docker login
-      include_role:
-        name: bento.common.ecr_login
-      vars:
-        region: us-east-1
+    # - name: docker login
+    #   include_role:
+    #     name: bento.common.ecr_login
+    #   vars:
+    #     region: us-east-1
 
+    - name: Get the current caller identity information
+      aws_caller_info:
+      register: caller_info
+
+    - name: set account number
+      set_fact:
+        account: "{{ caller_info.account }}"
     #deploy interoperation
     - name: deploy stage for {{ project }} interoperation
       include_role:
