@@ -63,7 +63,7 @@ pipeline {
   	stage('Deploy'){
 		
 	    environment {
-            IO_VERSION = "${params.Interoperation_Tag}"
+            INTEROPERATION_VERSION = "${params.InteroperationTag}"
         }
 
  		steps {
@@ -82,6 +82,25 @@ pipeline {
 						],
                     colorized: true)
  			}
+ 		}
+
+  	}
+
+	stage('verify deployment'){
+
+		steps {
+
+ 			script {
+
+			    sh label: 'Verify-Deploy', script: '''#!/bin/bash
+
+                # wait untiil the service is stable
+				aws ecs wait services-stable --cluster $CLUSTER --region $REGION --service $SERVICE
+
+				'''
+
+			}
+
  		}
 
   	}
