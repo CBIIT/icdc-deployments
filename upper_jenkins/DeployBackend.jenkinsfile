@@ -31,6 +31,9 @@ pipeline {
   environment {
 
       PROJECT    = 'icdc'
+	  CLUSTER      = "${env.PROJECT}-${params.Environment}-ecs" 
+	  SERVICE      = "${env.PROJECT}-${params.Environment}-interoperation"
+	  REGION       = "us-east-1"
 
   }
 
@@ -86,7 +89,7 @@ pipeline {
 
   	}
 
-	/*stage('verify deployment'){
+	stage('verify deployment'){
 
 		steps {
 
@@ -103,7 +106,7 @@ pipeline {
 
  		}
 
-  	}*/
+  	}
 
   }
 
@@ -112,7 +115,7 @@ pipeline {
     always {
 
         notify(
-            secretPath: "notification/slack",
+            secretPath: "notifications/slack",
             secretName: "icdc_slack_url"
         ) 
 
