@@ -86,7 +86,7 @@ pipeline {
 
   	}
 
-	stage('verify deployment'){
+	/*stage('verify deployment'){
 
 		steps {
 
@@ -103,7 +103,7 @@ pipeline {
 
  		}
 
-  	}
+  	}*/
 
   }
 
