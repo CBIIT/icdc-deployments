@@ -51,6 +51,7 @@
         container_memory: "512"
         container_cpu: "256"
         #Redis vars
+        redis_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.redis_password', nested=true, region='us-east-1') }}"
         enable_redis: "false"
         redis_port: "6379"
         use_cluster: "true"
@@ -94,6 +95,8 @@
           value: "false"
         - name: REDIS_AUTH_ENABLED
           value: "true"
+        - name: REDIS_PASSWORD
+          value: "{{ redis_password }}"
         ## Clodfront & s3
         - name: S3_ACCESS_KEY_ID
           value: "{{ s3_access_key_id }}"
