@@ -182,7 +182,7 @@ data "aws_iam_policy_document" "integration_server_policy" {
     actions = [
       "ecr:BatchCheckLayerAvailability",
       "ecr:BatchGetRepositoryScanningConfiguration",
-      "ecr:BatchImportUpstreamImage",
+      "ecr:BatchGetImage",
       "ecr:CompleteLayerUpload",
       "ecr:DescribeImageReplicationStatus",
       "ecr:DescribeImages",
