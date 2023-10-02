@@ -10,8 +10,8 @@
       shell: "ansible-galaxy collection install {{ item | quote }} --force"
       loop:
         - community.docker:<=3.4.3
-        - amazon.aws:<=5.4.0
-        - community.aws:<=3.2.0
+        - amazon.aws:<=5.5.1
+        - community.aws:<=3.2.1
         #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
         - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
 
