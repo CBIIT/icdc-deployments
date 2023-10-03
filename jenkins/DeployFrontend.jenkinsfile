@@ -3,7 +3,8 @@
 pipeline {
 	agent {
 		node {
-			label 'icdc-docker'
+			//label 'icdc-docker'
+            label 'slave-ncias-d2940-c'
 		}
 	}
 
@@ -64,6 +65,14 @@ pipeline {
   	}
 
   	stage('Deploy'){
+		agent {
+            docker {
+                image 'cbiitssrepo/cicd-ansible_4.0'
+                args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
+                reuseNode true
+            }
+        }
+
 	    environment {
             FE_VERSION = "${params.FrontendTag}"
             BE_VERSION = getVersion(service: "backend",deploymentFile: "${PROJECT}-deployments/deployments.yaml")
