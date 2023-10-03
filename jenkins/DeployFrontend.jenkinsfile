@@ -67,8 +67,7 @@ pipeline {
   	stage('Deploy'){
 		agent {
             docker {
-                //image 'cbiitssrepo/cicd-ansible-7.0'
-				image 'jenkins/inbound-agent:latest-jdk11'
+                image 'cbiitssrepo/cicd-ansible-7.0'
                 args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
                 reuseNode true
             }
