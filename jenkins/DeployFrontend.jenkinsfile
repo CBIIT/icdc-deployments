@@ -3,7 +3,6 @@
 pipeline {
 	agent {
 		node {
-			//label 'icdc-docker'
             label 'slave-ncias-d2940-c'
 		}
 	}
@@ -68,7 +67,6 @@ pipeline {
 		agent {
             docker {
                 image 'cbiitssrepo/cicd-ansible-7.0:latest'
-				//image 'jenkins/inbound-agent:latest-jdk11'
                 args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
                 reuseNode true
             }
@@ -81,21 +79,6 @@ pipeline {
 
  		steps {
 
-			// script {
-
-			//     sh label: 'Add-Ansible', script: '''#!/bin/bash
-
-            //     # install ansible
-			// 	   apt-get update && apt-get install -y jq python3 python3-pip \
-			//          && /usr/bin/pip3 install --break-system-packages pip -U && /usr/bin/pip3 install --break-system-packages ansible==8.0.0 awscli jmespath docker boto botocore boto3 \
-			//          && ansible-galaxy  collection install amazon.aws \
-			//          && mkdir -p /var/cert \
-			//          && apt-get clean
-
-			// 	'''
-
-			// }
-			
 			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
                 ansiblePlaybook(
 					playbook: "${WORKSPACE}/playbooks/ansible/playbooks/deploy-frontend-microservice.yml", 

@@ -3,7 +3,7 @@
 pipeline {
 	agent {
 		node {
-			label 'icdc-docker'
+			label 'slave-ncias-d2940-c'
 		}
 	}
 
@@ -64,7 +64,15 @@ pipeline {
   	}
 
   	stage('Deploy'){
-	    environment {
+		agent {
+            docker {
+                image 'cbiitssrepo/cicd-ansible-7.0:latest'
+                args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
+                reuseNode true
+            }
+        }
+	    
+		environment {
             INTEROPERATION_VERSION = "${params.InteroperationTag}"
         }
 
