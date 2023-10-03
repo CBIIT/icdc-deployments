@@ -67,8 +67,8 @@ pipeline {
   	stage('Deploy'){
 		agent {
             docker {
-                //image 'cbiitssrepo/cicd-ansible-7.0'
-				image 'jenkins/inbound-agent:latest-jdk11'
+                image 'cbiitssrepo/cicd-ansible-7.0'
+				//image 'jenkins/inbound-agent:latest-jdk11'
                 args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
                 reuseNode true
             }
@@ -81,16 +81,16 @@ pipeline {
 
  		steps {
 
-			script {
+			// script {
 
-			    sh label: 'Add-Ansible', script: '''#!/bin/bash
+			//     sh label: 'Add-Ansible', script: '''#!/bin/bash
 
-                # install ansible
-				apt-get update && apt-get install -y jq ansible
+            //     # install ansible
+			// 	apt-get update && apt-get install -y jq ansible
 
-				'''
+			// 	'''
 
-			}
+			// }
 			
 			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
                 ansiblePlaybook(
