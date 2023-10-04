@@ -17,3 +17,7 @@ services:
     version: 1.0.0.83
     image: 1.0.0.83
     buildNumber: '83'
+  'null':
+    version: v4.0.0.113
+    image: v4.0.0.113
+    buildNumber: '113'
