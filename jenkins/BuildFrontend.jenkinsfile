@@ -54,6 +54,7 @@ pipeline {
 	  DEPLOY_REPO  = "${env.PROJECT}-deployments"
       CODE_BRANCH  = "${params.CodeBranch}"
       CODE_FOLDER  = "${env.PROJECT}-${env.SERVICE}"
+      ENV          = "${params.Environment}"
 
   }
 
