@@ -10,9 +10,9 @@ services:
     image: v4.0.0.117
     buildNumber: '117'
   files:
-    version: main.71
-    image: main.71
-    buildNumber: '71'
+    version: 2.3.1.72
+    image: 2.3.1.72
+    buildNumber: '72'
   interoperation:
     version: 1.0.0.83
     image: 1.0.0.83
