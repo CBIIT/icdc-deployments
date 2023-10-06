@@ -14,6 +14,6 @@ services:
     image: 2.3.1.73
     buildNumber: '73'
   interoperation:
-    version: 1.0.0.83
-    image: 1.0.0.83
-    buildNumber: '83'
+    version: api-outage-revamp.87
+    image: api-outage-revamp.87
+    buildNumber: '87'
