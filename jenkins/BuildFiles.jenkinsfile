@@ -24,7 +24,7 @@ pipeline {
             selectedValue: 'DEFAULT',
             sortMode: 'ASCENDING_SMART',
             tagFilter: '*',
-            useRepository: 'https://github.com/CBIIT/bento-icdc-frontend')
+            useRepository: 'https://github.com/CBIIT/bento-files')
 
         booleanParam(
             defaultValue: true,
