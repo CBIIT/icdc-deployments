@@ -3,7 +3,7 @@
 pipeline {
 	agent {
 		node {
-			label 'icdc-docker'
+			label 'slave-ncias-d2940-c'
 		}
 	}
 
@@ -17,8 +17,8 @@ pipeline {
             value: 'dev')
 
         gitParameter(branchFilter: 'origin/(.*)',
-            defaultValue: 'master',
-            name:'InteroperationBranch',
+            defaultValue: 'main',
+            name: 'CodeBranch',
             type: 'GitParameterDefinition',
             quickFilterEnabled: true,
             selectedValue: 'DEFAULT',
@@ -43,9 +43,18 @@ pipeline {
 
   environment {
 
-      PROJECT    = 'icdc'
-      INTEROPERATION_VERSION = "${params.InteroperationBranch}"
-	  JOB_PATH   = '_default/_lower/ICDC/_jobs'
+      PROJECT      = "icdc"
+	  SERVICE      = "interoperation"
+      ECR_REPO     = "${env.PROJECT}-${env.SERVICE}"
+	  DEPLOY_JOB   = "DeployInteroperation"
+	  SLACK_SECRET = "icdc_slack_url"
+	  CODE_REPO    = "bento-${env.PROJECT}-${env.SERVICE}"
+	  JOB_PATH     = "_default/_lower/ICDC/_jobs"
+	  REGION       = "us-east-1"
+	  DEPLOY_REPO  = "${env.PROJECT}-deployments"
+      CODE_BRANCH  = "${params.CodeBranch}"
+      CODE_FOLDER  = "${env.PROJECT}-${env.SERVICE}"
+      ENV          = "${params.Environment}"
 
   }
 
@@ -54,51 +63,117 @@ pipeline {
   		steps {
 
 		checkout([$class: 'GitSCM',
-			branches: [[name: "${params.InteroperationBranch}"]],
-			doGenerateSubmoduleConfigurations: false,
-			extensions: [[$class: 'RelativeTargetDirectory',
-			relativeTargetDir: "${env.PROJECT}-interoperation"]],
-			submoduleCfg: [],
+			branches: [[name: "${env.CODE_BRANCH}"]],
+			extensions: [[$class: 'SubmoduleOption', 
+			recursiveSubmodules: true],
+			[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "${env.CODE_FOLDER}"]],
 			userRemoteConfigs:
-			[[url: 'https://github.com/CBIIT/bento-icdc-interoperation']]])
-
-  		sh "cd ${env.PROJECT}-interoperation && git submodule update --init --recursive"
-		
-		checkout([$class: 'GitSCM',
-			branches: [[name: '*/main']],
-			doGenerateSubmoduleConfigurations: false,
-			extensions: [[$class: 'RelativeTargetDirectory',
-			relativeTargetDir: "playbooks"]],
-			submoduleCfg: [],
-			userRemoteConfigs:
-			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+			[[url: "https://github.com/CBIIT/${env.CODE_REPO}"]]])
 
   		checkout([$class: 'GitSCM',
 			branches: [[name: "${params.Environment}"]],
-			doGenerateSubmoduleConfigurations: false,
-			extensions: [[$class: 'RelativeTargetDirectory',
+			extensions: [[$class: 'SubmoduleOption', 
+			recursiveSubmodules: true],
+			[$class: 'RelativeTargetDirectory',
 			relativeTargetDir: "${env.PROJECT}-deployments"]],
-			submoduleCfg: [],
 			userRemoteConfigs:
-			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+			[[url: "https://github.com/CBIIT/${env.DEPLOY_REPO}"]]])
 
         }
 
   	}
 
-  	stage('Build'){
+  	stage('Set Environment Variables'){
 
  		steps {
- 			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
-                ansiblePlaybook(
-					playbook: "${WORKSPACE}/playbooks/ansible/playbooks/build-interoperation-microservice.yml", 
-            		inventory: "${WORKSPACE}/playbooks/ansible/playbooks/hosts",
-                    extraVars: [
-						project_name: "${PROJECT}",
-						auth_enabled: true
-						],
-                   colorized: true)
- 			}
+
+ 			script {
+
+                // set ECR account number
+				//env.ECR_ACCOUNT = sh(label: 'Get ECR account', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.ecr_account'").trim()
+
+                // set Dcoker creds - ncidockerhub
+				env.DOCKER_USER = sh(label: 'Get Docker User', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id cbiit/docker --query SecretString --output text | jq -r '.username'").trim()
+                env.DOCKER_PASS = sh(label: 'Get Docker Password', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id cbiit/docker --query SecretString --output text | jq -r '.password'").trim()
+
+				// set repo URL
+				//env.REPO_URL = "${ECR_ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPO}"
+                env.REPO_URL = "ncidockerhub.nci.nih.gov/icdc/${ECR_REPO}"
+
+			}
+
+ 		}
+
+  	}
+
+	stage('Build'){
+
+ 		steps {
+
+ 			script {
+
+			    sh label: 'Docker-Build', script: '''#!/bin/bash
+
+				# build Docker container
+				echo "Building: $ECR_REPO:$CODE_BRANCH.$BUILD_NUMBER"
+
+				cd $WORKSPACE/$CODE_FOLDER && DOCKER_BUILDKIT=1 docker build --no-cache -t $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER .
+
+				'''
+
+			}
+
+ 		}
+
+  	}
+
+  	stage('Test'){
+
+ 		steps {
+
+ 			script {
+
+			    sh label: 'Trivy-Test', script: '''#!/bin/bash
+
+				# Test image for vulnerabilities
+                echo "Testing Image with Trivy: $ECR_REPO:$CODE_BRANCH.$BUILD_NUMBER"
+
+				#docker run --rm --name trivy -u root -v /var/run/docker.sock:/var/run/docker.sock bitnami/trivy:latest image --exit-code 1 --timeout 15m --severity HIGH,CRITICAL $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER
+				docker run --rm --name trivy -u root -v /var/run/docker.sock:/var/run/docker.sock bitnami/trivy:latest image --timeout 15m --severity HIGH,CRITICAL $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER
+
+				'''
+
+			}
+
+ 		}
+
+  	}
+
+  	stage('push to ECR'){
+
+ 		steps {
+
+ 			script {
+
+			    sh label: 'Docker-Push', script: '''#!/bin/bash
+
+				# push Docker container to ECR
+				echo "Pushing: $ECR_REPO:$CODE_BRANCH.$BUILD_NUMBER"
+
+				# login and push to ECR
+				#docker login -u AWS -p $(aws ecr get-login-password --region $REGION) $REPO_URL
+                docker login -u $DOCKER_USER -p $DOCKER_PASS ncidockerhub.nci.nih.gov
+				docker push $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER
+
+                # tag as latest and push to ECR
+				docker tag $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER $REPO_URL:latest
+                docker push $REPO_URL:latest
+
+				'''
+
+			}
+
  		}
 
   	}
@@ -110,12 +185,12 @@ pipeline {
 			script {
                 if (params.UpdateDeploymentVersion) {
                     writeDeployment(
-                        version: "${env.INTEROPERATION_VERSION}.${BUILD_NUMBER}",
-                        image:  "${env.INTEROPERATION_VERSION}.${BUILD_NUMBER}",
-                        service: "interoperation",
-                        deploymentFile: "${PROJECT}-deployments/deployments.yaml",
-                        deploymentRepoUrl: "https://github.com/CBIIT/${PROJECT}-deployments",
-                        deploymentCheckoutDirectory: "${PROJECT}-deployments"
+                        version: "${env.CODE_BRANCH}.${BUILD_NUMBER}",
+                        image:  "${env.CODE_BRANCH}.${BUILD_NUMBER}",
+                        service: "${env.SERVICE}",
+                        deploymentFile: "${env.PROJECT}-deployments/deployments.yaml",
+                        deploymentRepoUrl: "https://github.com/CBIIT/${env.DEPLOY_REPO}",
+                        deploymentCheckoutDirectory: "${env.PROJECT}-deployments"
                     )
                 }
             }
@@ -131,9 +206,9 @@ pipeline {
 			script {
 
                 tagRepo ( 
-                    gitTag: "${params.InteroperationBranch}",
-                    gitUrl: "github.com/CBIIT/bento-icdc-interoperation",
-                    checkoutDirectory: "${env.PROJECT}-interoperation"
+                    gitTag: "${env.CODE_BRANCH}",
+                    gitUrl: "github.com/CBIIT/${env.CODE_REPO}",
+                    checkoutDirectory: "${env.CODE_FOLDER}"
                 )
 
             }
@@ -151,7 +226,7 @@ pipeline {
 		script {
 			if (params.RunDeployStage) {
 				echo 'Run the deployment for this sevice'
-				build job: "$JOB_PATH/DeployInteroperation", parameters: [string(name: 'InteroperationTag', value: "${params.InteroperationBranch}.$BUILD_NUMBER"), extendedChoice(name: 'Environment', value: "${params.Environment}")]
+				build job: "$JOB_PATH/$DEPLOY_JOB", parameters: [string(name: 'ImageTag', value: "$CODE_BRANCH.$BUILD_NUMBER"), extendedChoice(name: 'Environment', value: "$ENV")]
 			}
 		}
     }
@@ -160,7 +235,7 @@ pipeline {
 
         notify(
             secretPath: "notification/slack",
-            secretName: "icdc_slack_url"
+            secretName: "${env.SLACK_SECRET}"
         ) 
 
     }
