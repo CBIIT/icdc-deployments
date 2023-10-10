@@ -10,9 +10,9 @@ services:
     image: v4.0.0.119
     buildNumber: '119'
   files:
-    version: 2.3.1.73
-    image: 2.3.1.73
-    buildNumber: '73'
+    version: 2.3.1.74
+    image: 2.3.1.74
+    buildNumber: '74'
   interoperation:
     version: api-outage-revamp.87
     image: api-outage-revamp.87
