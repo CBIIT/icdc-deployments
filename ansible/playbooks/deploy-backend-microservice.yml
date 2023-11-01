@@ -72,10 +72,11 @@
         es_schema: "{% if project_name == 'bento' %}es-schema.graphql{% else %}es-schema-{{ project_name }}.graphql{% endif %}"
         enable_es_filter: "true"
         #Redis vars
-        enable_redis: "false"
+        enable_redis: "true"
         redis_port: "6379"
         use_cluster: "true"
-        redis_host: localhost
+        redis_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.redis_password', nested=true, region='us-east-1') }}"
+        redis_host: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
         #Entrypoint
         container_entrypoint:
           - "/bin/sh"
@@ -103,6 +104,12 @@
           - name: BENTO_API_VERSION
             value: "{{ image_version }}"
           ## Redis
+          - name: REDIS_FILTER_ENABLE
+            value: "false"
+          - name: REDIS_PASSWORD
+            value: "{{ redis_password }}"
+          - name: REDIS_AUTH_ENABLED
+            value: "true"
           - name: REDIS_ENABLE
             value: "{{ enable_redis }}"
           - name: REDIS_USE_CLUSTER
