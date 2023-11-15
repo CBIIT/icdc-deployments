@@ -2,18 +2,18 @@ Notes: Jenkins pipeline
 project: icdc
 services:
   backend:
-    version: 14.8.0.77
-    image: 14.8.0.77
-    buildNumber: '77'
+    version: 14.8.0.96
+    image: 14.8.0.96
+    buildNumber: '96'
   frontend:
     version: v3.59.7.79
     image: v3.59.7.79
     buildNumber: '83'
   files:
-    version: 1.4.0.59
-    image: 1.4.0.59
-    buildNumber: '59'
+    version: 2.3.1.74
+    image: 2.3.1.74
+    buildNumber: '74'
   interoperation:
-    version: 1.0.0.75
-    image: 1.0.0.75
-    buildNumber: '75'
+    version: api-outage-revamp.91
+    image: api-outage-revamp.91
+    buildNumber: '91'
