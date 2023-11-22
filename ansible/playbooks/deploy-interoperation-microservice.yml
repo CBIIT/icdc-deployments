@@ -52,7 +52,7 @@
         container_cpu: "256"
         #Redis vars
         redis_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.redis_password', nested=true, region='us-east-1') }}"
-        enable_redis: "false"
+        enable_redis: "true"
         redis_port: "6379"
         use_cluster: "true"
         #Cloudfront & s3
