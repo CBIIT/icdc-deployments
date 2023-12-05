@@ -6,9 +6,9 @@ services:
     image: 14.8.1.140
     buildNumber: '140'
   frontend:
-    version: v4.0.0.167
-    image: v4.0.0.167
-    buildNumber: '167'
+    version: v4.0.0.179
+    image: v4.0.0.179
+    buildNumber: '179'
   files:
     version: 2.3.1.74
     image: 2.3.1.74
