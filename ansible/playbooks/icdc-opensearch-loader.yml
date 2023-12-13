@@ -10,11 +10,21 @@
     - name: install aws collection
       shell: "ansible-galaxy collection install {{ item | quote }} --force"
       loop:
-        -  amazon.aws:<=5.4.0
-        -  community.aws:<=3.2.0
-        -  community.docker:<=2.7.1
-        #-  git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,collections_v1.2
-        -  git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
+        - amazon.aws:<=5.4.0
+        - community.aws:<=3.2.0
+        - community.docker:<=2.7.1
+        #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,collections_v1.2
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
+    
+    # #install collections
+    # - name: install aws collection
+    #   shell: "ansible-galaxy collection install {{ item | quote }} --force"
+    #   loop:
+    #     - community.docker:<=3.4.3
+    #     - amazon.aws:<=5.4.0
+    #     - community.aws:<=3.2.0
+    #     #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
+    #     - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,icdc
 
 #    #get db ip
 #    - name: get db ip
