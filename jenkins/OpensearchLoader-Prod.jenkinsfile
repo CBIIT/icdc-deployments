@@ -91,7 +91,8 @@ pipeline {
 			sh 'git submodule update --init'
   			
 			checkout([$class: 'GitSCM',
-				branches: [[name: "main"]],
+				//branches: [[name: "main"]],
+				branches: [[name: "prod_os_loader"]],
 				doGenerateSubmoduleConfigurations: false,
 				extensions: [[$class: 'RelativeTargetDirectory',
 				relativeTargetDir: 'icdc-deployments']],

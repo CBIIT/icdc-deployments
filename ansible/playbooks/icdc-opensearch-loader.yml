@@ -8,7 +8,7 @@
   tasks:
     #install collections
     - name: install aws collection
-      shell: "ansible-galaxy collection install {{ item | quote }}"
+      shell: "ansible-galaxy collection install {{ item | quote }} --force"
       loop:
         -  amazon.aws:<=5.4.0
         -  community.aws:<=3.2.0
