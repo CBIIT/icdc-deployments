@@ -43,6 +43,7 @@
         project_name: "{{project_name}}"
         region: us-east-1
         container_name: "frontend"
+        service_name: "{{ project_name }}-{{ tier }}-frontend"
         frontend_version: "{{ lookup('env','FE_VERSION') }}"
         backend_version: "{{ lookup('env','BE_VERSION') }}"
         image_version: "{{ frontend_version }}"
