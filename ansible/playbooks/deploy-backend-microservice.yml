@@ -86,7 +86,7 @@
         #Environment
         container_env:
           - name: AUTH_ENABLED
-            value: "true"
+            value: "flase"
           ## Database
           - name: NEO4J_URL
             value: "bolt://{{ neo4j_ip }}:7687"
