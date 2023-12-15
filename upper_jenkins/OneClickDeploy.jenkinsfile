@@ -5,7 +5,7 @@ oneClickDeploy(
     codeRepoUrl: "https://github.com/CBIIT/icdc-deployments.git",
     checkoutDirectory: "icdc-deployments",
     deploymentFile: "icdc-deployments/deployments.yaml",
-    jobPath: "_default/_lower/ICDC/_jobs/",
+    jobPath: "_default/_upper/ICDC/_jobs/",
     slackSecretPath: "notifications/slack",
     slackSecretName: "icdc_slack_url",
 )
