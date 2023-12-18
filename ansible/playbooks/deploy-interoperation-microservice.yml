@@ -110,7 +110,7 @@
         - name: CLOUDFRONT_PRIVATE_KEY
           value: "{{ cloudfront_private_key }}"
         - name: CLOUDFRONT_DOMAIN
-          value: "{{ cloudfront_domain }}"
+          value: "https://{{ cloudfront_domain }}"
         - name: SIGNED_URL_EXPIRY_SECONDS
           value: "86400"
         - name: AWS_REGION
