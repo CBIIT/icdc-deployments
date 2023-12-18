@@ -325,8 +325,3 @@ variable "create_files_bucket" {
   default = false
 }
 
-variable "program" {
-  type = string 
-  default = "crdc"
-  description = "program name"
-}
