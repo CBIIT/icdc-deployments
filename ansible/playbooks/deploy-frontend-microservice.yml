@@ -113,7 +113,7 @@
             #value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/v1/graphql/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/v1/graphql/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/v1/graphql/{% endif %}"
             value: "https://caninecommons-test.cancer.gov/v1/graphql/"
           - name: REACT_APP_BACKEND_GETUSERINFO_API
-            value: "https://caninecommons.cancer.gov/fence/login/"
+            value: "https://caninecommons-test.cancer.gov/fence/login/"
           - name: REACT_APP_FILE_SERVICE_API
             #value: "{% if tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/files/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/files/{% endif %}"
             value: "https://caninecommons-test.cancer.gov/api/files/"
