@@ -325,3 +325,23 @@ variable "create_files_bucket" {
   default = false
 }
 
+variable "ecs_cluster_name" {
+  description = "Name of the existing ECS cluster"
+  type = string
+}
+
+variable "ecs_task_definition" {
+  description = "ARN of the existing ECS task definition"
+  type = string
+}
+
+variable "slack_notification_endpoint" {
+  description = "Slack notification endpoint"
+  type = string
+}
+
+variable "cron_expression" {
+  description = "Cron expression for the CloudWatch event rule"
+  type = string
+  default = "cron(0 0 1 * ? *)"
+}

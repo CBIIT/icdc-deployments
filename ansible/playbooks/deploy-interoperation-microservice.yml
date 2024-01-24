@@ -78,7 +78,8 @@
         - name: PROJECT
           value: "{{ project_name }}"
         - name: BENTO_BACKEND_GRAPHQL_URI
-          value: "{% if tier == 'prod' and project_name == 'bento' %}https://{{domain_name}}/v1/graphql/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/v1/graphql/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/v1/graphql/{% endif %}"
+          #value: "{% if tier == 'prod' and project_name == 'bento' %}https://{{domain_name}}/v1/graphql/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/v1/graphql/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/v1/graphql/{% endif %}"
+          value: https://caninecommons-test.cancer.gov/v1/graphql/
         - name: NEW_RELIC_LICENSE_KEY
           value: "{{ newrelic_license_key }}"
         - name: NEW_RELIC_APP_NAME

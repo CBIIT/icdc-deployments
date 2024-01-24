@@ -62,7 +62,6 @@ data "aws_iam_policy_document" "integration_server_assume_role" {
   }
 }
 
-
 data "aws_iam_policy_document" "integration_server_policy" {
 
   statement {
