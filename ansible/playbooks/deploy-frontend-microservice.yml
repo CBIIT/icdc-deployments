@@ -110,16 +110,16 @@
         container_env:
           # API URLs
           - name: REACT_APP_BACKEND_API
-            #value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/v1/graphql/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/v1/graphql/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/v1/graphql/{% endif %}"
-            value: "https://caninecommons-test.cancer.gov/v1/graphql/"
+            value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/v1/graphql/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/v1/graphql/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/v1/graphql/{% endif %}"
+            #value: "https://caninecommons-test.cancer.gov/v1/graphql/"
           - name: REACT_APP_BACKEND_GETUSERINFO_API
-            value: "https://caninecommons-test.cancer.gov/fence/login/"
+            value: "https://{{subdomain}}.{{domain_name}}/fence/login/"
           - name: REACT_APP_FILE_SERVICE_API
-            #value: "{% if tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/files/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/files/{% endif %}"
-            value: "https://caninecommons-test.cancer.gov/api/files/"
+            value: "{% if tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/files/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/files/{% endif %}"
+            #value: "https://caninecommons-test.cancer.gov/api/files/"
           - name: REACT_APP_INTEROP_SERVICE_URL
-            #value: "{% if tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/interoperation/graphql{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/interoperation/graphql{% endif %}"
-            value: "https://caninecommons-test.cancer.gov/api/interoperation/graphql"
+            value: "{% if tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/interoperation/graphql{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/interoperation/graphql{% endif %}"
+            #value: "https://caninecommons-test.cancer.gov/api/interoperation/graphql"
           #- name: REACT_APP_LOGIN_URL
           #  value: "{{ backend_fence_login }}"
           #- name: REACT_APP_USER_LOGOUT_URL
