@@ -108,8 +108,8 @@
           value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/api/auth/authenticated{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/auth/authenticated{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/auth/authenticated{% endif %}"
           #value: "https://caninecommons-test.cancer.gov/api/auth/authenticated"
         - name: BACKEND_URL
-          value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/v1/graphql/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/v1/graphql/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/v1/graphql/{% endif %}"
-          #value: "https://{{subdomain}}.{{domain_name}}/v1/graphql/"
+          #value: "{% if tier == 'prod'  and project_name == 'bento' %}https://{{domain_name}}/v1/graphql/{% elif tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/v1/graphql/{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/v1/graphql/{% endif %}"
+          value: "https://{{subdomain}}.{{domain_name}}/v1/graphql/"
         - name: INDEXD_URL
           value: "{{ indexd_url }}"
         - name: NEW_RELIC_LICENSE_KEY
