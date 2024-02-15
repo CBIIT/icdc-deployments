@@ -330,6 +330,17 @@ variable "central_ecr_account_id" {
   description = "central ecr account number"
 }
 
+variable "program" {
+  type = string 
+  default = "crdc"
+  description = "program name"
+}
+
+variable "service" {
+  type = string
+  description = "Name of the service where the monitoring is configured. example ecs, database etc"
+  default = "ecs"
+}
 
 /*variable "ecs_cluster_name" {
   description = "Name of the existing ECS cluster"
