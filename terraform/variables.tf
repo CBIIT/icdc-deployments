@@ -348,6 +348,12 @@ variable "newrelic_api_key" {
   default = "null"
 }
 
+variable "newrelic_account_id" {
+  description = "new relic account id"
+  type = string
+  default = null
+}
+
 
 /*variable "ecs_cluster_name" {
   description = "Name of the existing ECS cluster"
