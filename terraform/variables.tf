@@ -325,7 +325,13 @@ variable "create_files_bucket" {
   default = false
 }
 
-variable "ecs_cluster_name" {
+variable "central_ecr_account_id" {
+  type = string
+  description = "central ecr account number"
+}
+
+
+/*variable "ecs_cluster_name" {
   description = "Name of the existing ECS cluster"
   type = string
 }
@@ -344,4 +350,4 @@ variable "cron_expression" {
   description = "Cron expression for the CloudWatch event rule"
   type = string
   default = "cron(0 0 1 * ? *)"
-}
+}*/
