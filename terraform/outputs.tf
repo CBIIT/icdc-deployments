@@ -11,6 +11,6 @@ output "db_password" {
   value = module.aurora.*.db_password
   sensitive = true
 }
-output "read_only_role_arn" {
-  value = module.new_relic_metric_pipeline.*.read_only_role_arn
-}
+#output "read_only_role_arn" {
+ # value = module.new_relic_metric_pipeline.*.read_only_role_arn
+#}

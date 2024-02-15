@@ -342,6 +342,20 @@ variable "service" {
   default = "ecs"
 }
 
+variable "newrelic_api_key" {
+  type = string
+  description = "new relic http api key"
+  default = "null"
+}
+
+variable "aws_account_id" {
+  type = map(string)
+  description = "aws account to allow for alb s3 logging"
+  default = {
+    us-east-1 = "127311923021"
+  }
+}
+
 /*variable "ecs_cluster_name" {
   description = "Name of the existing ECS cluster"
   type = string
