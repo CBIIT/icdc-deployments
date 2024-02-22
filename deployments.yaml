@@ -2,9 +2,9 @@ Notes: Jenkins pipeline
 project: icdc
 services:
   backend:
-    version: 14.8.1.145
-    image: 14.8.1.145
-    buildNumber: '145'
+    version: 14.8.1.147
+    image: 14.8.1.147
+    buildNumber: '147'
   frontend:
     version: v4.0.1.218
     image: v4.0.1.218
