@@ -66,7 +66,7 @@
         ###################################################################################
         container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
         #container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
-        credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
+        #credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
         ###################################################################################
         #Elasticsearch
         es_host: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.es_host', nested=true, region='us-east-1' ) }}"
