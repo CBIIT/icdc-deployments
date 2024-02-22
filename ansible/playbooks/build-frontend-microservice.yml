@@ -42,6 +42,6 @@
         container_build_path: "{{ workspace }}/{{ project_name }}-frontend"
         dockerfile_path: "{{ workspace }}/playbooks/docker/dockerfiles/frontend-icdc-dockerfile"
         ###################################################################################
-        #container_registry_url: "{{ ecr_repo }}"
-        container_registry_url: "ncidockerhub.nci.nih.gov/icdc"
+        container_registry_url: "{{ ecr_repo }}"
+        #container_registry_url: "ncidockerhub.nci.nih.gov/icdc"
         ###################################################################################

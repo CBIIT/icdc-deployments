@@ -45,7 +45,7 @@ pipeline {
 
       PROJECT      = "icdc"
 	  SERVICE      = "interoperation"
-      ECR_REPO     = "$crdc-{env.PROJECT}-${env.SERVICE}"
+      ECR_REPO     = "crdc-${env.PROJECT}-${env.SERVICE}"
 	  DEPLOY_JOB   = "DeployInteroperation"
 	  SLACK_SECRET = "icdc_slack_url"
 	  CODE_REPO    = "bento-${env.PROJECT}-${env.SERVICE}"
