@@ -64,8 +64,8 @@
         container_memory: 4096
         container_cpu: 2048
         ###################################################################################
-        #container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
-        container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
+        container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
+        #container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
         credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
         ###################################################################################
         #Elasticsearch
