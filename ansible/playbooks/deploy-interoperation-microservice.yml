@@ -16,11 +16,11 @@
 
 
     #docker login
-    # - name: docker login
-    #   include_role:
-    #     name: bento.common.ecr_login
-    #   vars:
-    #     region: us-east-1
+    - name: docker login
+      include_role:
+        name: bento.common.ecr_login
+      vars:
+        region: us-east-1
 
     - name: Get the current caller identity information
       aws_caller_info:
@@ -40,6 +40,7 @@
         task_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-role{% else %}{{ project_name }}-{{ tier }}-task-role{% endif %}"
         project_name: "{{ project_name }}"
         service_name: "{{ project_name }}-{{ tier }}-interoperation"
+        program: crdc
         region: "us-east-1"
         container_name: "interoperation"
         interoperation_version: "{{ lookup('env','INTEROPERATION_VERSION') }}"
@@ -65,9 +66,9 @@
         cloudfront_private_key: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_private_key', nested=true, region='us-east-1') | b64decode }}"
         cloudfront_domain: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.cloudfront_domain', nested=true, region='us-east-1') }}"
         ###################################################################################
-        #container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
-        container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
-        credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
+        container_image_url: "{{ ecr_repo }}/{{program}}-{{ project_name }}-{{ container_name }}"
+        #container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
+        #credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
         ###################################################################################
         newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1') }}"
         container_env:

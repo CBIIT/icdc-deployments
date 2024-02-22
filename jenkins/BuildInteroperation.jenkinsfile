@@ -45,7 +45,7 @@ pipeline {
 
       PROJECT      = "icdc"
 	  SERVICE      = "interoperation"
-      ECR_REPO     = "${env.PROJECT}-${env.SERVICE}"
+      ECR_REPO     = "$crdc-{env.PROJECT}-${env.SERVICE}"
 	  DEPLOY_JOB   = "DeployInteroperation"
 	  SLACK_SECRET = "icdc_slack_url"
 	  CODE_REPO    = "bento-${env.PROJECT}-${env.SERVICE}"
@@ -91,15 +91,15 @@ pipeline {
  			script {
 
                 // set ECR account number
-				//env.ECR_ACCOUNT = sh(label: 'Get ECR account', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.ecr_account'").trim()
+				env.ECR_ACCOUNT = sh(label: 'Get ECR account', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.ecr_account'").trim()
 
                 // set Dcoker creds - ncidockerhub
-				env.DOCKER_USER = sh(label: 'Get Docker User', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id cbiit/docker --query SecretString --output text | jq -r '.username'").trim()
-                env.DOCKER_PASS = sh(label: 'Get Docker Password', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id cbiit/docker --query SecretString --output text | jq -r '.password'").trim()
+				//env.DOCKER_USER = sh(label: 'Get Docker User', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id cbiit/docker --query SecretString --output text | jq -r '.username'").trim()
+                //env.DOCKER_PASS = sh(label: 'Get Docker Password', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id cbiit/docker --query SecretString --output text | jq -r '.password'").trim()
 
 				// set repo URL
-				//env.REPO_URL = "${ECR_ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPO}"
-                env.REPO_URL = "ncidockerhub.nci.nih.gov/icdc/${ECR_REPO}"
+				env.REPO_URL = "${ECR_ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPO}"
+                //env.REPO_URL = "ncidockerhub.nci.nih.gov/icdc/${ECR_REPO}"
 
 			}
 
@@ -162,13 +162,13 @@ pipeline {
 				echo "Pushing: $ECR_REPO:$CODE_BRANCH.$BUILD_NUMBER"
 
 				# login and push to ECR
-				#docker login -u AWS -p $(aws ecr get-login-password --region $REGION) $REPO_URL
-                docker login -u $DOCKER_USER -p $DOCKER_PASS ncidockerhub.nci.nih.gov
+				docker login -u AWS -p $(aws ecr get-login-password --region $REGION) $REPO_URL
+                #docker login -u $DOCKER_USER -p $DOCKER_PASS ncidockerhub.nci.nih.gov
 				docker push $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER
 
                 # tag as latest and push to ECR
-				docker tag $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER $REPO_URL:latest
-                docker push $REPO_URL:latest
+				#docker tag $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER $REPO_URL:latest
+                #docker push $REPO_URL:latest
 
 				'''
 

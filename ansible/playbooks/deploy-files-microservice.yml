@@ -53,6 +53,7 @@
         task_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-role{% else %}{{ project_name }}-{{ tier }}-task-role{% endif %}"
         project_name: "{{ project_name }}"
         service_name: "{{ project_name }}-{{ tier }}-files"
+        program: crdc
         region: "us-east-1"
         container_name: "files"
         files_version: "{{ lookup('env','FILES_VERSION') }}"
@@ -68,9 +69,9 @@
         container_memory: "512"
         container_cpu: "256"
         ###################################################################################
-        container_image_url: "{{ ecr_repo }}/{{ project_name }}-{{ container_name }}"
+        container_image_url: "{{ ecr_repo }}/{{program}}-{{ project_name }}-{{ container_name }}"
         #container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
-        credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
+        #credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
         ###################################################################################
         url_src: "{% if tier == 'prod' or tier == 'stage' %}CLOUD_FRONT{% else %}indexd{% endif %}"
         indexd_url: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.indexd_url', nested=true, region='us-east-1') }}"
