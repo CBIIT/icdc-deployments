@@ -130,7 +130,11 @@ pipeline {
 
   	stage('Test'){
 
- 		steps {
+ 		when {
+               expression { params.VulnerabilityScan }
+             }
+
+		steps {
 
  			script {
 
