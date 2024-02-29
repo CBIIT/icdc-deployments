@@ -34,6 +34,10 @@ pipeline {
             defaultValue: true,
             name: 'RunDeployStage')
 
+		booleanParam(
+            defaultValue: true,
+            name: 'VulnerabilityScan')
+
   }
 
   options {
