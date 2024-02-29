@@ -124,7 +124,7 @@ pipeline {
     always {
 
         notify(
-            secretPath: "notification/slack",
+            secretPath: "notifications/slack",
             secretName: "icdc_slack_url"
         ) 
 
