@@ -10,7 +10,7 @@ pipeline {
             defaultValue: 'dev',
             description: 'Choose the environment to build',
             type: 'PT_SINGLE_SELECT',
-            value: 'dev,qa,stage,prod' )
+            value: 'dev,qa' )
     gitParameter(branchFilter: 'origin/(.*)', 
         defaultValue: 'master',
         name: 'Dataloader_Branch', 
@@ -103,13 +103,13 @@ pipeline {
   	  }
 	
   	stage('load-es-data'){
-	    agent {
-            docker {
-                image 'cbiitssrepo/cicd-ansible_4.0'				
-				args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
-                reuseNode true
-            }
-		}
+//	    agent {
+//            docker {
+//                image 'cbiitssrepo/cicd-ansible_4.0'
+//				args '--net=host -u root'
+//                reuseNode true
+//            }
+//		}
  		environment {
  			SLACK_URL = "${SLACK_URL}"
 		    TIER = "${params.Environment}"
