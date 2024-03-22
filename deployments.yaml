@@ -6,9 +6,9 @@ services:
     image: 14.8.1.149
     buildNumber: '149'
   frontend:
-    version: Bento-4.0.233
-    image: Bento-4.0.233
-    buildNumber: '233'
+    version: Bento-4.0.237
+    image: Bento-4.0.237
+    buildNumber: '237'
   files:
     version: 2.3.1.78
     image: 2.3.1.78
