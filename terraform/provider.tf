@@ -9,4 +9,12 @@ terraform {
 
 provider "aws" {
   region = var.region
+  default_tags {
+   tags = {
+     EnvironmentTier = terraform.workspace
+     ApplicationName = var.stack_name
+     Project = var.stack_name
+     CreatedBy = "NCI-fnl-datacommons-devops@mail.nih.gov"
+   }
+ }
 }

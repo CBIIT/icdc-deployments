@@ -6,6 +6,7 @@ variable "stack_name" {
 variable "tags" {
   description = "tags to associate with this instance"
   type = map(string)
+  default = {}
 }
 
 variable "vpc_id" {
