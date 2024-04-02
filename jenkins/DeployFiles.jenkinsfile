@@ -30,11 +30,15 @@ pipeline {
 
   environment {
 
-      PROJECT    = 'icdc'
-	  CLUSTER      = "${env.PROJECT}-${params.Environment}-ecs" 
-	  SERVICE      = "${env.PROJECT}-${params.Environment}-files"
+      PROJECT      = 'icdc'
+	  APP          = "files"
+	  ENV          = "${params.Environment}"
+	  CLUSTER      = "${env.PROJECT}-${env.ENV}-ecs" 
+	  SERVICE      = "${env.PROJECT}-${env.ENV}-${env.APP}"
 	  REGION       = "us-east-1"
-
+	  PROGRAM      = "crdc"
+      ECR_REPO     = "${env.PROGRAM}-${env.PROJECT}-${env.APP}"
+	  IMAGE_TAG    = "${params.FilesTag}"
   }
 
   stages{
@@ -60,6 +64,60 @@ pipeline {
 			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
 
         }
+
+  	}
+
+	 stage('Set Environment Variables'){
+                steps {
+                        script {
+                // set central ECR account number
+                                env.ECR_ACCOUNT = sh(label: 'Get ECR account', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id ecr --query SecretString --output text | jq -r '.central_account_id'").trim()
+                                // set repo URL
+                                env.REGISTRY_URL = "${ECR_ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com"
+                                env.DATE = sh(script: 'date +%Y-%m-%d.%H%M', returnStdout: true).trim()
+                        }
+                }
+        }
+
+      stage('Add Production Tag'){
+
+ 		when {
+
+	        expression {
+
+                ENV == 'prod'
+
+            }
+
+        }
+
+		steps {
+
+ 			script {
+
+			    sh label: 'Docker-Tag', script: '''#!/bin/bash
+
+				# Tag image as production if deploying to prod tier
+				echo "Tagging Image as Production: $ECR_REPO:$IMAGE_TAG-$DATE"
+                                aws_account=$(aws sts get-caller-identity --query "Account" --output text)
+                                repo_url="$REGISTRY_URL/$ECR_REPO"
+
+                                #DATE
+                                DATE="$DATE"
+				# login and get manifest
+				docker login -u AWS -p $(aws ecr get-login-password --region $REGION) $repo_url
+				
+				docker pull $repo_url:$IMAGE_TAG
+				docker tag $repo_url:$IMAGE_TAG $repo_url:prod-$IMAGE_TAG-$DATE
+				docker push $repo_url:prod-$IMAGE_TAG-$DATE
+				'''
+                
+                IMAGE_TAG = "prod-$IMAGE_TAG"
+				
+                echo "updated image tag: $IMAGE_TAG"
+			}
+
+ 		}
 
   	}
 

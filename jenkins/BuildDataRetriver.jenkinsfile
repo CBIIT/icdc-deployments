@@ -1,0 +1,251 @@
+@Library('datacommons-jenkins-shared-library@v1.1') _
+
+pipeline {
+	agent {
+		node {
+			label 'slave-ncias-d2940-c'
+		}
+	}
+
+	parameters {
+
+        extendedChoice(
+            name: 'Environment',
+            defaultValue: 'dev',
+            description: 'Choose the environment to build',
+            type: 'PT_SINGLE_SELECT',
+            value: 'dev')
+
+        gitParameter(branchFilter: 'origin/(.*)',
+            defaultValue: 'main',
+            name: 'CodeBranch',
+            type: 'GitParameterDefinition',
+            quickFilterEnabled: true,
+            selectedValue: 'DEFAULT',
+            sortMode: 'ASCENDING_SMART',
+            tagFilter: '*',
+            useRepository: '')
+
+        booleanParam(
+            defaultValue: true,
+            name: 'UpdateDeploymentVersion')
+
+        booleanParam(
+            defaultValue: true,
+            name: 'RunDeployStage')
+
+  }
+
+  options {
+  	ansiColor('xterm')
+	timestamps()
+  }
+
+  environment {
+
+      PROJECT      = "icdc"
+	  SERVICE      = "data-retriever"
+      ECR_REPO     = "crdc-${env.PROJECT}-${env.SERVICE}"
+	  DEPLOY_JOB   = "DeployDataRetriever"
+	  SLACK_SECRET = "icdc_slack_url"
+	  CODE_REPO    = "bento-${env.SERVICE}"
+	  JOB_PATH     = "_default/_lower/ICDC/_jobs"
+	  REGION       = "us-east-1"
+	  DEPLOY_REPO  = "${env.PROJECT}-deployments"
+      CODE_BRANCH  = "${params.CodeBranch}"
+      CODE_FOLDER  = "${env.PROJECT}-${env.SERVICE}"
+      ENV          = "${params.Environment}"
+
+  }
+
+  stages{
+  	stage('checkout'){
+  		steps {
+
+		checkout([$class: 'GitSCM',
+			branches: [[name: "${env.CODE_BRANCH}"]],
+			extensions: [[$class: 'SubmoduleOption', 
+			recursiveSubmodules: true],
+			[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "${env.CODE_FOLDER}"]],
+			userRemoteConfigs:
+			[[url: "https://github.com/CBIIT/${env.CODE_REPO}"]]])
+
+  		checkout([$class: 'GitSCM',
+			branches: [[name: "${params.Environment}"]],
+			extensions: [[$class: 'SubmoduleOption', 
+			recursiveSubmodules: true],
+			[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "${env.PROJECT}-deployments"]],
+			userRemoteConfigs:
+			[[url: "https://github.com/CBIIT/${env.DEPLOY_REPO}"]]])
+
+        }
+
+  	}
+
+  	stage('Set Environment Variables'){
+
+ 		steps {
+
+ 			script {
+
+                // set ECR account number
+				env.ECR_ACCOUNT = sh(label: 'Get ECR account', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.ecr_account'").trim()
+
+                // set Dcoker creds - ncidockerhub
+				//env.DOCKER_USER = sh(label: 'Get Docker User', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id cbiit/docker --query SecretString --output text | jq -r '.username'").trim()
+                //env.DOCKER_PASS = sh(label: 'Get Docker Password', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id cbiit/docker --query SecretString --output text | jq -r '.password'").trim()
+
+				// set repo URL
+				env.REPO_URL = "${ECR_ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPO}"
+                //env.REPO_URL = "ncidockerhub.nci.nih.gov/icdc/${ECR_REPO}"
+
+			}
+
+ 		}
+
+  	}
+
+	stage('Build'){
+
+ 		steps {
+
+ 			script {
+
+			    sh label: 'Docker-Build', script: '''#!/bin/bash
+
+				# build Docker container
+				echo "Building: $ECR_REPO:$CODE_BRANCH.$BUILD_NUMBER"
+
+				cd $WORKSPACE/$CODE_FOLDER && DOCKER_BUILDKIT=1 docker build --no-cache -t $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER .
+
+				'''
+
+			}
+
+ 		}
+
+  	}
+
+  	stage('Test'){
+
+ 		steps {
+
+ 			script {
+
+			    sh label: 'Trivy-Test', script: '''#!/bin/bash
+
+				# Test image for vulnerabilities
+                echo "Testing Image with Trivy: $ECR_REPO:$CODE_BRANCH.$BUILD_NUMBER"
+
+				#docker run --rm --name trivy -u root -v /var/run/docker.sock:/var/run/docker.sock bitnami/trivy:latest image --exit-code 1 --timeout 15m --severity HIGH,CRITICAL $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER
+				docker run --rm --name trivy -u root -v /var/run/docker.sock:/var/run/docker.sock bitnami/trivy:latest image --timeout 15m --severity HIGH,CRITICAL $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER
+
+				'''
+
+			}
+
+ 		}
+
+  	}
+
+  	stage('push to ECR'){
+
+ 		steps {
+
+ 			script {
+
+			    sh label: 'Docker-Push', script: '''#!/bin/bash
+
+				# push Docker container to ECR
+				echo "Pushing: $ECR_REPO:$CODE_BRANCH.$BUILD_NUMBER"
+
+				# login and push to ECR
+				docker login -u AWS -p $(aws ecr get-login-password --region $REGION) $REPO_URL
+                #docker login -u $DOCKER_USER -p $DOCKER_PASS ncidockerhub.nci.nih.gov
+				docker push $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER
+
+                # tag as latest and push to ECR
+				#docker tag $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER $REPO_URL:latest
+                #docker push $REPO_URL:latest
+
+				'''
+
+			}
+
+ 		}
+
+  	}
+
+  	stage('Update Deployment Manifest'){
+
+ 		steps {
+ 			
+			script {
+                if (params.UpdateDeploymentVersion) {
+                    writeDeployment(
+                        version: "${env.CODE_BRANCH}.${BUILD_NUMBER}",
+                        image:  "${env.CODE_BRANCH}.${BUILD_NUMBER}",
+                        service: "${env.SERVICE}",
+                        deploymentFile: "${env.PROJECT}-deployments/deployments.yaml",
+                        deploymentRepoUrl: "https://github.com/CBIIT/${env.DEPLOY_REPO}",
+                        deploymentCheckoutDirectory: "${env.PROJECT}-deployments"
+                    )
+                }
+            }
+
+ 		}
+
+  	}
+
+  	stage('Update Code Tag'){
+
+ 		steps {
+ 			
+			script {
+
+                tagRepo ( 
+                    gitTag: "${env.CODE_BRANCH}",
+                    gitUrl: "github.com/CBIIT/${env.CODE_REPO}",
+                    checkoutDirectory: "${env.CODE_FOLDER}"
+                )
+
+            }
+
+ 		}
+
+  	}
+
+  }
+
+  post {
+
+    success {
+
+		script {
+			if (params.RunDeployStage) {
+				echo 'Run the deployment for this sevice'
+				build job: "$JOB_PATH/$DEPLOY_JOB", parameters: [string(name: 'FilesTag', value: "$CODE_BRANCH.$BUILD_NUMBER"), extendedChoice(name: 'Environment', value: "$ENV")]
+			}
+		}
+    }
+
+    always {
+
+        notify(
+            secretPath: "notifications/slack",
+            secretName: "${env.SLACK_SECRET}"
+        ) 
+
+    }
+
+    cleanup {
+
+        cleanWs()
+
+    }
+
+  }
+
+}
