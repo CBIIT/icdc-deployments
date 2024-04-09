@@ -17,3 +17,7 @@ services:
     version: 1.0.0.104
     image: 1.0.0.104
     buildNumber: '104'
+  data-retriever:
+    version: main.4
+    image: main.4
+    buildNumber: '4'
