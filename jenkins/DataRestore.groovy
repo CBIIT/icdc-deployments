@@ -47,8 +47,8 @@ pipeline {
  		steps {
  		  wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
 			    ansiblePlaybook( 
-                playbook: '${WORKSPACE}/ansible/playbooks/hostfile.yml',
-                inventory: '${WORKSPACE}/ansible/playbooks/hosts',
+                playbook: '${WORKSPACE}/ansible/hostfile.yml',
+                inventory: '${WORKSPACE}/ansible/hosts',
                 extraVars: [
                   tier: "${params.Environment}",
 						      project_name: "${PROJECT}",
@@ -64,7 +64,7 @@ pipeline {
       wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
 			    ansiblePlaybook( 
                 playbook: '${WORKSPACE}/ansible/download-dump.yml',
-                inventory: '${WORKSPACE}/ansible/playbooks/hosts',
+                inventory: '${WORKSPACE}/ansible/hosts',
                 colorized: true)
 		  }
     }
