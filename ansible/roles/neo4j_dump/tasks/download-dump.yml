@@ -1,0 +1,16 @@
+- name: ensure restore directory exists
+  file:
+    path: "{{ restore_directory }}"
+    state: directory
+
+- name: Download Neo4j dump file from S3
+  amazon.aws.s3_object:
+    bucket: "{{s3_bucket_name}}"
+    object: "/{{s3_folder_name}}/{{dump_file_name}}"
+    dest: "/{{restore_directory }}/{{restore_file}}"
+    mode: get
+  register: download_result
+
+- name: show download status
+  debug:
+    msg: "{{download_result}}"

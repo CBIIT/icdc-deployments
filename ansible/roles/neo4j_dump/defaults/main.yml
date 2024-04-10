@@ -1,0 +1,18 @@
+---
+# vars file for data loading
+workspace: "{{ lookup('env','WORKSPACE') }}"
+neo4j_ip: "{{ lookup('env','NEO4J_IP') }}"
+project: "{{ lookup('env','PROJECT') }}"
+project_name: "{{ lookup('env','PROJECT') }}"
+backup_directory: /backups
+restore_directory: /tmp/neo4j
+remote_workspace: /tmp/neo4j
+s3_bucket_name: "{{ lookup('env','S3_BUCKET') }}"
+dump_file_name: "{{ lookup('env','DUMP_FILE') }}"
+s3_folder_name: 'dump_files'
+timestamp: "{{ lookup('pipe','date +%Y-%m-%d-%H-%M-%S') }}"
+tier: "{{ lookup('env','TIER') }}"
+region: us-east-1
+neo4j_db_name: neo4j
+neo4j_admin_cmd: 'neo4j-admin'
+restore_file: 'neo4j_restore.dump'
