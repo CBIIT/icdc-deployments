@@ -63,7 +63,7 @@ pipeline {
     steps{
       wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
 			    ansiblePlaybook( 
-                playbook: '${WORKSPACE}/ansible/playbooks/download-dump.yml',
+                playbook: '${WORKSPACE}/ansible/download-dump.yml',
                 inventory: '${WORKSPACE}/ansible/playbooks/hosts',
                 colorized: true)
 		  }
@@ -72,7 +72,7 @@ pipeline {
 	stage('restore data dump'){
 		steps{			
 			ansiblePlaybook( 
-                playbook: '${WORKSPACE}/ansible/playbooks/dump-restore.yml',
+                playbook: '${WORKSPACE}/ansible/dump-restore.yml',
                 inventory: '${WORKSPACE}/inventory/hosts',
                 colorized: true)
 

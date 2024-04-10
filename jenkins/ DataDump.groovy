@@ -62,7 +62,7 @@ pipeline {
     steps{
       wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
 			    ansiblePlaybook( 
-                playbook: '${WORKSPACE}/ansible/playbooks/data-dump.yml',
+                playbook: '${WORKSPACE}/ansible/data-dump.yml',
                 inventory: '${WORKSPACE}/inventory/hosts',
                 // extraVars: [
                 //   tier: "${params.Environment}",
@@ -76,7 +76,7 @@ pipeline {
 	stage('push to s3'){
 		steps{			
 			ansiblePlaybook( 
-                playbook: '${WORKSPACE}/ansible/playbooks/data-dump-push.yml',
+                playbook: '${WORKSPACE}/ansible/data-dump-push.yml',
                 inventory: '${WORKSPACE}/ansible/playbooks/hosts',
 				        credentialsId: 'commonsdocker',
                 colorized: true)
