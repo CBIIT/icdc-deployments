@@ -1,0 +1,12 @@
+---
+- name: push dump file to s3
+  hosts: all
+  connection: local
+  gather_facts: yes
+    
+  tasks:
+    - name: push dump file
+      include_role:
+        name: neo4j_dump
+        tasks_from: push-dump
+        

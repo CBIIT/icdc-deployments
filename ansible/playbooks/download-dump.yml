@@ -1,0 +1,13 @@
+---
+- name: download dump file from s3
+  hosts: all
+  connection: local
+  gather_facts: yes
+  become: yes
+  become_user: commonsdocker
+    
+  tasks:
+    - name: downaload dump file
+      include_role:
+        name: neo4j_dump
+        tasks_from: download-dump

@@ -1,0 +1,16 @@
+
+---
+- name: dump data from neo4j db
+  hosts: all
+  gather_facts: yes
+  become: yes
+  remote_user: commonsdocker
+  vars:
+    - ansible_python_interpreter: /bin/python3
+    
+  tasks:    
+    - name: 
+      include_role:
+        name: neo4j_dump
+        tasks_from: data-dump
+    
