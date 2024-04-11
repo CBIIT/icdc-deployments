@@ -39,7 +39,7 @@ pipeline {
 	  TIER      = "${params.Environment}"
     SLACK_SECRET  = "icdc_slack_url"
     PROJECT       = "icdc"
-    S3_BUCKET     = "crdc-dev-icdc-neo4j-data-backup"
+    S3_BUCKET     = "crdc-icdc-dev-neo4j-data-backup"
  }
   stages{
 
