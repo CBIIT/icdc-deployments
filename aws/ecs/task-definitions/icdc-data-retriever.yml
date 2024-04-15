@@ -1,0 +1,81 @@
+family: "$PROJECT-$ENV-$APP"
+networkMode: awsvpc
+cpu: "512"
+memory: "2048"
+executionRoleArn: "arn:aws:iam::$AWS_ACCOUNT_ID:role/power-user-$PROJECT-$ENV-ecs-task-execution-role"
+taskRoleArn: "arn:aws:iam::$AWS_ACCOUNT_ID:role/power-user-$PROJECT-$ENV-ecs-task-role"
+requiresCompatibilities:
+  - FARGATE
+containerDefinitions:
+  - name: sumologic-firelens
+    image: public.ecr.aws/aws-observability/aws-for-fluent-bit:stable
+    essential: true
+    firelensConfiguration:
+      type: fluentbit
+      options:
+        enable-ecs-log-metadata: "true"
+
+  - name: newrelic-infra
+    image: newrelic/nri-ecs:1.9.2
+    essential: true
+    environment:
+      - name: "FARGATE"
+        value: "true"
+      - name: "NRIA_IS_FORWARD_ONLY"
+        value: "true"
+      - name: "NEW_RELIC_DISTRIBUTED_TRACING_ENABLED"
+        value: "true"
+      - name: "NRIA_PASSTHROUGH_ENVIRONMENT"
+        value: "ECS_CONTAINER_METADATA_URI,ECS_CONTAINER_METADATA_URI_V4,FARGATE"
+      - name: "NEW_RELIC_HOST"
+        value: "gov-collector.newrelic.com"
+      - name: "NRIA_CUSTOM_ATTRIBUTES"
+        value: "{\"nrDeployMethod\":\"downloadPage\"}"
+      - name: "NEW_RELIC_APP_NAME"
+        value: "$SERVICE"
+      - name: "NRIA_OVERRIDE_HOST_ROOT"
+        value: ""
+    secrets:
+      - name: "NRIA_LICENSE_KEY"
+        valueFrom: "arn:aws:secretsmanager:$REGION:$AWS_ACCOUNT_ID:secret:monitoring/newrelic:api_key::"
+
+  - name: data-retriever
+    image: "$REGISTRY_URL/$ECR_REPO:$IMAGE_TAG"
+    essential: true
+    environment:
+      - name: "PROJECT"
+        value: "$PROJECT"
+      - name: "TIER"
+        value: "$ENV"
+      - name: "DATE"
+        value: "$DEPLOY_DATE"
+      - name: "VERSION"
+        value: "$IMAGE_TAG"
+      - name: "ROLE_ARN"
+        value: "arn:aws:iam::$AWS_ACCOUNT_ID:role/power-user-$PROJECT-$ENV-ecs-task-execution-role"
+      - name: "NEW_RELIC_APP_NAME"
+        value: "$PROJECT-aws-$ENV-$APP"
+      - name: "NEW_RELIC_DISTRIBUTED_TRACING_ENABLED"
+        value: "true"
+      - name: "NEW_RELIC_HOST"
+        value: "gov-collector.newrelic.com"
+      - name: "NEW_RELIC_LABELS"
+        value: "Project:$PROJECT;Environment:$ENV"
+      - name: "NEW_RELIC_LOG_FILE_NAME"
+        value: "STDOUT"
+    # secrets
+      - name: "NEW_RELIC_LICENSE_KEY"
+        valueFrom: "arn:aws:secretsmanager:$REGION:$AWS_ACCOUNT_ID:secret:monitoring/newrelic:api_key::"
+    logConfiguration:
+      logDriver: awsfirelens
+      options:
+        Format: json_lines
+        Name: http
+        Port: "443"
+        URI: "/receiver/v1/http/$SUMO_LOGIC_COLLECTOR_TOKEN"
+        Retry_Limit: "2"
+        tls: "on"
+        tls.verify: "off"
+      secretOptions:
+        - name: "Host"
+          valueFrom: "arn:aws:secretsmanager:$REGION:$AWS_ACCOUNT_ID:secret:bento/$PROJECT/$ENV:sumo_collector_endpoint::"

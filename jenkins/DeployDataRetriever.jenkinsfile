@@ -146,9 +146,9 @@ pipeline {
 				export DATE=$(date '+%m/%d/%Y')
 
 				# Update and register task definition
-				envsubst < $TEMPLATE_FILE > $TEMPLATE_FILE
-				aws ecs register-task-definition --cli-input-yaml file://$TEMPLATE_FILE
-
+                TASK_DEFINTION_FOLDER=$WORKSPACE/aws/ecs/task-definitions
+				envsubst < $TASK_DEFINTION_FOLDER/$PROJECT-$APP.yml > $TASK_DEFINTION_FOLDER/$PROJECT-$APP-deploy.yml
+				aws ecs register-task-definition --cli-input-yaml file://$TASK_DEFINTION_FOLDER/$PROJECT-$APP-deploy.yml
 				'''
 
 				}
