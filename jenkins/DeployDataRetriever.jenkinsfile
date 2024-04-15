@@ -1,0 +1,185 @@
+@Library('datacommons-jenkins-shared-library@v1.2') _
+
+def getLabelForEnvironment(environment) {
+	if (environment == "stage" || environment == "prod") {
+		return "ncias-p2790-c" 
+	} else {
+		return "slave-ncias-d2940-c" 
+	}
+}
+
+pipeline {
+	agent {
+		node {
+			label getLabelForEnvironment(params.Environment)
+		}
+	}
+
+	parameters {
+
+		string(
+			defaultValue: '',
+			description: 'The Image to Deploy',
+			name: 'ImageTag'
+		)
+
+		extendedChoice(
+			name: 'Environment',
+			defaultValue: 'dev',
+			description: 'Choose the environment to deploy to',
+			type: 'PT_SINGLE_SELECT',
+			value: 'dev,qa,stage,prod'
+		)
+
+	}
+
+	options {
+
+		timestamps()
+
+	}
+
+	environment {
+
+		PROGRAM = "crdc" 
+		PROJECT = "icdc"
+		APP = "data-retriever" 
+		SLACK_SECRET = "icdc_slack_url" 
+		REGION = "us-east-1"
+		DEPLOY_REPO = "${env.PROJECT}-deployments"
+		ECR_REPO = "${env.PROGRAM}-${env.PROJECT}-${env.APP}"
+		IMAGE_TAG = "${params.ImageTag}"
+		ENV = "${params.Environment}"
+		CLUSTER = "${env.PROJECT}-${env.ENV}-ecs"
+		
+
+	}
+
+	stages {
+
+		stage('checkout') {
+
+			steps {
+
+				checkout([$class: 'GitSCM',
+					branches: [[name: '*/main']],
+					extensions: [[$class: 'SubmoduleOption',
+					recursiveSubmodules: true],
+					[$class: 'RelativeTargetDirectory',
+					relativeTargetDir: "${env.PROJECT}-deployments"]],
+					userRemoteConfigs:
+					[[url: "https://github.com/CBIIT/${env.DEPLOY_REPO}"]]])
+
+			}
+
+		}
+
+		stage('Set Environment Variables') {
+
+			steps {
+
+				script {
+
+					// set sumo vars for logging
+					env.SUMO_COLLECTOR_ENDPOINT = sh(label: 'Get Sumo Endpoint', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.sumo_collector_endpoint'").trim()
+					env.SUMO_COLLECTOR_TOKEN = sh(label: 'Get Sumo Token', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.sumo_collector_token_$APP'").trim()
+
+					// set ECR account number
+					env.ECR_ACCOUNT = sh(label: 'Get ECR account', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.ecr_account'").trim()
+
+					// set repo URL
+					env.REPO_URL = "${ECR_ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPO}"
+
+					// set template file name
+					env.TEMPLATE_FILE = "${PROJECT}-deployments/aws/${APP}_task.yml"
+
+				}
+
+			}
+
+		}
+		stage('Add Production Tag') {
+
+			when {
+
+				expression {
+
+					ENV == 'prod'
+
+				}
+
+			}
+
+			steps {
+
+				script {
+
+					sh label: 'Docker-Tag', script: '''#!/bin/bash
+
+				# Tag image as production if deploying to prod tier
+				echo "Tagging Image as Production: $ECR_REPO:$IMAGE_TAG"
+
+				# login and get manifest
+				docker login -u AWS -p $(aws ecr get-login-password --region $REGION) $REPO_URL
+				
+				docker pull $REPO_URL:$IMAGE_TAG
+				docker tag $REPO_URL:$IMAGE_TAG $REPO_URL:prod-$IMAGE_TAG
+				docker push $REPO_URL:prod-$IMAGE_TAG
+				'''
+
+					IMAGE_TAG = "prod-$IMAGE_TAG"
+
+					echo "updated image tag: $IMAGE_TAG"
+				}
+
+			}
+
+		}
+		stage('Update Task Definition') {
+
+			steps {
+
+				script {
+
+					sh label: 'Task-Definition-Update', script: '''#!/bin/bash
+
+				# create new revision for $PROJECT-$APP Task Definition
+				echo "Updating Task Defintion to Use: $ECR_REPO:$IMAGE_TAG"
+				export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+				export IMAGE_ID="$REPO_URL:$IMAGE_TAG"
+				export DATE=$(date '+%m/%d/%Y')
+
+				# Update and register task definition
+				envsubst < $TEMPLATE_FILE > $TEMPLATE_FILE
+				aws ecs register-task-definition --cli-input-yaml file://$TEMPLATE_FILE
+
+				'''
+
+				}
+
+			}
+
+		}
+
+	}
+
+	post {
+
+		always {
+
+			notify(
+				secretPath: "notification/slack",
+				secretName: "${env.SLACK_SECRET}"
+			)
+
+		}
+
+		cleanup {
+
+			cleanWs()
+
+		}
+
+	}
+
+}
