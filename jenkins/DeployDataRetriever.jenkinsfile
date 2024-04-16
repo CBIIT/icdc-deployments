@@ -20,7 +20,7 @@ pipeline {
 		string(
 			defaultValue: '',
 			description: 'The Image to Deploy',
-			name: 'ImageTag'
+			name: 'DataRetrieverTag'
 		)
 
 		extendedChoice(
