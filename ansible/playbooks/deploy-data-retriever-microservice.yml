@@ -61,6 +61,8 @@
         #container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
         #credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
         ###################################################################################
+        newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1') }}"
+        
         container_env:
         ## Database
         - name: VERSION
@@ -69,4 +71,8 @@
           value: "{{ ansible_date_time.date }}"
         - name: PROJECT
           value: "{{ project_name }}"
+        - name: NEW_RELIC_LICENSE_KEY
+          value: "{{ newrelic_license_key }}"
+        - name: NEW_RELIC_APP_NAME
+          value: "{{ project_name }}-{{ tier }}-files-{{ ansible_hostname }}"
        
