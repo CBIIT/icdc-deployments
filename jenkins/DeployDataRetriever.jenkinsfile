@@ -48,9 +48,9 @@ pipeline {
 		REGION       = "us-east-1"
 		DEPLOY_REPO  = "${env.PROJECT}-deployments"
 		ECR_REPO     = "${env.PROGRAM}-${env.PROJECT}-${env.APP}"
-		IMAGE_TAG    = "${params.ImageTag}"
+		IMAGE_TAG    = "${params.DataRetrieverTag}"
 		ENV          = "${params.Environment}"
-		CLUSTER      = "${env.PROJECT}-${env.ENV}-ecs"
+        CLUSTER      = "${env.PROJECT}-${env.ENV}-ecs"
 		
 
 	}
