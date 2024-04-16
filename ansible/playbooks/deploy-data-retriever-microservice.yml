@@ -1,0 +1,72 @@
+- name: deploy files microservice
+  hosts: all
+  connection: local
+  gather_facts: true
+
+  tasks:
+    #install collections
+    - name: install aws collection
+      shell: "ansible-galaxy collection install {{ item | quote }} --force"
+      loop:
+        #- community.docker:<=3.4.3
+        #- amazon.aws:<=5.4.0
+        #- community.aws:<=3.2.0
+        #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,main
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,dataretriever
+
+
+    #docker login
+    - name: docker login
+      include_role:
+        name: bento.common.ecr_login
+      vars:
+        region: us-east-1
+
+    - name: Get the current caller identity information
+      aws_caller_info:
+      register: caller_info
+
+    - name: set account number
+      set_fact:
+        account: "{{ caller_info.account }}"
+
+#    - name: log into ncidockerhub
+#      community.docker.docker_login:
+#        username: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.username', nested=true, region='us-east-1') }}"
+#        password: "{{ lookup('amazon.aws.aws_secret', 'cbiit/docker.password', nested=true, region='us-east-1') }}"
+#        registry: https://ncidockerhub.nci.nih.gov
+
+    #deploy files
+    - name: deploy stage for {{ project }} files
+      include_role:
+        #name: bento.common.ecs
+        name: bento.common.ecs
+      vars: 
+        ansible_python_interpreter: "/usr/bin/python3"
+        execution_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-execution-role{% else %}{{ project_name }}-{{ tier }}-task-execution-role{% endif %}"
+        task_role: "{% if iam_prefix is defined and iam_prefix != '' %}{{ iam_prefix }}-{{ project_name }}-{{ tier }}-ecs-task-role{% else %}{{ project_name }}-{{ tier }}-task-role{% endif %}"
+        project_name: "{{ project_name }}"
+        program: crdc
+        region: "us-east-1"
+        container_name: "data-retriever"
+        files_version: "{{ lookup('env','DATA-RETRIEVER_VERSION') }}"
+        image_version: "{{ data-retriever_version }}"
+        tier: "{{ tier }}"
+        ecs_cluster_name: "{{ project_name }}-{{ tier }}-ecs"
+        container_port: "3000"
+        container_memory: "512"
+        container_cpu: "256"
+        ###################################################################################
+        container_image_url: "{{ ecr_repo }}/{{program}}-{{ project_name }}-{{ container_name }}"
+        #container_image_url: "ncidockerhub.nci.nih.gov/icdc/{{ project_name }}-{{ container_name }}"
+        #credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
+        ###################################################################################
+        container_env:
+        ## Database
+        - name: VERSION
+          value: "{{ files_version }}"
+        - name: DATE
+          value: "{{ ansible_date_time.date }}"
+        - name: PROJECT
+          value: "{{ project_name }}"
+       

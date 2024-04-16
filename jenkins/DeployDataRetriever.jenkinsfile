@@ -1,108 +1,84 @@
-@Library('datacommons-jenkins-shared-library@v1.2') _
-
-def getLabelForEnvironment(environment) {
-	if (environment == "stage" || environment == "prod"){
-		return ""     // Set to use a Jenkins agent in your prod account
-	}else {
-		return "slave-ncias-d2940-c"     // Set to use a Jenkins agent in your nonprod account
-	}
-}
+@Library('datacommons-jenkins-shared-library@v1.1') _
 
 pipeline {
 	agent {
 		node {
-			label getLabelForEnvironment(params.Environment)
+			label 'slave-ncias-d2940-c'
 		}
 	}
 
 	parameters {
 
         string(
-            defaultValue: '',
-            description: 'The Image to Deploy',
-            name: 'DataRetrieverTag')
+	        defaultValue: '',
+		    description: 'The image tag to deploy',
+		    name: 'FilesTag')
 
-        extendedChoice(
+		extendedChoice(
             name: 'Environment',
             defaultValue: 'dev',
-            description: 'Choose the environment to deploy to',
+            description: 'Choose the environment to build',
             type: 'PT_SINGLE_SELECT',
             value: 'dev,qa,stage,prod')
 
   }
 
   options {
-
+  	ansiColor('xterm')
 	timestamps()
-
   }
 
   environment {
 
-	PROGRAM      = "crdc"   
-	PROJECT      = "icdc"     
-	APP          = "data-retriever"     
-	SLACK_SECRET = "icdc_slack_url"   
-	REGION       = "us-east-1"
-	DEPLOY_REPO  = "${env.PROJECT}-deployments"
-	ECR_REPO     = "${env.PROGRAM}-${env.PROJECT}-${env.APP}"
-	IMAGE_TAG    = "${params.DataRetrieverTag}"
-	ENV          = "${params.Environment}"
-	CLUSTER      = "${env.PROJECT}-${env.ENV}-ecs"
-	SERVICE = "${env.PROJECT}-${env.ENV}-${env.APP}"
-
+      PROJECT      = 'icdc'
+	  APP          = "data-retriever"
+	  ENV          = "${params.Environment}"
+	  CLUSTER      = "${env.PROJECT}-${env.ENV}-ecs" 
+	  REGION       = "us-east-1"
+	  PROGRAM      = "crdc"
+      ECR_REPO     = "${env.PROGRAM}-${env.PROJECT}-${env.APP}"
+	  IMAGE_TAG    = "${params.DataRetrieverTag}"
   }
 
   stages{
-
   	stage('checkout'){
-
   		steps {
 
   		checkout([$class: 'GitSCM',
 			branches: [[name: '*/main']],
-			extensions: [[$class: 'SubmoduleOption', 
-			recursiveSubmodules: true],
-			[$class: 'RelativeTargetDirectory',
-			relativeTargetDir: "${env.PROJECT}-deployments"]],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
+			relativeTargetDir: "playbooks"]],
+			submoduleCfg: [],
 			userRemoteConfigs:
-			[[url: "https://github.com/CBIIT/${env.DEPLOY_REPO}"]]])
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
 
-		checkout([$class: 'GitSCM',
-			branches: [[name: "${env.ENV}"]],
-			extensions: [[$class: 'SubmoduleOption', 
-			recursiveSubmodules: true],
-			[$class: 'RelativeTargetDirectory',
+        checkout([$class: 'GitSCM',
+			branches: [[name: "${params.Environment}"]],
+			doGenerateSubmoduleConfigurations: false,
+			extensions: [[$class: 'RelativeTargetDirectory',
 			relativeTargetDir: "${env.PROJECT}-deployments"]],
+			submoduleCfg: [],
 			userRemoteConfigs:
-			[[url: "https://github.com/CBIIT/${env.DEPLOY_REPO}"]]])
+			[[url: 'https://github.com/CBIIT/icdc-deployments']]])
 
         }
 
   	}
 
-    stage('Set Environment Variables'){
+	 stage('Set Environment Variables'){
+                steps {
+                        script {
+                // set central ECR account number
+                                env.ECR_ACCOUNT = sh(label: 'Get ECR account', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id ecr --query SecretString --output text | jq -r '.central_account_id'").trim()
+                                // set repo URL
+                                env.REGISTRY_URL = "${ECR_ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com"
+                                env.DATE = sh(script: 'date +%Y-%m-%d.%H%M', returnStdout: true).trim()
+                        }
+                }
+        }
 
- 		steps {
-
- 			script {
-
-
-				// set ECR account number
-				env.ECR_ACCOUNT = sh(label: 'Get ECR account', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.ecr_account'").trim()
-
-				// set repo URL
-				env.REPO_URL = "${ECR_ACCOUNT}.dkr.ecr.${REGION}.amazonaws.com/${ECR_REPO}"
-
-				// set template file name
-				env.TEMPLATE_FILE="${PROJECT}-deployments/aws/${APP}_task.yml"
-
-			}
-
- 		}
-
-  	}
-	stage('Add Production Tag'){
+      stage('Add Production Tag'){
 
  		when {
 
@@ -121,14 +97,18 @@ pipeline {
 			    sh label: 'Docker-Tag', script: '''#!/bin/bash
 
 				# Tag image as production if deploying to prod tier
-				echo "Tagging Image as Production: $ECR_REPO:$IMAGE_TAG"
+				echo "Tagging Image as Production: $ECR_REPO:$IMAGE_TAG-$DATE"
+                                aws_account=$(aws sts get-caller-identity --query "Account" --output text)
+                                repo_url="$REGISTRY_URL/$ECR_REPO"
 
+                                #DATE
+                                DATE="$DATE"
 				# login and get manifest
-				docker login -u AWS -p $(aws ecr get-login-password --region $REGION) $REPO_URL
+				docker login -u AWS -p $(aws ecr get-login-password --region $REGION) $repo_url
 				
-				docker pull $REPO_URL:$IMAGE_TAG
-				docker tag $REPO_URL:$IMAGE_TAG $REPO_URL:prod-$IMAGE_TAG
-				docker push $REPO_URL:prod-$IMAGE_TAG
+				docker pull $repo_url:$IMAGE_TAG
+				docker tag $repo_url:$IMAGE_TAG $repo_url:prod-$IMAGE_TAG-$DATE
+				docker push $repo_url:prod-$IMAGE_TAG-$DATE
 				'''
                 
                 IMAGE_TAG = "prod-$IMAGE_TAG"
@@ -140,41 +120,52 @@ pipeline {
 
   	}
 
-  	stage('Update Task Definition'){
+  	stage('Deploy'){
+
+		agent {
+            docker {
+                image 'cbiitssrepo/cicd-ansible-8.0:latest'
+                args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
+                reuseNode true
+            }
+        }
+
+	    environment {
+            FILES_VERSION = "${params.DataRetrieverTag}"
+        }
 
  		steps {
 
-			script {
-
-			    sh label: 'Task-Definition-Update', script: '''#!/bin/bash
-
-				# create new revision for $PROJECT-$ENV-$APP Task Definition
-				echo "Updating Task Defintion to Use: $ECR_REPO:$IMAGE_TAG"
-				export ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-				export IMAGE_ID="$REPO_URL:$IMAGE_TAG"
-
-				# Update and register task definition
-                TASK_DEFINTION_FOLDER=$WORKSPACE/aws/ecs/task-definitions
-                envsubst < $TASK_DEFINTION_FOLDER/$PROJECT-$APP.yml > $TASK_DEFINTION_FOLDER/$PROJECT-$APP-deploy.yml
-                aws ecs register-task-definition --cli-input-yaml file://$TASK_DEFINTION_FOLDER/$PROJECT-$APP-deploy.yml
-
-				'''
-
-			}
-
+			wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
+                ansiblePlaybook(
+					playbook: "${WORKSPACE}/playbooks/ansible/playbooks/deploy-data-retriever-microservice.yml", 
+            		inventory: "${WORKSPACE}/playbooks/ansible/playbooks/hosts",
+                    extraVars: [
+                        tier: "${params.Environment}",
+						project_name: "${PROJECT}",
+						iam_prefix: "power-user",
+						subdomain: "caninecommons",
+						domain_name: "cancer.gov",
+						auth_enabled: false
+						],
+                    colorized: true)
+ 			}
  		}
-
-  	}
 
   	}
 
   }
 
   post {
-        always {
-            notify(secretPath: 'notification/slack', secretName: "${env.SLACK_SECRET}")
-        }
 
+    always {
+
+        notify(
+            secretPath: "notifications/slack",
+            secretName: "icdc_slack_url"
+        ) 
+
+    }
 
     cleanup {
 
@@ -183,3 +174,5 @@ pipeline {
     }
 
   }
+
+}
