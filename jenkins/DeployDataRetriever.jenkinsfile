@@ -148,7 +148,7 @@ pipeline {
 				# Update and register task definition
                 TASK_DEFINITION_FOLDER="$WORKSPACE/aws/ecs/task-definitions"
                 envsubst < "$TASK_DEFINITION_FOLDER/$PROJECT-$APP.yml" > "$TASK_DEFINITION_FOLDER/$PROJECT-$APP-deploy.yml"
-                aws ecs register-task-definition --cli-input-json "$(jq -c '.' "$TASK_DEFINITION_FOLDER/$PROJECT-$APP-deploy.yml")"
+                aws ecs register-task-definition --cli-input-json "$(jq -c '. | tostring' "$TASK_DEFINITION_FOLDER/$PROJECT-$APP-deploy.yml")"
 
 				'''
 
