@@ -4,7 +4,7 @@ def getLabelForEnvironment(environment) {
 	if (environment == "stage" || environment == "prod"){
 		return ""     // Set to use a Jenkins agent in your prod account
 	}else {
-		return ""     // Set to use a Jenkins agent in your nonprod account
+		return "slave-ncias-d2940-c"     // Set to use a Jenkins agent in your nonprod account
 	}
 }
 
