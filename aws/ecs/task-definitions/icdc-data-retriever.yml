@@ -1,4 +1,4 @@
-family: "$PROJECT-$ENV-$APP"
+family: "PROGRAM-$ENV-$PROJECT-$APP"
 networkMode: awsvpc
 cpu: "512"
 memory: "2048"

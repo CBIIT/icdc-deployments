@@ -41,16 +41,16 @@ pipeline {
 
 	environment {
 
-		PROGRAM = "crdc" 
-		PROJECT = "icdc"
-		APP = "data-retriever" 
+		PROGRAM      = "crdc" 
+		PROJECT      = "icdc"
+		APP          = "data-retriever" 
 		SLACK_SECRET = "icdc_slack_url" 
-		REGION = "us-east-1"
-		DEPLOY_REPO = "${env.PROJECT}-deployments"
-		ECR_REPO = "${env.PROGRAM}-${env.PROJECT}-${env.APP}"
-		IMAGE_TAG = "${params.ImageTag}"
-		ENV = "${params.Environment}"
-		CLUSTER = "${env.PROJECT}-${env.ENV}-ecs"
+		REGION       = "us-east-1"
+		DEPLOY_REPO  = "${env.PROJECT}-deployments"
+		ECR_REPO     = "${env.PROGRAM}-${env.PROJECT}-${env.APP}"
+		IMAGE_TAG    = "${params.ImageTag}"
+		ENV          = "${params.Environment}"
+		CLUSTER      = "${env.PROJECT}-${env.ENV}-ecs"
 		
 
 	}
@@ -146,9 +146,10 @@ pipeline {
 				export DATE=$(date '+%m/%d/%Y')
 
 				# Update and register task definition
-                TASK_DEFINTION_FOLDER=$WORKSPACE/aws/ecs/task-definitions
-				envsubst < $TASK_DEFINTION_FOLDER/$PROJECT-$APP.yml > $TASK_DEFINTION_FOLDER/$PROJECT-$APP-deploy.yml
-				aws ecs register-task-definition --cli-input-yaml file://$TASK_DEFINTION_FOLDER/$PROJECT-$APP-deploy.yml
+                TASK_DEFINITION_FOLDER=$WORKSPACE/aws/ecs/task-definitions
+                envsubst < "$TASK_DEFINITION_FOLDER/$PROJECT-$APP.yml" > "$TASK_DEFINITION_FOLDER/$PROJECT-$APP-deploy.yml"
+                aws ecs register-task-definition --cli-input-yaml file://"$TASK_DEFINITION_FOLDER/$PROJECT-$APP-deploy.yml"
+   
 				'''
 
 				}
