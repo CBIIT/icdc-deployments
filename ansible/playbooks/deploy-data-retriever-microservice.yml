@@ -62,7 +62,8 @@
         #credentialsParameter: "arn:aws:secretsmanager:{{ region }}:{{ account }}:secret:cbiit/docker"
         ###################################################################################
         newrelic_license_key: "{{ lookup('amazon.aws.aws_secret', 'monitoring/newrelic.api_key', nested=true, region='us-east-1') }}"
-        
+        sumo_collector_endpoint: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.sumo_collector_endpoint', nested=true, region='us-east-1') }}"
+        sumo_collector_token: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.sumo_collector_token_files', nested=true, region='us-east-1') }}"
         container_env:
         ## Database
         - name: VERSION
