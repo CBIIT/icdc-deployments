@@ -12,7 +12,7 @@ pipeline {
         string(
 	        defaultValue: '',
 		    description: 'The image tag to deploy',
-		    name: 'FilesTag')
+		    name: 'DataRetrieverTag')
 
 		extendedChoice(
             name: 'Environment',
@@ -131,7 +131,7 @@ pipeline {
         }
 
 	    environment {
-            FILES_VERSION = "${params.DataRetrieverTag}"
+            DR_VERSION = "${params.DataRetrieverTag}"
         }
 
  		steps {
