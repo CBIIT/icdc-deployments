@@ -71,7 +71,7 @@ containerDefinitions:
       options:
         Format: json_lines
         Name: http
-        Port: "443"
+        Port: "3000"
         URI: "/receiver/v1/http/$SUMO_LOGIC_COLLECTOR_TOKEN"
         Retry_Limit: "2"
         tls: "on"
