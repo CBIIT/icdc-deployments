@@ -70,13 +70,16 @@
         react_app_backend_version: "https://{{subdomain}}-dev.{{domain_name}}/version"
         ## Readme Content ##
         react_app_readme_data:
+          
           dev: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/My_Files_Cart_Page_README.md"
+          dev2: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/My_Files_Cart_Page_README.md"
           qa: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/My_Files_Cart_Page_README.md"
           stage: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/stage/My_Files_Cart_Page_README.md"
           prod: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/prod/My_Files_Cart_Page_README.md"
         ## Static Content ##
         react_app_landing_data:
           dev: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/landingView.yaml"
+          dev2: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/landingView.yaml"
           qa: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/landingView.yaml"
           qa2: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/landingView.yaml"
           stage: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/stage/landingView.yaml"
@@ -84,6 +87,7 @@
 
         react_app_news_data:
           dev: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/newsView.yaml"
+          dev2: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/newsView.yaml"
           qa: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/newsView.yaml"
           qa2: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/newsView.yaml"
           stage: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/stage/newsView.yaml"
@@ -91,6 +95,7 @@
 
         react_app_about_data:
           dev: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/aboutPagesContent.yaml"
+          dev2: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/aboutPagesContent.yaml"
           qa: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/aboutPagesContent.yaml"
           qa2: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/aboutPagesContent.yaml"
           stage: "https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/stage/aboutPagesContent.yaml"
@@ -99,6 +104,7 @@
         ## readme data ##
         react_app_readme_url:
           dev: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/Data_Model_Navigator_README.md"
+          dev2: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/Data_Model_Navigator_README.md"
           qa: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/Data_Model_Navigator_README.md"
           qa2: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/Data_Model_Navigator_README.md"
           stage: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/stage/Data_Model_Navigator_README.md"
@@ -107,6 +113,7 @@
         ## privacy policy ##
         react_app_footer_privacy_policy:
           dev: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/Privacy_Policy.md"
+          dev2: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/Privacy_Policy.md"
           qa: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/Privacy_Policy.md"
           qa2: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/Privacy_Policy.md"
           stage: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/stage/Privacy_Policy.md"
