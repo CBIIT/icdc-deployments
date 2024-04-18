@@ -45,7 +45,7 @@
         #about_file: "{{ workspace }}/{{ project_name }}-frontend/src/content/pre-prod/aboutPagesContent.yaml"
         about_file_name: "aboutPagesContent.yaml"
         about_file:
-          dev: "https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}"
+          dev: "{{ workspace }}/bento-icdc-static-content/blob/develop/{{ about_file_name }}"
           dev2: "https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}"
           qa: "https://github.com/CBIIT/bento-icdc-static-content/blob/qa/{{ about_file_name }}"
           qa2: "https://github.com/CBIIT/bento-icdc-static-content/blob/qa/{{ about_file_name }}"
