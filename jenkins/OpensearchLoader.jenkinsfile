@@ -92,7 +92,7 @@ pipeline {
                 recursiveSubmodules: true,
   				userRemoteConfigs: 
 				[[url: 'https://github.com/CBIIT/bento-icdc-static-content']]])	
-			
+
 			checkout([$class: 'GitSCM',
 				branches: [[name: "${params.Backend_Branch}"]],
 				doGenerateSubmoduleConfigurations: false,
@@ -101,7 +101,7 @@ pipeline {
 				submoduleCfg: [],
 				userRemoteConfigs: 
 				[[url: 'https://github.com/CBIIT/bento-icdc-backend']]])
-            
+	
 			dir('icdc-model'){
                 git branch: "${params.Model_Branch}",
                 url: 'https://github.com/CBIIT/icdc-model-tool'}
