@@ -53,15 +53,15 @@
           prod: "https://github.com/CBIIT/bento-icdc-static-content/blob/production/{{ about_file_name }}"
         
         tasks:
-        - name: Fetch about file
+        - name: Download about file
           get_url:
             url: "{{ about_file_url[tier] }}"
             dest: "{{ workspace }}/aboutPagesContent.yaml"
             validate_certs: no
 
-        - name: Use fetched about file
-          include_vars:
-            file: "{{ workspace }}/aboutPagesContent.yaml"
+        - name: perform data loading
+          include_role:
+            name: bento.common.opensearch_loader
 
         #about_file: "{{ workspace }}/{{ project_name }}-frontend/src/content/{{ tier }}/aboutPagesContent.yaml"
         about_file: "{{ about_file_url[tier] }}"
