@@ -76,12 +76,12 @@ pipeline {
 				[[url: 'https://github.com/CBIIT/bento-icdc-frontend']]])
 
 			checkout([$class: 'GitSCM',
-				branches: [[name: "${params.Frontend_Branch}"]],
-				doGenerateSubmoduleConfigurations: false,
-				extensions: [[$class: 'RelativeTargetDirectory',
-				relativeTargetDir: 'icdc-frontend']],
-				submoduleCfg: [],
-				userRemoteConfigs: 
+				checkout([$class: 'GitSCM', 
+  				branches: [[name: "${params.Static_Content}"]], 
+  				doGenerateSubmoduleConfigurations: 
+  				false, extensions: [], submoduleCfg: [], 
+                recursiveSubmodules: true,
+  				userRemoteConfigs: 
 				[[url: 'https://github.com/CBIIT/bento-icdc-static-content']]])	
 			
 			checkout([$class: 'GitSCM',
