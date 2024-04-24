@@ -9,6 +9,7 @@ locals {
   neo4j_https = 7473
   neo4j_bolt = 7687
   redis = "6379"
+  level        = terraform.workspace == "stage" || terraform.workspace == "prod" ? "prod" : "nonprod"
   integration_server_profile_name = "${var.iam_prefix}-integration-server-profile"
   permissions_boundary            = terraform.workspace == "dev" || terraform.workspace == "qa" ? "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/PermissionBoundary_PowerUser" : null
   cert_types = var.cloud_platform == "leidos" ? "AMAZON_ISSUED" : "IMPORTED"
