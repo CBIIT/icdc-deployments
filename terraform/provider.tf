@@ -9,8 +9,9 @@ terraform {
 
 provider "aws" {
   region = var.region
+}  
   
-  default_tags {
+  /*default_tags {
     tags = {
       EnvironmentTier = terraform.workspace
       Customer        = "nci od cbiit ods"
@@ -28,4 +29,4 @@ provider "aws" {
       ProjectManager  = "Gina Kuffel"
     }
   }
-}
+}*/
