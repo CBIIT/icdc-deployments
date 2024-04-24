@@ -47,7 +47,7 @@ pipeline {
             sortMode: 'ASCENDING_SMART',
             tagFilter: '*',
             useRepository: 'https://github.com/CBIIT/icdc-model-tool')
-	gitParameter(branchFilter: 'origin/(.*)', 
+	/*gitParameter(branchFilter: 'origin/(.*)', 
         defaultValue: 'main',
         name: 'Static_Content_Branch', 
         type: 'PT_BRANCH_TAG',
@@ -55,7 +55,7 @@ pipeline {
         selectedValue: 'DEFAULT', 
         sortMode: 'ASCENDING_SMART', 
         tagFilter: '*', 
-        useRepository: 'https://github.com/CBIIT/bento-icdc-static-content')		
+        useRepository: 'https://github.com/CBIIT/bento-icdc-static-content')		*/
     }
     options {
       ansiColor('xterm')
@@ -84,13 +84,13 @@ pipeline {
 				userRemoteConfigs: 
 				[[url: 'https://github.com/CBIIT/bento-icdc-frontend']]])
 
-			checkout([$class: 'GitSCM', 
+			/*checkout([$class: 'GitSCM', 
                     branches: [[name: "${params.Static_Content_Branch}"]], 
                     doGenerateSubmoduleConfigurations: 
                     false, extensions: [], submoduleCfg: [], 
                     recursiveSubmodules: true,
                     userRemoteConfigs: 
-                    [[url: 'https://github.com/CBIIT/bento-icdc-static-content']]])		
+                    [[url: 'https://github.com/CBIIT/bento-icdc-static-content']]])		*/
 
 			checkout([$class: 'GitSCM',
 				branches: [[name: "${params.Backend_Branch}"]],
