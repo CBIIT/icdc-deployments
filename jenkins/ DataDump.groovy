@@ -2,7 +2,7 @@
 
 def getLabelForEnvironment(environment) {
 	if (environment == "stage" || environment == "prod"){
-		return "slave-ncias-p2790-c"
+		return "ncias-p2790-c"
 	}else {
 		return "slave-ncias-d2940-c"
 	}
