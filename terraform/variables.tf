@@ -71,6 +71,12 @@ variable "alb_subnet_ids" {
   type = list(string)
 }
 
+variable "assign_public_ip" {
+  description = "Whether to assign a public IP to the ECS task. Valid values: 'ENABLED', 'DISABLED'"
+  type        = string
+  default     = "DISABLED"
+}
+
 variable "attach_bucket_policy" {
   description = "set to true if you want bucket policy and provide value for policy variable"
   type        = bool

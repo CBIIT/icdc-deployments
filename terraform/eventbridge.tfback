@@ -8,7 +8,7 @@ module "eventbridge_ecs_schedule" {
   task_definition_arn = aws_ecs_task_definition.my_task.arn
   subnets             = ["subnet-12345", "subnet-67890"]
   security_groups     = ["sg-12345"]
-  assign_public_ip    = "ENABLED"
+  assign_public_ip    = var.assign_public_ip
   input               = jsonencode({
     "containerOverrides": [
       {
