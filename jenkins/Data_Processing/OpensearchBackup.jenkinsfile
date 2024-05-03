@@ -16,7 +16,7 @@ pipeline {
 			label getLabelForEnvironment(params.Environment)
 		}
 	}
-    
+
 	parameters {
     extendedChoice( 
         name: 'Environment', 
@@ -36,7 +36,7 @@ pipeline {
     string(defaultValue: "crdc-nonprod-icdc-opensearch-snapshot-bucket",
         description: 'S3 bucket which has the snapshot to restore',
         name: 'S3_BUCKET')
-    string(defaultValue: "",
+    string(defaultValue: "icdc",
         description: 'sub folder in S3 bucket where the snapshot is present',
         name: 'BASE_PATH')
   }
