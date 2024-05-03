@@ -1,0 +1,35 @@
+---
+- name: Opensearch restore
+  hosts: loader
+  connection: local
+  gather_facts: yes
+  remote_user: commonsdocker
+
+  tasks:
+    #install collections
+    - name: install aws collection
+      shell: "ansible-galaxy collection install {{ item | quote }} --force"
+      loop:
+        - community.docker:<=3.4.3
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,opensearch_testing
+      # vars:
+      #   ansible_python_interpreter: /usr/local/bin/python3
+        
+    #load data
+    - name: perform opensearch backup
+      include_role:
+        name: bento.common.opensearch_dataloading
+        tasks_from: opensearchrestore
+      vars:
+        #ansible_python_interpreter: /usr/local/bin/python3
+        project_name:  "{{ lookup('env','PROJECT_NAME') }}"
+        tier: "{{ lookup('env','TIER') }}"
+        workspace: "{{ lookup('env','WORKSPACE') }}"
+        region: us-east-1
+        opensearch_host: "https://{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.es_host', nested=true, region='us-east-1' ) }}/"
+        snapshot_repo: "{{lookup('env','SNAPSHOT_REPO')}}"
+        s3_bucket: "{{lookup('env','S3_Bucket')}}"
+        snapshot_value: "{{lookup('env','SNAPSHOT_VALUE')}}"
+        base_path: "{{lookup('env', 'BASE_PATH')}}"
+        role_arn: "{% if tier == 'dev2' %}arn:aws:iam::917011444075:role/power-user-crdc-dev-icdc-opensearch-snapshot{% else %}arn:aws:iam::917011444075:power-user-crdc-dev-icdc-opensearch-snapshot{% endif %}"
+        indices: "{{lookup('env', 'INDICES')}}"
