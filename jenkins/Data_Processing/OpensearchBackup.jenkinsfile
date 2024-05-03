@@ -98,7 +98,7 @@ pipeline {
                     snapshot_repo: "${params.SNAPSHOT_REPO}", 
                     snapshot_value: "${params.SNAPSHOT_VALUE}",
                     //base_path: "${params.BASE_PATH}",
-                    base_path: "${params.SNAPSHOT_VALUE}",
+                    //base_path: "${params.SNAPSHOT_VALUE}",
                     s3_bucket: "${params.S3_BUCKET}",
                     project: "${PROJECT}",
                     role_arn: "arn:aws:iam::917011444075:role/power-user-crdc-dev-icdc-opensearch-snapshot"
