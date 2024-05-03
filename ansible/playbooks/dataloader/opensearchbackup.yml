@@ -21,7 +21,8 @@
         name: bento.common.opensearch_dataloading
         tasks_from: opensearchbackup
       vars:
-        ansible_python_interpreter: /usr/local/bin/python3
+        #ansible_python_interpreter: /usr/local/bin/python3
+        ansible_python_interpreter: /bin/python3
         project_name:  "{{ lookup('env','PROJECT_NAME') }}"
         tier: "{{ lookup('env','TIER') }}"
         workspace: "{{ lookup('env','WORKSPACE') }}"
