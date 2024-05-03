@@ -13,7 +13,7 @@
         - community.docker:<=3.4.3
         - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,opensearch_testing
       vars:
-        ansible_python_interpreter: /usr/local/bin/python3
+        ansible_python_interpreter: /bin/python3
 
     #load data
     - name: perform opensearch backup
