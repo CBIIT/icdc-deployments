@@ -87,8 +87,8 @@ pipeline {
  		steps{
           wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]){
              ansiblePlaybook( 
-                playbook: '${WORKSPACE}/ctdc-deployments/ansible/playbooks/dataloader/opensearchrestore.yml',
-                inventory: '${WORKSPACE}/ctdc-deployments/ansible/playbooks/hosts',
+                playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/dataloader/opensearchrestore.yml',
+                inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
                 extraVars: [
                     tier: "${ENV}",
                     project_name: "${PROJECT}",
