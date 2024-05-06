@@ -32,5 +32,5 @@
         s3_bucket: "{{lookup('env','S3_Bucket')}}"
         snapshot_value: "{{lookup('env','SNAPSHOT_VALUE')}}"
         base_path: "{{lookup('env', 'BASE_PATH')}}"
-        #base_path: "{{lookup('env', 'SNAPSHOT_VALUE')}}"
+        indices: "{{lookup('env', 'INDICES')}}"
         role_arn: "{{lookup('env', 'ROLE_ARN')}}"

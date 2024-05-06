@@ -33,6 +33,8 @@ pipeline {
     string(defaultValue: "v_1_0",
         description: 'Snapshot name used for restore operation',
         name: 'SNAPSHOT_VALUE')
+    string(description: 'indices to be backed up from opensearch. values should comma seperated.',
+            name: 'INDICES')
     string(defaultValue: "crdc-nonprod-icdc-opensearch-snapshot-bucket",
         description: 'S3 bucket which has the snapshot to restore',
         name: 'S3_BUCKET')
@@ -98,7 +100,7 @@ pipeline {
                     snapshot_repo: "${params.SNAPSHOT_REPO}", 
                     snapshot_value: "${params.SNAPSHOT_VALUE}",
                     base_path: "${params.BASE_PATH}",
-                    //base_path: "${params.SNAPSHOT_VALUE}",
+                    indices: "${params.INDICES}",
                     s3_bucket: "${params.S3_BUCKET}",
                     project: "${PROJECT}",
                     role_arn: "arn:aws:iam::917011444075:role/power-user-crdc-dev-icdc-opensearch-snapshot"
