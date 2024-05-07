@@ -6,7 +6,7 @@ module "eventbridge_ecs_schedule" {
   target_arn          = aws_events_rule.my_ecs_task_rule.arn
   ecs_cluster_arn     = aws_ecs_cluster.my_cluster.arn
   task_definition_arn = aws_ecs_task_definition.my_task.arn
-  subnets             = ["subnet-12345", "subnet-67890"]
+  ecs_subnet_ids            = var.private_subnet_ids
   security_groups     = ["sg-12345"]
   assign_public_ip    = var.assign_public_ip
   input               = jsonencode({
