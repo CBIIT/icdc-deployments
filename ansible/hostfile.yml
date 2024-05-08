@@ -3,26 +3,28 @@
   hosts: all
   gather_facts: false
   connection: local
-  
+  vars:
+    - region: us-east-1
+    - tier: "{{ tier }}"
+    - project_name: "{{project_name}}"
+    - neo4j_ip: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1') }}"
+    - workspace: "{{workspace}}"
+
   tasks:
-  #install collections
+    #install collections
     - name: install aws collection
       shell: "ansible-galaxy collection install {{ item | quote }} --force"
       loop:
         - amazon.aws:<=5.1.0
+
     - name: Create directory for inventory
       ansible.builtin.file:
         path: "{{workspace}}/inventory"
         state: directory
+
     - name: generate inventory file
       ansible.builtin.copy:
         content: |
           [all]
           db ansible_host="{{neo4j_ip}}"
         dest: "{{workspace}}/inventory/hosts"
-  vars:
-    - region: us-east-1
-    - tier: "{{ tier }}"
-    - project_name: "{{project_name}}"
-    - neo4j_ip: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
-    - workspace: "{{workspace}}"
