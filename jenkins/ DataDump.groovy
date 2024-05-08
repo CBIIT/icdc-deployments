@@ -38,7 +38,7 @@ pipeline {
 	  TIER          = "${params.Environment}"
     SLACK_SECRET  = "icdc_slack_url"
     PROJECT       = "icdc"
-    S3_BUCKET     = "crdc-{{ project }}-{{ tier }}-neo4j-data-backup"
+    S3_BUCKET     = "crdc-${PROJECT}-${TIER}-neo4j-data-backup"
  }
   stages{
 
@@ -79,6 +79,11 @@ pipeline {
                 playbook: '${WORKSPACE}/ansible/data-dump-push.yml',
                 inventory: '${WORKSPACE}/ansible/hosts',
 				        credentialsId: 'commonsdocker',
+                // extraVars: [
+                //   tier: "${params.Environment}",
+						    //   project_name: "${PROJECT}",
+                //   workspace: "$WORKSPACE"
+						    // ],
                 colorized: true)
 
 		}
