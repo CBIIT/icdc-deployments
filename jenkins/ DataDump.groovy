@@ -42,7 +42,15 @@ pipeline {
  }
   stages{
 
-  	stage('create inventory'){
+  	agent {
+            docker {
+                image 'cbiitssrepo/cicd-ansible-8.0:latest'
+                args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
+                reuseNode true
+            }
+        }
+    
+    stage('create inventory'){
  		steps {
  		  wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
 			    ansiblePlaybook( 
@@ -91,14 +99,17 @@ pipeline {
 	
   }
   post {
+
     always {
        notify(
             secretPath: "notification/slack",
             secretName: "${env.SLACK_SECRET}"
         ) 
-      }
-    cleanup {
-      cleanWs()
-      }
+    }
+
+    // cleanup {
+    //   cleanWs()
+    // }
+
   }
 }
