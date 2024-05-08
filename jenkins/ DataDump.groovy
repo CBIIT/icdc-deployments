@@ -81,11 +81,6 @@ pipeline {
             ansiblePlaybook( 
                   playbook: '${WORKSPACE}/ansible/data-dump.yml',
                   inventory: '${WORKSPACE}/inventory/hosts',
-                  // extraVars: [
-                  //   tier: "${params.Environment}",
-                  //   project_name: "${PROJECT}",
-                  //   workspace: "$WORKSPACE"
-                  // ],
                   colorized: true)
         }
       }
@@ -97,11 +92,6 @@ pipeline {
                   playbook: '${WORKSPACE}/ansible/data-dump-push.yml',
                   inventory: '${WORKSPACE}/ansible/hosts',
                   credentialsId: 'commonsdocker',
-                  // extraVars: [
-                  //   tier: "${params.Environment}",
-                  //   project_name: "${PROJECT}",
-                  //   workspace: "$WORKSPACE"
-                  // ],
                   colorized: true)
 
       }
@@ -117,9 +107,9 @@ pipeline {
         ) 
     }
 
-    // cleanup {
-    //   cleanWs()
-    // }
+    cleanup {
+      cleanWs()
+    }
 
   }
 }
