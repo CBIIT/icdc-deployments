@@ -1,7 +1,7 @@
 module "eventbridge_ecs_schedule" {
   source              = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/eventbridge?ref=eventbridge_new"
   resource_prefix     = "${var.stack_name}-${terraform.workspace}"
-  name                = var.eventbridge_name
+  eventbridge_name    = var.eventbridge_name
   schedule_expression = var.schedule_expression // Scheduled expression for every day at 9 AM,
   target_type         = var.target_type
   target_arn          = aws_events_rule.my_ecs_task_rule.arn
