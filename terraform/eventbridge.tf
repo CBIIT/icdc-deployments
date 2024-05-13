@@ -1,4 +1,4 @@
-module "eventbridge_ecs_schedule" {
+module "event_scheduler" {
   source              = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/eventbridge?ref=eventbridge_new"
   resource_prefix     = "${var.stack_name}-${terraform.workspace}"
   eventbridge_name    = var.eventbridge_name
