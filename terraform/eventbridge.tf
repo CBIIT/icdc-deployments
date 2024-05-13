@@ -7,7 +7,7 @@ module "eventbridge_ecs_schedule" {
   target_arn          = aws_events_rule.my_ecs_task_rule.arn
   ecs_cluster_arn     = var.ecs_cluster_arn 
   task_definition_arn = var.task_definition_arn
-  ecs_subnet_ids            = var.private_subnet_ids
+  subnet_ids            = var.private_subnet_ids
   ecs_security_groups     = var.ecs_security_groups
   assign_public_ip    = var.assign_public_ip
 }
