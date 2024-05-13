@@ -12,8 +12,14 @@ output "db_password" {
   sensitive = true
 }
 
-output "scheduled_task_event_rule_arn" {
-  value = module.eventbridge_ecs_schedule.module_event.arn
+output "eventbridge_rule_name" {
+  value = module.event_scheduler.eventbridge_rule_name
+  description = "Name of the EventBridge rule created for the ECS task scheduler."
+}
+
+output "eventbridge_target_id" {
+  value = module.event_scheduler.eventbridge_target_id
+  description = "Target ID of the EventBridge target created for the ECS task scheduler."
 }
 
 #output "read_only_role_arn" {
