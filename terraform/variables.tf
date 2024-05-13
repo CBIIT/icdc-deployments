@@ -391,6 +391,11 @@ variable "task_definition_arn" {
   type = string
 }
 
+variable "eventbridge_name" {
+  description = "Name of the EventBridge rule"
+  type        = string
+}
+
 /*variable "slack_notification_endpoint" {
   description = "Slack notification endpoint"
   type = string
