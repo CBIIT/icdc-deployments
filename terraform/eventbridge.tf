@@ -4,7 +4,7 @@ module "eventbridge_ecs_schedule" {
   eventbridge_name   = var.eventbridge_name
   schedule_expression = var.schedule_expression // Scheduled expression for every day at 9 AM,
   target_type         = var.target_type
-  target_arn          = aws_events_rule.my_ecs_task_rule.arn
+  #target_arn          = 
   ecs_cluster_arn     = var.ecs_cluster_arn 
   task_definition_arn = var.task_definition_arn
   #subnets          = var.private_subnet_ids
