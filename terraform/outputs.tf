@@ -11,6 +11,11 @@ output "db_password" {
   value = module.aurora.*.db_password
   sensitive = true
 }
+
+output "scheduled_task_event_rule_arn" {
+  value = module.eventbridge_ecs_schedule.module_event.arn
+}
+
 #output "read_only_role_arn" {
  # value = module.new_relic_metric_pipeline.*.read_only_role_arn
 #}

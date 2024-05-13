@@ -365,18 +365,33 @@ variable "newrelic_account_id" {
   default = null
 }
 
+variable "schedule_expression" {
+  description = "Schedule expression for the EventBridge rule"
+  type        = string
+  default = "cron(0 9 * * ? *)"
+}
 
-/*variable "ecs_cluster_name" {
-  description = "Name of the existing ECS cluster"
+variable "ecs_security_groups" {
+  description = "List of security group IDs for ECS task type targets"
+  type        = list(string)
+}
+
+variable "target_type" {
+  description = "Type of the EventBridge target (e.g., 'ecs-task', 'lambda', 'sns')"
+  type        = string
+  default = "ecs-task"
+}
+variable "ecs_cluster_arn" {
+  description = "ARN of the existing ECS cluster"
   type = string
 }
 
-variable "ecs_task_definition" {
+variable "task_definition_arn" {
   description = "ARN of the existing ECS task definition"
   type = string
 }
 
-variable "slack_notification_endpoint" {
+/*variable "slack_notification_endpoint" {
   description = "Slack notification endpoint"
   type = string
 }
