@@ -24,6 +24,7 @@
         ansible_python_interpreter: /usr/bin/python3
         project_name:  "{{ lookup('env','PROJECT_NAME') }}"
         tier: "{{ lookup('env','TIER') }}"
+        workspace: "{{ lookup('env','WORKSPACE') }}"
 
 #    #get db ip
 #    - name: get db ip
