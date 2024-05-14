@@ -25,7 +25,7 @@
 #        tier: "{{ lookup('env','TIER') }}"
 #        database_name: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
 
-    #load data
+    # Download file
     - name: Download aboutPagesContent.yaml
       get_url:
         url: "{{ about_file_url }}"
@@ -48,8 +48,27 @@
           {% elif tier == 'prod' %}
           https://github.com/CBIIT/bento-icdc-static-content/blob/production/{{ about_file_name }}
           {% endif %}
+     # Check if file exists
+    - name: Verify aboutPagesContent.yaml exists
+      stat:
+        path: "{{ workspace }}/aboutPagesContent.yaml"
+      register: about_file_stat
 
-      
+    - name: Fail if aboutPagesContent.yaml does not exist
+      fail:
+        msg: "{{ workspace }}/aboutPagesContent.yaml is not a file!"
+      when: not about_file_stat.stat.exists
+
+    # Output the contents of the YAML file for debugging
+    - name: Debug aboutPagesContent.yaml contents
+      command: cat "{{ workspace }}/aboutPagesContent.yaml"
+      register: about_file_contents
+
+    - name: Display aboutPagesContent.yaml contents
+      debug:
+        var: about_file_contents.stdout
+
+   #load data   
     - name: perform data loading
       include_role:
         name: bento.common.opensearch_loader
