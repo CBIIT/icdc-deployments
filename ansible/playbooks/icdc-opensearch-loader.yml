@@ -15,6 +15,12 @@
        # -  community.docker:<=2.7.1
         -  git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,collections_v1.2
 
+    - name: download aboutPagesContent file
+      get_url:
+        url: "https://github.com/CBIIT/bento-icdc-static-content/blob/{{ tier }}/aboutPagesContent.yaml"
+        dest: "{{ workspace }}/aboutPagesContent.yaml"
+        mode: '0644'
+
 #    #get db ip
 #    - name: get db ip
 #      include_role:
@@ -44,16 +50,7 @@
         property_file: "config/props-{{ project_name }}.yml"
         #about_file: "{{ workspace }}/{{ project_name }}-frontend/src/content/pre-prod/aboutPagesContent.yaml"
         #about_file_name: "aboutPagesContent.yaml"
-        about_file_url: "https://github.com/CBIIT/bento-icdc-static-content/raw/{{ tier }}/aboutPagesContent.yaml"
-        #about_file_url:
-          #dev: "https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}"
-          #dev2: "https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}"
-          #qa: "https://github.com/CBIIT/bento-icdc-static-content/blob/qa/{{ about_file_name }}"
-          #qa2: "https://github.com/CBIIT/bento-icdc-static-content/blob/qa/{{ about_file_name }}"
-          #stage: "https://github.com/CBIIT/bento-icdc-static-content/blob/stage/{{ about_file_name }}"
-          #prod: "https://github.com/CBIIT/bento-icdc-static-content/blob/production/{{ about_file_name }}"
-        
-
+        #about_file_url: "https://github.com/CBIIT/bento-icdc-static-content/raw/{{ tier }}/aboutPagesContent.yaml"
+        about_file: "{{ workspace }}/aboutPagesContent.yaml"
         #about_file: "{{ workspace }}/{{ project_name }}-frontend/src/content/{{ tier }}/aboutPagesContent.yaml"
-        about_file: "{{ about_file_url }}"
         indices_file: "{{ workspace }}/bento-backend/src/main/resources/yaml/es_indices_{{ project_name }}.yml"
