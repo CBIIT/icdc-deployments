@@ -57,6 +57,22 @@
         #about_file: "{{ workspace }}/{{ project_name }}-frontend/src/content/pre-prod/aboutPagesContent.yaml"
         #about_file_name: "aboutPagesContent.yaml"
         #about_file_url: "https://github.com/CBIIT/bento-icdc-static-content/raw/{{ tier }}/aboutPagesContent.yaml"
-        about_file: "{{ workspace }}/aboutPagesContent.yaml"
+        #about_file: "{{ workspace }}/aboutPagesContent.yaml"
         #about_file: "{{ workspace }}/{{ project_name }}-frontend/src/content/{{ tier }}/aboutPagesContent.yaml"
         indices_file: "{{ workspace }}/bento-backend/src/main/resources/yaml/es_indices_{{ project_name }}.yml"
+        about_file_name: "aboutPagesContent.yaml"
+        about_file_url: >
+          {% if tier == 'dev' %}
+            https://github.com/CBIIT/bento-icdc-static-content/raw/develop/{{ about_file_name }}
+          {% elif tier == 'qa' %}
+            https://github.com/CBIIT/bento-icdc-static-content/raw/qa/{{ about_file_name }}
+          {% elif tier == 'stage' %}
+            https://github.com/CBIIT/bento-icdc-static-content/raw/stage/{{ about_file_name }}
+          {% elif tier == 'prod' %}
+            https://github.com/CBIIT/bento-icdc-static-content/raw/production/{{ about_file_name }}
+          {% endif %}
+
+    - name: Download aboutPagesContent.yaml
+      get_url:
+        url: "{{ about_file_url }}"
+        dest: "{{ workspace }}/{{ about_file_name }}"
