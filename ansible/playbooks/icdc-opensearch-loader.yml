@@ -26,26 +26,28 @@
 #        database_name: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
 
     #load data
-   # - name: Download aboutPagesContent.yaml
-    #  get_url:
-     #   url: "{{ about_file_url }}"
-      #  dest: "{{ workspace }}/{{ about_file_name }}"
-      #vars:
-        #ansible_python_interpreter: /usr/bin/python3
-        #project_name:  "{{ lookup('env','PROJECT_NAME') }}"
-        #tier: "{{ lookup('env','TIER') }}"
-       # workspace: "{{ lookup('env','WORKSPACE') }}"
-        #about_file_name: "aboutPagesContent.yaml"
-        #about_file_url: >
-        # {% if tier == 'dev' %}
-         #   https://github.com/CBIIT/bento-icdc-static-content/raw/develop/{{ about_file_name }}
-         # {% elif tier == 'qa' %}
-         #   https://github.com/CBIIT/bento-icdc-static-content/raw/qa/{{ about_file_name }}
-         # {% elif tier == 'stage' %}
-         #   https://github.com/CBIIT/bento-icdc-static-content/raw/stage/{{ about_file_name }}
-          #{% elif tier == 'prod' %}
-         #   https://github.com/CBIIT/bento-icdc-static-content/raw/production/{{ about_file_name }}
-         # {% endif %}
+    - name: Download aboutPagesContent.yaml
+      get_url:
+        url: "{{ about_file_url }}"
+        dest: "{{ workspace }}/{{ about_file_name }}"
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+        project_name:  "{{ lookup('env','PROJECT_NAME') }}"
+        tier: "{{ lookup('env','TIER') }}"
+        workspace: "{{ lookup('env','WORKSPACE') }}"
+        about_file_name: "aboutPagesContent.yaml"
+        about_file_url: >
+          {% if tier == 'dev' %}
+          https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}
+          {% if tier == 'dev2' %}
+          https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}
+          {% elif tier == 'qa' %}
+          https://github.com/CBIIT/bento-icdc-static-content/blob/qa/{{ about_file_name }}
+          {% elif tier == 'stage' %}
+          https://github.com/CBIIT/bento-icdc-static-content/blob/stage/{{ about_file_name }}
+          {% elif tier == 'prod' %}
+          https://github.com/CBIIT/bento-icdc-static-content/blob/production/{{ about_file_name }}
+          {% endif %}
 
     - name: perform data loading
       include_role:
@@ -69,15 +71,5 @@
         #about_file: "{{ workspace }}/aboutPagesContent.yaml"
         #about_file: "{{ workspace }}/{{ project_name }}-frontend/src/content/{{ tier }}/aboutPagesContent.yaml"
         indices_file: "{{ workspace }}/bento-backend/src/main/resources/yaml/es_indices_{{ project_name }}.yml"
-        about_file: "{{ workspace }}/bento-icdc-static-content/aboutPagesContent.yaml"
-        about_file_name: "aboutPagesContent.yaml"
-        about_file_url: >
-          {% if tier == 'dev' %}
-            https://github.com/CBIIT/bento-icdc-static-content/raw/develop/{{ about_file_name }}
-          {% elif tier == 'qa' %}
-            https://github.com/CBIIT/bento-icdc-static-content/raw/qa/{{ about_file_name }}
-          {% elif tier == 'stage' %}
-            https://github.com/CBIIT/bento-icdc-static-content/raw/stage/{{ about_file_name }}
-          {% elif tier == 'prod' %}
-            https://github.com/CBIIT/bento-icdc-static-content/raw/production/{{ about_file_name }}
-          {% endif %}
+        about_file: "{{ workspace }}/aboutPagesContent.yaml"
+       
