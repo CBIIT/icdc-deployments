@@ -47,8 +47,8 @@ pipeline {
             sortMode: 'ASCENDING_SMART',
             tagFilter: '*',
             useRepository: 'https://github.com/CBIIT/icdc-model-tool')
-	/*gitParameter(branchFilter: 'origin/(.*)', 
-        defaultValue: 'main',
+	gitParameter(branchFilter: 'origin/(.*)', 
+        defaultValue: 'develop',
         name: 'Static_Content_Branch', 
         type: 'PT_BRANCH_TAG',
         quickFilterEnabled: false, 
@@ -67,26 +67,15 @@ pipeline {
     stages {
   	  stage('checkout'){
   		    steps {
-            // Dynamic branch selection based on environment
-                script {
-                    def contentBranch = 'main'
-                    if (params.Environment == 'dev') {
-                        contentBranch = 'develop'
-                    } else if (params.Environment == 'qa') {
-                        contentBranch = 'qa'
-                    } else if (params.Environment == 'stage') {
-                        contentBranch = 'stage'
-                    } else if (params.Environment == 'prod') {
-                        contentBranch = 'production'
-                    }
-                    checkout([$class: 'GitSCM',
-                        branches: [[name: "origin/${contentBranch}"]],
-                        extensions: [[$class: 'RelativeTargetDirectory',
-                        relativeTargetDir: 'bento-icdc-static-content']],
-                        userRemoteConfigs: 
-                        [[url: 'https://github.com/CBIIT/bento-icdc-static-content']]])
-                }
-  		    checkout([$class: 'GitSCM', 
+               checkout([$class: 'GitSCM', 
+                   branches: [[name: "${params.Static_Content_Branch}"]], 
+                   doGenerateSubmoduleConfigurations: 
+                   false, extensions: [], submoduleCfg: [], 
+                   recursiveSubmodules: true,
+                   userRemoteConfigs: 
+                   [[url: 'https://github.com/CBIIT/bento-icdc-static-content']]]) 
+            
+  		       checkout([$class: 'GitSCM', 
   				    branches: [[name: "${params.Dataloader_Branch}"]], 
   				    doGenerateSubmoduleConfigurations: 
   				    false, extensions: [], submoduleCfg: [], 
