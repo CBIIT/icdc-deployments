@@ -31,24 +31,9 @@
         url: "{{ about_file_url }}"
         dest: "{{ workspace }}/{{ about_file_name }}"
       vars:
-        ansible_python_interpreter: /usr/bin/python3
-        project_name:  "{{ lookup('env','PROJECT_NAME') }}"
-        tier: "{{ lookup('env','TIER') }}"
         workspace: "{{ lookup('env','WORKSPACE') }}"
-        about_file_name: "aboutPagesContent.yaml"
-        about_file_url: >
-          {% if tier == 'dev' %}
-          https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}
-          {% if tier == 'dev2' %}
-          https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}
-          {% elif tier == 'qa' %}
-          https://github.com/CBIIT/bento-icdc-static-content/blob/qa/{{ about_file_name }}
-          {% elif tier == 'stage' %}
-          https://github.com/CBIIT/bento-icdc-static-content/blob/stage/{{ about_file_name }}
-          {% elif tier == 'prod' %}
-          https://github.com/CBIIT/bento-icdc-static-content/blob/production/{{ about_file_name }}
-          {% endif %}
-
+        
+      
     - name: perform data loading
       include_role:
         name: bento.common.opensearch_loader
