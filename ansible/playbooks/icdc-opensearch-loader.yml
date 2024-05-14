@@ -53,16 +53,22 @@
       stat:
         path: "{{ workspace }}/aboutPagesContent.yaml"
       register: about_file_stat
+      vars:
+         workspace: "{{ lookup('env','WORKSPACE') }}"
 
     - name: Fail if aboutPagesContent.yaml does not exist
       fail:
         msg: "{{ workspace }}/aboutPagesContent.yaml is not a file!"
       when: not about_file_stat.stat.exists
+      vars:
+         workspace: "{{ lookup('env','WORKSPACE') }}"
 
     # Output the contents of the YAML file for debugging
     - name: Debug aboutPagesContent.yaml contents
       command: cat "{{ workspace }}/aboutPagesContent.yaml"
       register: about_file_contents
+      vars:
+         workspace: "{{ lookup('env','WORKSPACE') }}"
 
     - name: Display aboutPagesContent.yaml contents
       debug:
