@@ -42,9 +42,9 @@
         model_file1: "{{ workspace }}/icdc-model/model-desc/icdc-model.yml"
         model_file2: "{{ workspace }}/icdc-model/model-desc/icdc-model-props.yml"
         property_file: "config/props-{{ project_name }}.yml"
-        about_file: "{{ workspace }}/bento-icdc-static-content/aboutPagesContent.yaml"
         #about_file: "{{ workspace }}/{{ project_name }}-frontend/src/content/pre-prod/aboutPagesContent.yaml"
         #about_file_name: "aboutPagesContent.yaml"
+        about_file_url: "https://github.com/CBIIT/bento-icdc-static-content/raw/{{ tier }}/aboutPagesContent.yaml"
         #about_file_url:
           #dev: "https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}"
           #dev2: "https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}"
@@ -55,5 +55,5 @@
         
 
         #about_file: "{{ workspace }}/{{ project_name }}-frontend/src/content/{{ tier }}/aboutPagesContent.yaml"
-        #about_file: "{{ about_file_url[tier] }}"
+        about_file: "{{ about_file_url }}"
         indices_file: "{{ workspace }}/bento-backend/src/main/resources/yaml/es_indices_{{ project_name }}.yml"
