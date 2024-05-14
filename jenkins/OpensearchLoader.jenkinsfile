@@ -59,106 +59,103 @@ pipeline {
             useRepository: 'https://github.com/CBIIT/bento-icdc-static-content')  // New parameter
     }
     options {
-      ansiColor('xterm')
+        ansiColor('xterm')
     }
     tools {
-      maven 'Default' 
-      jdk 'Default' 
+        maven 'Default' 
+        jdk 'Default' 
     }
     stages {
-      stage('checkout'){
-        steps {
-            script {
-                checkout([$class: 'GitSCM', 
-                    branches: [[name: "${params.Dataloader_Branch}"]], 
-                    doGenerateSubmoduleConfigurations: false, 
-                    extensions: [], submoduleCfg: [], 
-                    recursiveSubmodules: true,
-                    userRemoteConfigs: [[url: 'https://github.com/CBIIT/icdc-dataloader']]])
-                
-                checkout([$class: 'GitSCM',
-                    branches: [[name: "${params.Frontend_Branch}"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'RelativeTargetDirectory',
-                    relativeTargetDir: 'icdc-frontend']],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [[url: 'https://github.com/CBIIT/bento-icdc-frontend']]])
-                
-                checkout([$class: 'GitSCM',
-                    branches: [[name: "${params.Static_Content_Branch}"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'RelativeTargetDirectory',
-                    relativeTargetDir: 'bento-static-content']],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [[url: 'https://github.com/CBIIT/bento-icdc-static-content']]])  // New checkout step
-                
-                checkout([$class: 'GitSCM',
-                    branches: [[name: "${params.Backend_Branch}"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'RelativeTargetDirectory',
-                    relativeTargetDir: 'bento-backend']],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [[url: 'https://github.com/CBIIT/bento-icdc-backend']]])
-                
-                dir('icdc-model') {
-                    git branch: "${params.Model_Branch}",
-                    url: 'https://github.com/CBIIT/icdc-model-tool'
+        stage('checkout') {
+            steps {
+                script {
+                    checkout([$class: 'GitSCM', 
+                        branches: [[name: "${params.Dataloader_Branch}"]], 
+                        doGenerateSubmoduleConfigurations: false, 
+                        extensions: [], submoduleCfg: [], 
+                        recursiveSubmodules: true,
+                        userRemoteConfigs: [[url: 'https://github.com/CBIIT/icdc-dataloader']]])
+                    
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: "${params.Frontend_Branch}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'RelativeTargetDirectory',
+                        relativeTargetDir: 'icdc-frontend']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[url: 'https://github.com/CBIIT/bento-icdc-frontend']]])
+                    
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: "${params.Static_Content_Branch}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'RelativeTargetDirectory',
+                        relativeTargetDir: 'bento-static-content']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[url: 'https://github.com/CBIIT/bento-icdc-static-content']]])  // New checkout step
+                    
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: "${params.Backend_Branch}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'RelativeTargetDirectory',
+                        relativeTargetDir: 'bento-backend']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[url: 'https://github.com/CBIIT/bento-icdc-backend']]])
+                    
+                    dir('icdc-model') {
+                        git branch: "${params.Model_Branch}",
+                        url: 'https://github.com/CBIIT/icdc-model-tool'
+                    }
+                    
+                    sh 'git submodule update --init'
+                    
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: "main"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [[$class: 'RelativeTargetDirectory',
+                        relativeTargetDir: 'icdc-deployments']],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[url: 'https://github.com/CBIIT/icdc-deployments']]])
                 }
-                
-                sh 'git submodule update --init'
-                
-                checkout([$class: 'GitSCM',
-                    branches: [[name: "main"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [[$class: 'RelativeTargetDirectory',
-                    relativeTargetDir: 'icdc-deployments']],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [[url: 'https://github.com/CBIIT/icdc-deployments']]])
             }
         }
-      }
     
-    stage('load-es-data'){
-        environment {
-            SLACK_URL = "${SLACK_URL}"
-            TIER = "${params.Environment}"
-            PROJECT_NAME = "icdc"
-        }
-        steps {
-            script {
-                def aboutFileUrl
-                switch (params.Environment) {
-                    case 'dev':
-                        aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/develop/aboutPagesContent.yaml'
-                        break
-                    case 'qa':
-                        aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/qa/aboutPagesContent.yaml'
-                        break
-                    case 'stage':
-                        aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/stage/aboutPagesContent.yaml'
-                        break
-                    case 'prod':
-                        aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/production/aboutPagesContent.yaml'
-                        break
+        stage('load-es-data') {
+            environment {
+                SLACK_URL = "${SLACK_URL}"
+                TIER = "${params.Environment}"
+                PROJECT_NAME = "icdc"
+            }
+            steps {
+                script {
+                    def aboutFileUrl
+                    switch (params.Environment) {
+                        case 'dev':
+                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/develop/aboutPagesContent.yaml'
+                            break
+                        case 'qa':
+                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/qa/aboutPagesContent.yaml'
+                            break
+                        case 'stage':
+                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/stage/aboutPagesContent.yaml'
+                            break
+                        case 'prod':
+                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/production/aboutPagesContent.yaml'
+                            break
+                    }
+                    wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
+                        ansiblePlaybook( 
+                            playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/icdc-opensearch-loader.yml',
+                            inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
+                            colorized: true
+                        ) 
+                    }
                 }
-            wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
-                ansiblePlaybook( 
-                    playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/icdc-opensearch-loader.yml',
-                    inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
-                    colorized: true
-                ) 
             }
         }
     }
     
- }
- 
-  post {
-
-    always {
-      cleanWs()
+    post {
+        always {
+            cleanWs()
+        }
     }
-
-  }
-
 }
