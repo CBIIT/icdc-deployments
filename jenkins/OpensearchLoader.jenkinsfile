@@ -129,16 +129,16 @@ pipeline {
                     def aboutFileUrl
                     switch (params.Environment) {
                         case 'dev':
-                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/develop/aboutPagesContent.yaml'
+                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/blob/develop/aboutPagesContent.yaml'
                             break
                         case 'qa':
-                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/qa/aboutPagesContent.yaml'
+                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/blob/qa/aboutPagesContent.yaml'
                             break
                         case 'stage':
-                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/stage/aboutPagesContent.yaml'
+                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/blob/stage/aboutPagesContent.yaml'
                             break
                         case 'prod':
-                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/raw/production/aboutPagesContent.yaml'
+                            aboutFileUrl = 'https://github.com/CBIIT/bento-icdc-static-content/blob/production/aboutPagesContent.yaml'
                             break
                     }
                     wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
