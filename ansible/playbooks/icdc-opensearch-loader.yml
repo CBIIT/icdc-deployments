@@ -18,7 +18,7 @@
     - name: download aboutPagesContent file
       get_url:
         #url: "https://github.com/CBIIT/bento-icdc-static-content/blob/{{ tier }}/aboutPagesContent.yaml"
-        url: "https://github.com/CBIIT/bento-icdc-static-content/blob/develope/aboutPagesContent.yaml"
+        url: "https://github.com/CBIIT/bento-icdc-static-content/blob/develop/aboutPagesContent.yaml"
         dest: "{{ workspace }}/aboutPagesContent.yaml"
         mode: '0644'
       vars:
