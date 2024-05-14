@@ -66,40 +66,51 @@ pipeline {
     }
     stages {
   	  stage('checkout'){
-  		steps {
-  			checkout([$class: 'GitSCM', 
-  				branches: [[name: "${params.Dataloader_Branch}"]], 
-  				doGenerateSubmoduleConfigurations: 
-  				false, extensions: [], submoduleCfg: [], 
-                recursiveSubmodules: true,
-  				userRemoteConfigs: 
-  				[[url: 'https://github.com/CBIIT/icdc-dataloader']]])
+  		    steps {
+            // Dynamic branch selection based on environment
+                script {
+                    def contentBranch = 'main'
+                    if (params.Environment == 'dev') {
+                        contentBranch = 'develop'
+                    } else if (params.Environment == 'qa') {
+                        contentBranch = 'qa'
+                    } else if (params.Environment == 'stage') {
+                        contentBranch = 'stage'
+                    } else if (params.Environment == 'prod') {
+                        contentBranch = 'production'
+                    }
+                    checkout([$class: 'GitSCM',
+                        branches: [[name: "origin/${contentBranch}"]],
+                        extensions: [[$class: 'RelativeTargetDirectory',
+                        relativeTargetDir: 'icdc-static-content']],
+                        userRemoteConfigs: 
+                        [[url: 'https://github.com/CBIIT/bento-icdc-static-content']]])
+                }
+  		    checkout([$class: 'GitSCM', 
+  				    branches: [[name: "${params.Dataloader_Branch}"]], 
+  				    doGenerateSubmoduleConfigurations: 
+  				    false, extensions: [], submoduleCfg: [], 
+              recursiveSubmodules: true,
+  				    userRemoteConfigs: 
+  				    [[url: 'https://github.com/CBIIT/icdc-dataloader']]])
 
-			checkout([$class: 'GitSCM',
-				branches: [[name: "${params.Frontend_Branch}"]],
-				doGenerateSubmoduleConfigurations: false,
-				extensions: [[$class: 'RelativeTargetDirectory',
-				relativeTargetDir: 'icdc-frontend']],
-				submoduleCfg: [],
-				userRemoteConfigs: 
-				[[url: 'https://github.com/CBIIT/bento-icdc-frontend']]])
+			    checkout([$class: 'GitSCM',
+				      branches: [[name: "${params.Frontend_Branch}"]],
+				      doGenerateSubmoduleConfigurations: false,
+				      extensions: [[$class: 'RelativeTargetDirectory',
+				      relativeTargetDir: 'icdc-frontend']],
+				      submoduleCfg: [],
+				      userRemoteConfigs: 
+				      [[url: 'https://github.com/CBIIT/bento-icdc-frontend']]])
 
-			/*checkout([$class: 'GitSCM', 
-                    branches: [[name: "${params.Static_Content_Branch}"]], 
-                    doGenerateSubmoduleConfigurations: 
-                    false, extensions: [], submoduleCfg: [], 
-                    recursiveSubmodules: true,
-                    userRemoteConfigs: 
-                    [[url: 'https://github.com/CBIIT/bento-icdc-static-content']]])		*/
-
-			checkout([$class: 'GitSCM',
-				branches: [[name: "${params.Backend_Branch}"]],
-				doGenerateSubmoduleConfigurations: false,
-				extensions: [[$class: 'RelativeTargetDirectory',
-				relativeTargetDir: 'bento-backend']],
-				submoduleCfg: [],
-				userRemoteConfigs: 
-				[[url: 'https://github.com/CBIIT/bento-icdc-backend']]])
+			   checkout([$class: 'GitSCM',
+				     branches: [[name: "${params.Backend_Branch}"]],
+				     doGenerateSubmoduleConfigurations: false,
+				     extensions: [[$class: 'RelativeTargetDirectory',
+				     relativeTargetDir: 'bento-backend']],
+				     submoduleCfg: [],
+				     userRemoteConfigs: 
+				     [[url: 'https://github.com/CBIIT/bento-icdc-backend']]])
 	
 			dir('icdc-model'){
                 git branch: "${params.Model_Branch}",
@@ -107,16 +118,16 @@ pipeline {
 			
 			sh 'git submodule update --init'
   			
-			checkout([$class: 'GitSCM',
-				branches: [[name: "main"]],
-				doGenerateSubmoduleConfigurations: false,
-				extensions: [[$class: 'RelativeTargetDirectory',
-				relativeTargetDir: 'icdc-deployments']],
-				submoduleCfg: [],
-				userRemoteConfigs: 
-				[[url: 'https://github.com/CBIIT/icdc-deployments']]])
+			   checkout([$class: 'GitSCM',
+				     branches: [[name: "main"]],
+				     doGenerateSubmoduleConfigurations: false,
+				     extensions: [[$class: 'RelativeTargetDirectory',
+				     relativeTargetDir: 'icdc-deployments']],
+				     submoduleCfg: [],
+				     userRemoteConfigs: 
+				     [[url: 'https://github.com/CBIIT/icdc-deployments']]])
 
-  		}
+  		    }
   	  }
 	
   	stage('load-es-data'){
