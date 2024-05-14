@@ -82,7 +82,7 @@ pipeline {
                     checkout([$class: 'GitSCM',
                         branches: [[name: "origin/${contentBranch}"]],
                         extensions: [[$class: 'RelativeTargetDirectory',
-                        relativeTargetDir: 'icdc-static-content']],
+                        relativeTargetDir: 'bento-icdc-static-content']],
                         userRemoteConfigs: 
                         [[url: 'https://github.com/CBIIT/bento-icdc-static-content']]])
                 }
