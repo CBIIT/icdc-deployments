@@ -14,9 +14,9 @@ services:
     image: 2.3.1.78
     buildNumber: '78'
   interoperation:
-    version: 1.0.0.106
-    image: 1.0.0.106
-    buildNumber: '106'
+    version: 1.0.0.111
+    image: 1.0.0.111
+    buildNumber: '111'
   data-retriever:
     version: main.4
     image: main.4
