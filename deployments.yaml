@@ -10,9 +10,9 @@ services:
     image: Bento-4.0.237
     buildNumber: '237'
   files:
-    version: 2.3.1.78
-    image: 2.3.1.78
-    buildNumber: '78'
+    version: 2.3.1.79
+    image: 2.3.1.79
+    buildNumber: '79'
   interoperation:
     version: 1.0.0.111
     image: 1.0.0.111
