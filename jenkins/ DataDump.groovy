@@ -43,6 +43,13 @@ pipeline {
   stages{
 
   	stage('create inventory'){
+      agent {
+        docker {
+          image 'cbiitssrepo/cicd-ansible-8.0:latest'
+          args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
+          reuseNode true
+        }
+      }
  		steps {
  		  wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
 			    ansiblePlaybook( 
