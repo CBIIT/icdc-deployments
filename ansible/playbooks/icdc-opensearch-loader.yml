@@ -74,6 +74,17 @@
       debug:
         var: about_file_contents.stdout
 
+    # Display config file for debugging
+    - name: Debug config/es_loader.yml contents
+      command: cat "{{ workspace }}/config/es_loader.yml"
+      register: config_file_contents
+      vars:
+         workspace: "{{ lookup('env','WORKSPACE') }}"
+
+    - name: Display config/es_loader.yml contents
+      debug:
+        var: config_file_contents.stdout
+
    #load data   
     - name: perform data loading
       include_role:
