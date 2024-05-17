@@ -6,9 +6,9 @@ vars:
         about_file_name: "aboutPagesContent.yaml"
         about_file_url: >
           {% if tier == 'dev' %}
-          https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}
+          https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/{{ about_file_name }}
           {% if tier == 'dev2' %}
-          https://github.com/CBIIT/bento-icdc-static-content/blob/develop/{{ about_file_name }}
+          https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/{{ about_file_name }}
           {% elif tier == 'qa' %}
           https://github.com/CBIIT/bento-icdc-static-content/blob/qa/{{ about_file_name }}
           {% elif tier == 'stage' %}
@@ -16,3 +16,41 @@ vars:
           {% elif tier == 'prod' %}
           https://github.com/CBIIT/bento-icdc-static-content/blob/production/{{ about_file_name }}
           {% endif %}
+
+
+ # Check if file exists
+    - name: Verify aboutPagesContent.yaml exists
+      stat:
+        path: "{{ workspace }}/aboutPagesContent.yaml"
+      register: about_file_stat
+      vars:
+         workspace: "{{ lookup('env','WORKSPACE') }}"
+
+    - name: Fail if aboutPagesContent.yaml does not exist
+      fail:
+        msg: "{{ workspace }}/aboutPagesContent.yaml is not a file!"
+      when: not about_file_stat.stat.exists
+      vars:
+         workspace: "{{ lookup('env','WORKSPACE') }}"
+
+    # Output the contents of the YAML file for debugging
+    - name: Debug aboutPagesContent.yaml contents
+      command: cat "{{ workspace }}/aboutPagesContent.yaml"
+      register: about_file_contents
+      vars:
+         workspace: "{{ lookup('env','WORKSPACE') }}"
+
+    - name: Display aboutPagesContent.yaml contents
+      debug:
+        var: about_file_contents.stdout
+
+    # Display config file for debugging
+    - name: Debug config/es_loader.yml contents
+      command: cat "{{ workspace }}/config/es_loader.yml"
+      register: config_file_contents
+      vars:
+         workspace: "{{ lookup('env','WORKSPACE') }}"
+
+    - name: Display config/es_loader.yml contents
+      debug:
+        var: config_file_contents.stdout
