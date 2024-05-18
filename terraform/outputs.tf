@@ -27,6 +27,13 @@ output "eventbridge_lambda_target_id" {
   description = "The ID of the EventBridge Lambda target."
 }
 
+output "task_definition_arn" {
+  value = data.aws_ecs_task_definition.latest.arn
+}
+
+output "task_definition" {
+  value = data.aws_ecs_task_definition.latest.task_definition
+}
 
 #output "read_only_role_arn" {
  # value = module.new_relic_metric_pipeline.*.read_only_role_arn
