@@ -15,5 +15,6 @@ module "event_scheduler" {
 }
   
 data "aws_ecs_task_definition" "latest" {
-  task_definition = "${var.stack_name}-${terraform.workspace}-data-retriever"
+  #task_definition = "${var.stack_name}-${terraform.workspace}-data-retriever"
+  task_definition = "icdc-dev-data-retriever"
 }
