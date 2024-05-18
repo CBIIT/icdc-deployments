@@ -386,10 +386,10 @@ variable "ecs_cluster_arn" {
   type = string
 }
 
-variable "task_definition_arn" {
+/*variable "task_definition_arn" {
   description = "ARN of the existing ECS task definition"
   type = string
-}
+}*/
 
 variable "eventbridge_name" {
   description = "Name of the EventBridge rule"
