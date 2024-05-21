@@ -1,5 +1,5 @@
 module "event_scheduler" {
-  source              = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/eventbridge?ref=eventbridge_new"
+  source              = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/eventbridge?ref=eventbridge_ne"
   resource_prefix     = "${var.stack_name}-${terraform.workspace}"
   eventbridge_name    = var.eventbridge_name
   schedule_expression = var.schedule_expression // Scheduled expression for every day at 9 AM,
