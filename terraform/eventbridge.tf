@@ -6,7 +6,7 @@ module "event_scheduler" {
   target_type         = var.target_type
   role_arn            = module.ecs.ecs_task_execution_role_arn
   target_arn          = var.ecs_cluster_arn 
-  ecs_cluster_arn     = var.ecs_cluster_arn 
+  #ecs_cluster_arn     = var.ecs_cluster_arn 
   task_definition_arn = data.aws_ecs_task_definition.latest.arn
   private_subnet_ids  = var.private_subnet_ids
   ecs_security_groups = var.ecs_security_groups
