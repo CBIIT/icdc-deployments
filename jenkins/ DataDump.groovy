@@ -38,7 +38,7 @@ pipeline {
 	  TIER          = "${params.Environment}"
     SLACK_SECRET  = "icdc_slack_url"
     PROJECT       = "icdc"
-    S3_BUCKET     = "crdc-{{ project }}-{{ tier }}-neo4j-data-backup"
+    S3_BUCKET     = "crdc-${env.PROJECT}-${env.TIER}-neo4j-data-backup"
  }
   stages{
 
