@@ -12,7 +12,7 @@ output "db_password" {
   sensitive = true
 }
 
-output "eventbridge_rule_name" {
+/*output "eventbridge_rule_name" {
   value = module.event_scheduler.eventbridge_rule_name
   description = "Name of the EventBridge rule created for the ECS task scheduler."
 }
@@ -33,7 +33,7 @@ output "task_definition_arn" {
 
 output "task_definition" {
   value = data.aws_ecs_task_definition.latest.task_definition
-}
+}*/
 
 #output "read_only_role_arn" {
  # value = module.new_relic_metric_pipeline.*.read_only_role_arn
