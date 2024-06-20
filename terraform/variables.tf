@@ -365,7 +365,7 @@ variable "newrelic_account_id" {
   default = null
 }
 
-variable "schedule_expression" {
+/*variable "schedule_expression" {
   description = "Schedule expression for the EventBridge rule"
   type        = string
   default = "cron(0 9 * * ? *)"
@@ -391,11 +391,11 @@ variable "ecs_cluster_arn" {
   type = string
 }*/
 
-variable "eventbridge_name" {
+/*variable "eventbridge_name" {
   description = "Name of the EventBridge rule"
   type        = string
   default = ""
-}
+}*/
 
 /*variable "slack_notification_endpoint" {
   description = "Slack notification endpoint"

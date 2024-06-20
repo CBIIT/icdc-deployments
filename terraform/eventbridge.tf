@@ -1,4 +1,4 @@
-module "event_scheduler" {
+/*module "event_scheduler" {
   source              = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/eventbridge?ref=eventbridge_new"
   resource_prefix     = "${var.stack_name}-${terraform.workspace}"
   eventbridge_name    = var.eventbridge_name
@@ -16,4 +16,4 @@ module "event_scheduler" {
   
 data "aws_ecs_task_definition" "latest" {
   task_definition = "${var.stack_name}-${terraform.workspace}-data-retriever"
-}
+}*/
