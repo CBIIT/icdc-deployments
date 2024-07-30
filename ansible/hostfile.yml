@@ -9,7 +9,8 @@
     - name: install aws collection
       shell: "ansible-galaxy collection install {{ item | quote }} --force"
       loop:
-        - amazon.aws:==5.1.0
+       #- amazon.aws:==5.1.0
+        - amazon.aws:==8.1.0
     - name: Create directory for inventory
       ansible.builtin.file:
         path: "{{workspace}}/inventory"
