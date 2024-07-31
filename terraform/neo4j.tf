@@ -1,6 +1,6 @@
 module "neo4j" {
   count = var.create_db_instance ? 1: 0
-  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/neo4j?ref=v1.15"
+  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/neo4j?ref=v1.19"
   resource_prefix     = "${var.stack_name}-${terraform.workspace}"
   env = terraform.workspace
   vpc_id = var.vpc_id

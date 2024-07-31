@@ -1,5 +1,5 @@
 module "alb" {
-  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/loadbalancer?ref=v1.15"
+  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/loadbalancer?ref=v1.19"
   resource_prefix     = "${var.stack_name}-${terraform.workspace}"
   program = var.program
   vpc_id = var.vpc_id
