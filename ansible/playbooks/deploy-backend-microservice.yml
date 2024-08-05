@@ -74,7 +74,7 @@
         es_schema: "{% if project_name == 'bento' %}es-schema.graphql{% else %}es-schema-{{ project_name }}.graphql{% endif %}"
         enable_es_filter: "true"
         #Redis vars
-        enable_redis: "true"
+        enable_redis: "false"
         redis_port: "6379"
         use_cluster: "true"
         redis_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.redis_password', nested=true, region='us-east-1') }}"
