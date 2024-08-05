@@ -2,9 +2,9 @@ Notes: Jenkins pipeline
 project: icdc
 services:
   backend:
-    version: debug-invalid-token.165
-    image: debug-invalid-token.165
-    buildNumber: '165'
+    version: debug-invalid-token.166
+    image: debug-invalid-token.166
+    buildNumber: '166'
   frontend:
     version: v4.0.1.216
     image: v4.0.1.216
