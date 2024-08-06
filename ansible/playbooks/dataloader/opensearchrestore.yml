@@ -1,6 +1,6 @@
 ---
 - name: Opensearch restore
-  hosts: loader
+  hosts: all
   connection: local
   gather_facts: yes
   remote_user: commonsdocker
@@ -12,8 +12,6 @@
       loop:
         - community.docker:<=3.4.3
         - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,v1.19
-      # vars:
-      #   ansible_python_interpreter: /usr/local/bin/python3
         
     #load data
     - name: perform opensearch backup
@@ -22,15 +20,14 @@
         tasks_from: opensearchrestore
       vars:
         #ansible_python_interpreter: /usr/local/bin/python3
+        workspace: "{{ lookup('env','WORKSPACE') }}"
         project_name:  "{{ lookup('env','PROJECT') }}"
         tier: "{{ lookup('env','ENV') }}"
-        workspace: "{{ lookup('env','WORKSPACE') }}"
-        region: us-east-1
+        region: "{{ lookup('env','REGION') }}"
         opensearch_host: "https://{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.es_host', nested=true, region='us-east-1' ) }}/"
-        snapshot_repo: "{{lookup('env','SNAPSHOT_REPO')}}"
-        s3_bucket: "{{lookup('env','S3_Bucket')}}"
-        snapshot_value: "{{lookup('env','SNAPSHOT_VALUE')}}"
-        base_path: "{{lookup('env', 'BASE_PATH')}}"
-        #role_arn: "{% if tier == 'dev2' %}arn:aws:iam::917011444075:role/power-user-crdc-dev-icdc-opensearch-snapshot{% else %}arn:aws:iam::917011444075:power-user-crdc-dev-icdc-opensearch-snapshot{% endif %}"
-        #role_arn: "arn:aws:iam::917011444075:power-user-crdc-dev-icdc-opensearch-snapshot"
+        snapshot_repo: "{{ project_name }}"
+        s3_bucket: "{{lookup('env','S3_BUCKET')}}"
+        snapshot_value: "{{lookup('env','SNAPSHOT_NAME')}}"
+        base_path: ""
         indices: "{{lookup('env', 'INDICES')}}"
+        role_arn: "{{lookup('env', 'ROLE_ARN')}}"
