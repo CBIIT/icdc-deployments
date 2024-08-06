@@ -20,94 +20,84 @@ pipeline {
 	parameters {
     extendedChoice( 
         name: 'Environment', 
-        defaultValue: 'dev2', 
-        description: 'Choose the environment to build', 
+        description: 'The environment to back up from.', 
+        defaultValue: 'dev', 
         type: 'PT_SINGLE_SELECT',
-        value: 'dev2' )
-    string(defaultValue: "icdc",
-        description: 'snapshot repository name',
-        name: 'PROJECT_NAME')
-    string(defaultValue: "icdc",
-        description: 'snapshot repository name',
-        name: 'SNAPSHOT_REPO')
-    string(defaultValue: "v_1_0",
-        description: 'Snapshot name used for restore operation',
-        name: 'SNAPSHOT_VALUE')
-    string(description: 'indices to be backed up from opensearch. values should comma seperated.',
-            name: 'INDICES')
-    string(defaultValue: "crdc-nonprod-icdc-opensearch-snapshot-bucket",
-        description: 'S3 bucket which has the snapshot to restore',
-        name: 'S3_BUCKET')
-    string(defaultValue: "icdc",
-        description: 'sub folder in S3 bucket where the snapshot is present',
-        name: 'BASE_PATH')
+        value: 'dev,dev2,qa,qa2' )
+
+    string(name: 'SNAPSHOT_NAME',
+        description: 'Snapshot name used for backup/restore operation.')
+
+    string(name: 'INDICES',
+        description: 'Indices to be backed up from Opensearch. Values should comma seperated. If left blank all indices will be selected.')
+
+    string(name: 'S3_BUCKET',
+        description: 'S3 bucket which holds the snapshot.',
+        defaultValue: "crdc-nonprod-icdc-opensearch-snapshot-bucket")
   }
+
   options {
   	ansiColor('xterm')
   }
-  tools {
-  	maven 'Default' 
-    jdk 'Default' 
-  }
+
   environment {
-      PROGRAM      = "crdc"
-	  PROJECT      = "icdc"
-	  SLACK_SECRET = "icdc_slack_url"
-	  ENV          = "${params.Environment}"
-	  REGION       = "us-east-1"
-	  DEPLOY_REPO  = "${env.PROJECT}-deployments"
+    PROGRAM       = "crdc"
+	  PROJECT       = "icdc"
+	  SLACK_SECRET  = "icdc_slack_url"
+	  ENV           = "${params.Environment}"
+    SNAPSHOT_NAME = "${params.SNAPSHOT_NAME}"
+    INDICES       = "${params.INDICES}"
+    S3_BUCKET     = "${params.S3_BUCKET}"
+    REGION        = "us-east-1"
+	  DEPLOY_REPO   = "icdc-deployments"
   }
   stages{
       stage('checkout'){
       steps {
 
         checkout( poll: false, 
-        changelog:false,
-        scm: [$class: 'GitSCM', 
-        //branches: [[name: '*/main']], 
-        branches: [[name: '*/os_snapshot']], 
-        doGenerateSubmoduleConfigurations: false, 
-        extensions: [[$class: 'DisableRemotePoll'],
-        [$class: 'PathRestriction', excludedRegions: '*'], 
-        [$class: 'RelativeTargetDirectory', 
-        relativeTargetDir: "${env.PROJECT}-deployments"]],
-        submoduleCfg: [], 
-	    userRemoteConfigs:
-		[[url: "https://github.com/CBIIT/${env.DEPLOY_REPO}"]]])
+          changelog:false,
+          scm: [$class: 'GitSCM', 
+          branches: [[name: '*/main']], 
+          doGenerateSubmoduleConfigurations: false, 
+          extensions: [[$class: 'DisableRemotePoll'],
+          [$class: 'PathRestriction', excludedRegions: '*'], 
+          [$class: 'RelativeTargetDirectory', 
+          relativeTargetDir: "icdc-deployments"]],
+          submoduleCfg: [], 
+          userRemoteConfigs:
+          [[url: "https://github.com/CBIIT/${env.DEPLOY_REPO}"]]])
 
         }
  
     }
+
+    stage('Set Environment Variables'){
+
+ 		steps {
+
+ 			script {
+
+				// set account number
+				env.AWS_ACCOUNT = sh(label: 'Get account number', returnStdout: true, script: "aws sts get-caller-identity --query \"Account\" --output text").trim()
+
+			}
+
+ 		}
+
+  	}
+
   	stage('opensearch_backup'){
-      environment {
-        TIER = "${params.Environment}"
-      }
-      // agent {
-      //       docker {
-      //           image 'cbiitssrepo/cicd-ansible_4.0'
-      //           args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
-      //           reuseNode true
-      //       }
-      // }
  		  steps{
         wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]){
              ansiblePlaybook( 
                 playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/dataloader/opensearchbackup.yml',
                 inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
                 extraVars: [
-                    tier: "${ENV}",
-                    project_name: "${PROJECT}",
-                    snapshot_repo: "${params.SNAPSHOT_REPO}", 
-                    snapshot_value: "${params.SNAPSHOT_VALUE}",
-                    base_path: "${params.BASE_PATH}",
-                    indices: "${params.INDICES}",
-                    s3_bucket: "${params.S3_BUCKET}",
-                    project: "${PROJECT}",
-                    role_arn: "arn:aws:iam::917011444075:role/power-user-crdc-dev-icdc-opensearch-snapshot"
+                    role_arn: "arn:aws:iam::${AWS_ACCOUNT}:role/power-user-crdc-dev-icdc-opensearch-snapshot"
                     ],
                   hostKeyChecking: false,
-                  colorized: true,
-                  extras: '-vvv') 
+                  colorized: true)
         }
       }
     }

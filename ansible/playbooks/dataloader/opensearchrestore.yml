@@ -32,5 +32,5 @@
         snapshot_value: "{{lookup('env','SNAPSHOT_VALUE')}}"
         base_path: "{{lookup('env', 'BASE_PATH')}}"
         #role_arn: "{% if tier == 'dev2' %}arn:aws:iam::917011444075:role/power-user-crdc-dev-icdc-opensearch-snapshot{% else %}arn:aws:iam::917011444075:power-user-crdc-dev-icdc-opensearch-snapshot{% endif %}"
-        role_arn: "arn:aws:iam::917011444075:power-user-crdc-dev-icdc-opensearch-snapshot"
+        #role_arn: "arn:aws:iam::917011444075:power-user-crdc-dev-icdc-opensearch-snapshot"
         indices: "{{lookup('env', 'INDICES')}}"
