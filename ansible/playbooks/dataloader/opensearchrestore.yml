@@ -22,8 +22,8 @@
         tasks_from: opensearchrestore
       vars:
         #ansible_python_interpreter: /usr/local/bin/python3
-        project_name:  "{{ lookup('env','PROJECT_NAME') }}"
-        tier: "{{ lookup('env','TIER') }}"
+        project_name:  "{{ lookup('env','PROJECT') }}"
+        tier: "{{ lookup('env','ENV') }}"
         workspace: "{{ lookup('env','WORKSPACE') }}"
         region: us-east-1
         opensearch_host: "https://{{ lookup('amazon.aws.aws_secret', 'bento/{{ project_name }}/{{ tier }}.es_host', nested=true, region='us-east-1' ) }}/"
