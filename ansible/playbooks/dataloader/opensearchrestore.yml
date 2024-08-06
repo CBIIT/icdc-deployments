@@ -11,7 +11,7 @@
       shell: "ansible-galaxy collection install {{ item | quote }} --force"
       loop:
         - community.docker:<=3.4.3
-        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,opensearch_testing
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,v1.19
       # vars:
       #   ansible_python_interpreter: /usr/local/bin/python3
         
