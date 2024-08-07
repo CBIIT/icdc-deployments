@@ -33,7 +33,7 @@ pipeline {
 
     string(name: 'S3_BUCKET',
         description: 'S3 bucket which holds the snapshot.',
-        defaultValue: "crdc-nonprod-icdc-opensearch-snapshot-bucket")
+        defaultValue: "crdc-prod-icdc-opensearch-snapshot-bucket")
   }
 
   options {
