@@ -1,11 +1,10 @@
 #cloudfront
 module "cloudfront" {
   count = var.create_cloudfront ? 1 : 0
-  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/cloudfront?ref=v1.19"
-  resource_prefix     = "${var.stack_name}-${terraform.workspace}"
+  source = "git::https://github.com/CBIIT/datacommons-devops.git//terraform/modules/cloudfront?ref=cloudfront_no_kenesis"
   alarms = var.alarms
   domain_name = var.domain_name
-  cloudfront_distribution_bucket_name = var.cloudfront_distribution_bucket_name
+  cloudfront_distribution_bucket_name = module.s3.bucket_name
   cloudfront_slack_channel_name =  var.cloudfront_slack_channel_name
   env = terraform.workspace
   stack_name = var.stack_name
