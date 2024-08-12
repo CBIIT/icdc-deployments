@@ -43,6 +43,8 @@
           https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/develop/{{ about_file_name }}
           {% elif tier == 'qa' %}
           https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/{{ about_file_name }}
+          {% elif tier == 'qa2' %}
+          https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/qa/{{ about_file_name }}
           {% elif tier == 'stage' %}
           https://raw.githubusercontent.com/CBIIT/bento-icdc-static-content/stage/{{ about_file_name }}
           {% elif tier == 'prod' %}
