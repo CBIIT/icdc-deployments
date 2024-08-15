@@ -74,6 +74,15 @@ pipeline {
   	maven 'Default' 
     jdk 'Default' 
   }
+
+  environment {
+
+    PROJECT      = "icdc"
+    REGION       = "us-east-1"
+    ENV          = "${params.Environment}"
+
+  }
+
   stages{
   	stage('checkout'){
   		steps {
@@ -100,39 +109,17 @@ pipeline {
         steps {
           script {
             switch("${params.Environment}") {
-              case "demo":
-                withCredentials([usernamePassword(credentialsId: 'neo4j_icdc_dev_cred', passwordVariable: 'neo4j_password', usernameVariable: 'neo4j_user')]) {
-                  env.NEO4J_IP        = "${NEO4J_DEMO_IP}"
-                  env.S3_FOLDER       = "${params.S3Folder}"
-                  env.TIER            = "${params.Environment}"
-                  env.WIPE_DB         = "${params.WipeDB}"
-                  env.CHEAT_MODE      = "${params.CheatMode}"
-                  env.PROJECT         = "${params.ProjectName}"
-                  env.NEO4J_PASSWORD  = "${neo4j_password}"
-                  env.SPLIT           = "${params.SplitTransactions}"
-                }
-              break
               case "dev":
                 withCredentials([usernamePassword(credentialsId: 'neo4j_icdc_dev_cred', passwordVariable: 'neo4j_password', usernameVariable: 'neo4j_user')]) {
-                  env.NEO4J_IP        = "${NEO4J_ICDC_DEV_IP}"
-                  env.S3_FOLDER       = "${params.S3Folder}"
+                  //env.NEO4J_IP        = "${NEO4J_ICDC_DEV_IP}"
+		  env.NEO4J_IP        = sh(label: 'Get Neo4j IP', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.neo4j_ip'").trim()
+                  //env.NEO4J_PASSWORD  = "${neo4j_password}"
+		  env.NEO4J_PASSWORD  = sh(label: 'Get Neo4j Password', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.neo4j_password'").trim()
+		  env.S3_FOLDER       = "${params.S3Folder}"
                   env.TIER            = "${params.Environment}"
                   env.WIPE_DB         = "${params.WipeDB}"
                   env.PROJECT         = "${params.ProjectName}"
                   env.CHEAT_MODE      = "${params.CheatMode}"
-                  env.NEO4J_PASSWORD  = "${neo4j_password}"
-                  env.SPLIT           = "${params.SplitTransactions}"
-                }
-              break
-              case "ecs-dev":
-                withCredentials([usernamePassword(credentialsId: 'neo4j_icdc_dev_cred', passwordVariable: 'neo4j_password', usernameVariable: 'neo4j_user')]) {
-                  env.NEO4J_IP        = "${NEO4J_ECS_DEV_IP}"
-                  env.S3_FOLDER       = "${params.S3Folder}"
-                  env.TIER            = "${params.Environment}"
-                  env.WIPE_DB         = "${params.WipeDB}"
-                  env.PROJECT         = "${params.ProjectName}"
-                  env.CHEAT_MODE      = "${params.CheatMode}"
-                  env.NEO4J_PASSWORD  = "${neo4j_password}"
                   env.SPLIT           = "${params.SplitTransactions}"
                 }
               break
