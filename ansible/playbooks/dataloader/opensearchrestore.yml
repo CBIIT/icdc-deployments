@@ -10,7 +10,7 @@
     - name: install aws collection
       shell: "ansible-galaxy collection install {{ item | quote }} --force"
       loop:
-        - community.docker:<=3.4.3
+       # - community.docker:<=3.4.3
         - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,v1.19
         
     #load data
