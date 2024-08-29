@@ -10,9 +10,9 @@ services:
     image: v4.0.1.216
     buildNumber: '216'
   files:
-    version: 2.3.1.81
-    image: 2.3.1.81
-    buildNumber: '81'
+    version: 2.3.1.83
+    image: 2.3.1.83
+    buildNumber: '83'
   interoperation:
     version: 1.0.0.119
     image: 1.0.0.119
