@@ -126,9 +126,6 @@ pipeline {
           ansiblePlaybook( 
             playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/icdc-data-loader.yml',
             inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
-            extraVars: [
-                            
-            ],
             credentialsId: 'commonsdocker',
             colorized: true
           )
