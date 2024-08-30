@@ -82,6 +82,7 @@ pipeline {
     WIPE_DB           = "${params.Wipe_DB}"
     CHEAT_MODE        = "${params.Cheat_Mode}"
     SPLIT             = "${params.Split_Transactions}"
+    DATA_BUCKET       = "nci-cbiit-caninedatacommons-dev"
 
   }
 
