@@ -1,0 +1,29 @@
+- name: load data
+  hosts: loader
+  connection: local
+  gather_facts: no
+
+  tasks:
+    #install collections
+    - name: install aws collection
+      shell: "ansible-galaxy collection install {{ item | quote }}"
+      loop:
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,v1.19
+    
+    #run data loader
+    - name: data loader stage
+      include_role:
+        name: bento.common.data_loader
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+        platform: aws
+        region: us-east-1
+        project: "icdc"
+        workspace: "{{ lookup('env','WORKSPACE') }}"
+        model_file1: "{{ workspace }}/{{ project }}-model/model-desc/icdc-model.yml"
+        model_file2: "{{ workspace }}/{{ project }}-model/model-desc/icdc-model-props.yml"
+        property_file: "config/props-icdc-pmvp.yml"
+        neo4j_user: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project }}/{{ tier }}.neo4j_user', nested=true, region='us-east-1' ) }}"
+        neo4j_ip: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
+        neo4j_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project }}/{{ tier }}.neo4j_password', nested=true, region='us-east-1' ) }}"
+        loading_mode: "upsert"

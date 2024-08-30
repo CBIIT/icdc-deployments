@@ -1,0 +1,234 @@
+pipeline {
+	
+  agent {
+
+		node {
+			label 'slave-ncias-d2320-c'
+		}
+
+  }
+
+	parameters {
+    gitParameter(branchFilter: 'origin/(.*)', 
+        defaultValue: 'master', 
+        name: 'Data_Loader_Branch', 
+        type: 'PT_BRANCH_TAG',
+        quickFilterEnabled: true, 
+        selectedValue: 'DEFAULT', 
+        sortMode: 'ASCENDING_SMART', 
+        tagFilter: '*', 
+        useRepository: 'https://github.com/CBIIT/icdc-dataloader')
+    
+    gitParameter(branchFilter: 'origin/(.*)', 
+        defaultValue: 'master', 
+        name: 'Model_Branch', 
+        type: 'PT_BRANCH_TAG',
+        quickFilterEnabled: true, 
+        selectedValue: 'DEFAULT', 
+        sortMode: 'ASCENDING_SMART', 
+        tagFilter: '*', 
+        useRepository: 'https://github.com/CBIIT/icdc-model-tool')
+    
+    extendedChoice( 
+        name: 'Environment', 
+        defaultValue: 'dev', 
+        description: 'Choose the environment to build', 
+        type: 'PT_SINGLE_SELECT',
+        value: 'dev,qa,stage,prod' )
+
+    string(defaultValue: "", 
+        description: 'S3 Folder to load data from', 
+        name: 'S3_Folder')
+
+    extendedChoice( 
+        defaultValue: 'no', 
+        name: 'Wipe_DB', 
+        description: 'Choose yes to wipe DB',
+        quoteValue: false,
+        multiSelectDelimiter: ',',
+        value: 'no,yes',
+        type: 'PT_RADIO')
+
+    extendedChoice( 
+        defaultValue: 'no', 
+        name: 'Cheat_Mode', 
+        description: 'Bypass Data Validation',
+        quoteValue: false,
+        multiSelectDelimiter: ',',
+        value: 'no,yes',
+        type: 'PT_RADIO')
+
+    extendedChoice( 
+        defaultValue: 'false', 
+        name: 'Split_Transactions', 
+        description: 'Choose true to the Split Transactions',
+        quoteValue: false,
+        multiSelectDelimiter: ',',
+        value: 'false,true',
+        type: 'PT_SINGLE_SELECT')
+
+	  booleanParam(
+		    defaultValue: true,
+		    description: 'Flush the Redis cache',
+		    name: 'Flush_Redis')		
+  }
+  
+  environment {
+  	
+    DATALOADER_BRANCH = "${params.Data_Loader_Branch}"
+    MODEL_BRANCH      = "${params.Model_Branch}"
+    S3_FOLDER         = "${params.S3_Folder}"
+    ENV               = "${params.Environment}"
+    WIPE_DB           = "${params.Wipe_DB}"
+    CHEAT_MODE        = "${params.Cheat_Mode}"
+    SPLIT             = "${params.Split_Transactions}"
+    REGION            = "us-east-1"
+    PROJECT           = "icdc"
+    DATA_BUCKET       = "nci-cbiit-caninedatacommons-dev"
+
+  }
+
+  stages{
+
+  	stage('checkout'){
+  		steps {
+
+  		  checkout([$class: 'GitSCM',
+			    branches: [[name: "${env.DATALOADER_BRANCH}"]],
+          extensions: [[$class: 'SubmoduleOption', 
+          recursiveSubmodules: true]],
+          userRemoteConfigs:
+          [[url: "https://github.com/CBIIT/icdc-dataloader"]]])
+
+        checkout([$class: 'GitSCM',
+          branches: [[name: "${env.MODEL_BRANCH}"]],
+          extensions: [[$class: 'SubmoduleOption', 
+          recursiveSubmodules: true],
+          [$class: 'RelativeTargetDirectory',
+          relativeTargetDir: "icdc-model"]],
+          userRemoteConfigs:
+          [[url: "https://github.com/CBIIT/icdc-model-tool"]]])
+
+        checkout([$class: 'GitSCM',
+          branches: [[name: "main"]],
+          extensions: [[$class: 'SubmoduleOption', 
+          recursiveSubmodules: true],
+          [$class: 'RelativeTargetDirectory',
+          relativeTargetDir: "icdc-deployments"]],
+          userRemoteConfigs:
+          [[url: "https://github.com/CBIIT/icdc-deployments"]]])
+
+  		}
+  	}
+
+  	stage('load-data'){
+      agent {
+        docker {
+          image 'cbiitssrepo/cicd-ansible_4.0'
+          args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
+          reuseNode true
+        }
+      }
+
+      steps {
+
+        wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
+          ansiblePlaybook( 
+            playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/icdc-data-loader.yml',
+            inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
+            extraVars: [
+              tier: "${ENV}",
+              s3_folder: "${S3_FOLDER}",
+              wipe_db: "${WIPE_DB}",
+              cheat_mode: "${CHEAT_MODE}",
+              split_transactions: "${SPLIT_TRANSACTIONS}",
+              data_bucket: "nci-cbiit-caninedatacommons-dev"
+						],
+            colorized: true
+            //extras: '-vvv'
+          )
+        }
+
+      }
+    }
+	
+    stage('clear redis cache'){
+      when {
+        allOf {
+
+          not { expression { params.Environment == 'stage' } }
+          not { expression { params.Environment == 'prod' } }
+          expression { params.Flush_Redis }
+            
+        }
+
+      }
+
+      agent {
+        docker {
+          image 'cbiitssrepo/cicd-ansible_4.0'
+          args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
+          reuseNode true
+        }
+      }
+
+      steps{
+        script {
+
+          REDIS_HOST = sh(label: 'Get Redis DB Host', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.neo4j_ip'").trim()
+          REDIS_PASS = sh(label: 'Get Redis DB Password', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.redis_password'").trim()
+          //REDIS_PORT = sh(label: 'Get Redis DB Port', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.redis_password'").trim()
+          
+          maskPasswords(varPasswordPairs: [[password: "${REDIS_PASS}"]]){
+
+            // Get Redis key info prior to flushing
+            REDIS_STATE = sh(label: 'Get Redis DB Key Info', returnStdout: true, script: "redis-cli -h $REDIS_HOST -a $REDIS_PASS -p 6379 INFO keyspace").trim()
+            println "Redis DB Key Info:   $REDIS_STATE"
+
+            // Flush Redis keys
+            REDIS_STATE = sh(label: 'Get Redis DB Key Info', returnStdout: true, script: "redis-cli -h $REDIS_HOST -a $REDIS_PASS -p 6379 FLUSHALL").trim()
+            println "Redis Flush Output:   $REDIS_STATE"
+
+            // Get Redis key info after flushing
+            REDIS_STATE = sh(label: 'Get Redis DB Key Info', returnStdout: true, script: "redis-cli -h $REDIS_HOST -a $REDIS_PASS -p 6379 INFO keyspace").trim()
+            println "Redis DB Key Info:   $REDIS_STATE"
+
+          }
+
+        }
+          
+        // wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
+        
+        //   script {
+        //     sh label: 'database-hosts', script: '''#!/bin/bash
+        //       echo "Creating inventory file"
+        //       echo "[icdc]" > ${WORKSPACE}/icdc-devops/ansible/hosts
+        //       echo ${NEO4J_IP} >> ${WORKSPACE}/icdc-devops/ansible/hosts
+        //       '''
+        //   }
+        
+        //   ansiblePlaybook( 
+        //     playbook: '${WORKSPACE}/icdc-devops/ansible/redis_icdc.yml',
+        //     inventory: '${WORKSPACE}/icdc-devops/ansible/hosts',
+        //     credentialsId: 'commonsdocker',
+        //     colorized: true
+        //   )
+
+        // }
+
+      }
+    }
+
+  }
+
+  post {
+   
+    cleanup {
+	
+		  cleanWs()
+    
+	  }
+	
+  }
+
+}
