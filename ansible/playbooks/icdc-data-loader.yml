@@ -24,7 +24,7 @@
         region: us-east-1
         #project_name: "{{project_name}}"
         project_name: "icdc"
-        tier: "{{ tier }}"
+        tier: "{{ lookup('env','TIER') }}"
         workspace: "{{ lookup('env','WORKSPACE') }}"
         #model_file1: "{{ workspace }}/{{ project_name }}-model/model-desc/{{ model_file_1 }}"
         #model_file2: "{{ workspace }}/{{ project_name }}-model/model-desc/{{ model_file_2 }}"
