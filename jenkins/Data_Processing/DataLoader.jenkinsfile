@@ -128,6 +128,17 @@ pipeline {
           reuseNode true
         }
       }
+
+      environment {
+
+        S3_FOLDER         = "${params.S3_Folder}"
+        TIER              = "${params.Environment}"
+        WIPE_DB           = "${params.Wipe_DB}"
+        CHEAT_MODE        = "${params.Cheat_Mode}"
+        SPLIT             = "${params.Split_Transactions}"
+        DATA_BUCKET       = "nci-cbiit-caninedatacommons-dev"
+
+      }
       
       steps {
 
