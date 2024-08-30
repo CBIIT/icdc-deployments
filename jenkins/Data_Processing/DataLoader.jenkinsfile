@@ -42,7 +42,7 @@ pipeline {
 
     extendedChoice( 
         defaultValue: 'no', 
-        name: 'WipeDB', 
+        name: 'Wipe_DB', 
         description: 'Choose yes to wipe DB',
         quoteValue: false,
         multiSelectDelimiter: ',',
@@ -51,7 +51,7 @@ pipeline {
 
     extendedChoice( 
         defaultValue: 'no', 
-        name: 'CheatMode', 
+        name: 'Cheat_Mode', 
         description: 'Bypass Data Validation',
         quoteValue: false,
         multiSelectDelimiter: ',',
@@ -60,7 +60,7 @@ pipeline {
 
     extendedChoice( 
         defaultValue: 'false', 
-        name: 'SplitTransactions', 
+        name: 'Split_Transactions', 
         description: 'Choose true to the Split Transactions',
         quoteValue: false,
         multiSelectDelimiter: ',',
@@ -79,10 +79,9 @@ pipeline {
     MODEL_BRANCH      = "${params.Model_Branch}"
     S3_FOLDER         = "${params.S3Folder}"
     TIER              = "${params.Environment}"
-    WIPE_DB           = "${params.WipeDB}"
-    CHEAT_MODE        = "${params.CheatMode}"
-    PROJECT           = "${params.ProjectName}"
-    SPLIT             = "${params.SplitTransactions}"
+    WIPE_DB           = "${params.Wipe_DB}"
+    CHEAT_MODE        = "${params.Cheat_Mode}"
+    SPLIT             = "${params.Split_Transactions}"
 
   }
 
