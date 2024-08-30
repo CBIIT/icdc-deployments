@@ -150,15 +150,14 @@ pipeline {
             //credentialsId: 'commonsdocker',
             extraVars: [
               tier: "${TIER}",
-              //project: "${PROJECT}",
               s3_folder: "${S3_FOLDER}",
               wipe_db: "${WIPE_DB}",
               cheat_mode: "${CHEAT_MODE}",
               split_transactions: "${SPLIT_TRANSACTIONS}",
               data_bucket: "nci-cbiit-caninedatacommons-dev"
 						],
-            colorized: true,
-            extras: '-vvv'
+            colorized: true
+            //extras: '-vvv'
           )
         }
 

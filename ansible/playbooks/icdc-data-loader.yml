@@ -12,8 +12,8 @@
        # -  amazon.aws:<=5.4.0
        # -  community.aws:<=3.2.0
        # -  community.docker:<=2.7.1
-        #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,v1.19
-        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,dataloader_test
+        - git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,v1.19
+        #- git+https://github.com/CBIIT/datacommons-devops.git#/ansible/collections/bento/common/,dataloader_test
     
     #run data loader
     - name: data loader stage
