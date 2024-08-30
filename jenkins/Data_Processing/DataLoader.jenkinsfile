@@ -78,7 +78,7 @@ pipeline {
     DATALOADER_BRANCH = "${params.Data_Loader_Branch}"
     MODEL_BRANCH      = "${params.Model_Branch}"
     S3_FOLDER         = "${params.S3_Folder}"
-    TIER              = "${params.Environment}"
+    ENV               = "${params.Environment}"
     WIPE_DB           = "${params.Wipe_DB}"
     CHEAT_MODE        = "${params.Cheat_Mode}"
     SPLIT             = "${params.Split_Transactions}"
@@ -131,16 +131,16 @@ pipeline {
         }
       }
 
-      environment {
+      // environment {
 
-        S3_FOLDER          = "${params.S3_Folder}"
-        TIER               = "${params.Environment}"
-        WIPE_DB            = "${params.Wipe_DB}"
-        CHEAT_MODE         = "${params.Cheat_Mode}"
-        SPLIT_TRANSACTIONS = "${params.Split_Transactions}"
-        DATA_BUCKET        = "nci-cbiit-caninedatacommons-dev"
+      //   S3_FOLDER          = "${params.S3_Folder}"
+      //   ENV                = "${params.Environment}"
+      //   WIPE_DB            = "${params.Wipe_DB}"
+      //   CHEAT_MODE         = "${params.Cheat_Mode}"
+      //   SPLIT_TRANSACTIONS = "${params.Split_Transactions}"
+      //   DATA_BUCKET        = "nci-cbiit-caninedatacommons-dev"
 
-      }
+      // }
       
       steps {
 
@@ -150,7 +150,7 @@ pipeline {
             inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
             //credentialsId: 'commonsdocker',
             extraVars: [
-              tier: "${TIER}",
+              tier: "${ENV}",
               s3_folder: "${S3_FOLDER}",
               wipe_db: "${WIPE_DB}",
               cheat_mode: "${CHEAT_MODE}",
