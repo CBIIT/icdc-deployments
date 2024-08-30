@@ -150,10 +150,10 @@ pipeline {
             extraVars: [
               tier: "${TIER}",
               //project: "${PROJECT}",
-              s3_folder: "${S3_FOLDER}"
-              wipe_db: "${WIPE_DB}"
-              cheat_mode: "${CHEAT_MODE}"
-              split: "${SPLIT}"
+              s3_folder: "${S3_FOLDER}",
+              wipe_db: "${WIPE_DB}",
+              cheat_mode: "${CHEAT_MODE}",
+              split: "${SPLIT}",
               data_bucket: "nci-cbiit-caninedatacommons-dev"
 						],
             colorized: true,
