@@ -83,6 +83,7 @@ pipeline {
     CHEAT_MODE        = "${params.Cheat_Mode}"
     SPLIT             = "${params.Split_Transactions}"
     REGION            = "us-east-1"
+    PROJECT           = "icdc"
     DATA_BUCKET       = "nci-cbiit-caninedatacommons-dev"
 
   }
