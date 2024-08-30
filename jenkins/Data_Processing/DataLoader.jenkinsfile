@@ -147,6 +147,15 @@ pipeline {
             playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/icdc-data-loader.yml',
             inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
             //credentialsId: 'commonsdocker',
+            extraVars: [
+              tier: "${TIER}",
+              //project: "${PROJECT}",
+              s3_folder: "${S3_FOLDER}"
+              wipe_db: "${WIPE_DB}"
+              cheat_mode: "${CHEAT_MODE}"
+              split: "${SPLIT}"
+              data_bucket: "nci-cbiit-caninedatacommons-dev"
+						],
             colorized: true,
             extras: '-vvv'
           )
