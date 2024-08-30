@@ -38,7 +38,7 @@ pipeline {
 
     string(defaultValue: "", 
         description: 'S3 Folder to load data from', 
-        name: 'S3Folder')
+        name: 'S3_Folder')
 
     extendedChoice( 
         defaultValue: 'no', 
@@ -77,7 +77,7 @@ pipeline {
   	
     DATALOADER_BRANCH = "${params.Data_Loader_Branch}"
     MODEL_BRANCH      = "${params.Model_Branch}"
-    S3_FOLDER         = "${params.S3Folder}"
+    S3_FOLDER         = "${params.S3_Folder}"
     TIER              = "${params.Environment}"
     WIPE_DB           = "${params.Wipe_DB}"
     CHEAT_MODE        = "${params.Cheat_Mode}"
