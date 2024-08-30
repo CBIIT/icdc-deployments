@@ -110,8 +110,7 @@ pipeline {
           [[url: "https://github.com/CBIIT/icdc-model-tool"]]])
 
         checkout([$class: 'GitSCM',
-          //branches: [[name: "main"]],
-          branches: [[name: "redis_update"]],
+          branches: [[name: "main"]],
           extensions: [[$class: 'SubmoduleOption', 
           recursiveSubmodules: true],
           [$class: 'RelativeTargetDirectory',
@@ -131,24 +130,12 @@ pipeline {
         }
       }
 
-      // environment {
-
-      //   S3_FOLDER          = "${params.S3_Folder}"
-      //   ENV                = "${params.Environment}"
-      //   WIPE_DB            = "${params.Wipe_DB}"
-      //   CHEAT_MODE         = "${params.Cheat_Mode}"
-      //   SPLIT_TRANSACTIONS = "${params.Split_Transactions}"
-      //   DATA_BUCKET        = "nci-cbiit-caninedatacommons-dev"
-
-      // }
-      
       steps {
 
         wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]) {
           ansiblePlaybook( 
             playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/icdc-data-loader.yml',
             inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
-            //credentialsId: 'commonsdocker',
             extraVars: [
               tier: "${ENV}",
               s3_folder: "${S3_FOLDER}",
@@ -188,8 +175,7 @@ pipeline {
       steps{
         script {
 
-          //REDIS_HOST = sh(label: 'Get Redis DB Host', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.neo4j_ip'").trim()
-          REDIS_HOST = sh(label: 'Get Redis DB Host', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.neo4j_old'").trim()
+          REDIS_HOST = sh(label: 'Get Redis DB Host', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.neo4j_ip'").trim()
           REDIS_PASS = sh(label: 'Get Redis DB Password', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.redis_password'").trim()
           //REDIS_PORT = sh(label: 'Get Redis DB Port', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.redis_password'").trim()
           
@@ -206,7 +192,7 @@ pipeline {
             // Get Redis key info after flushing
             REDIS_STATE = sh(label: 'Get Redis DB Key Info', returnStdout: true, script: "redis-cli -h $REDIS_HOST -a $REDIS_PASS -p 6379 INFO keyspace").trim()
             println "Redis DB Key Info:   $REDIS_STATE"
-            
+
           }
 
         }
