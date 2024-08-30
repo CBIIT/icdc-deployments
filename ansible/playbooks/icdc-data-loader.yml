@@ -1,5 +1,6 @@
 - name: load data
-  hosts: all
+  #hosts: all
+  hosts: loader
   connection: local
   gather_facts: no
 
