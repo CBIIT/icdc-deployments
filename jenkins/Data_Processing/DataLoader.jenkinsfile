@@ -192,9 +192,18 @@ pipeline {
           REDIS_HOST = sh(label: 'Get Redis DB Host', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.neo4j_old'").trim()
           REDIS_PASS = sh(label: 'Get Redis DB Password', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.redis_password'").trim()
           //REDIS_PORT = sh(label: 'Get Redis DB Port', returnStdout: true, script: "aws secretsmanager get-secret-value --region $REGION --secret-id bento/$PROJECT/$ENV --query SecretString --output text | jq -r '.redis_password'").trim()
-          REDIS_SIZE = sh(label: 'Get Redis DB Size', returnStdout: true, script: "redis-cli -h $REDIS_HOST -a $REDIS_PASS -p 6379 DBSIZE").trim()
+          
+          // Get Redis key info prior to flushing
+          REDIS_STATE = sh(label: 'Get Redis DB Key Info', returnStdout: true, script: "redis-cli -h $REDIS_HOST -a $REDIS_PASS -p 6379 INFO keyspace").trim()
+          println "Redis DB Key Info:   $REDIS_STATE"
 
-          println "Redis DB Size:   $REDIS_SIZE"
+          // Flush Redis keys
+          REDIS_STATE = sh(label: 'Get Redis DB Key Info', returnStdout: true, script: "redis-cli -h $REDIS_HOST -a $REDIS_PASS -p 6379 FLUSHALL").trim()
+          println "Redis Flush Output:   $REDIS_STATE"
+
+          // Get Redis key info after flushing
+          REDIS_STATE = sh(label: 'Get Redis DB Key Info', returnStdout: true, script: "redis-cli -h $REDIS_HOST -a $REDIS_PASS -p 6379 INFO keyspace").trim()
+          println "Redis DB Key Info:   $REDIS_STATE"
 
         }
           
