@@ -42,7 +42,20 @@ pipeline {
     S3_BUCKET = "${TIER == 'dev' || TIER == 'qa' ? 'crdc-' + env.PROJECT + '-dev-neo4j-data-backup' : 'crdc-' + env.PROJECT + '-prod-neo4j-data-backup'}"
     //S3_BUCKET     = "crdc-${env.PROJECT}-prod-neo4j-data-backup"
  }
+
+
   stages{
+
+    stage('Install boto3 and botocore') {
+            steps {
+                script {
+                    // Install boto3 and botocore using pip3
+                    sh '''
+                    sudo pip3 install boto3 botocore
+                    '''
+                }
+            }
+        }
 
   	stage('create inventory'){
       agent {
