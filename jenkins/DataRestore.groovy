@@ -51,7 +51,7 @@ pipeline {
                 script {
                     // Install boto3 and botocore using pip3
                     sh '''
-                    sudo pip3 install boto3 botocore
+                    pip3 install boto3 botocore
                     '''
                 }
             }
