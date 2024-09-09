@@ -1,11 +1,21 @@
+- name: Ensure pip3 is installed on OL8
+  dnf:
+    name: python3-pip
+    state: present
+  become: yes  # Requires root privileges to install system packages
+
+- name: Upgrade pip3 to the latest version
+  shell: python3 -m pip install --upgrade pip
+  become: yes  # Run with elevated privileges
+
 - name: Install required Python libraries using pip3
   pip:
     name:
       - boto3
       - botocore
     state: present
-    executable: pip3 
-    
+    executable: pip3
+
 - name: ensure restore directory exists
   file:
     path: "{{ restore_directory }}"
