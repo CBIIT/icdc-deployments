@@ -45,18 +45,6 @@ pipeline {
 
 
   stages{
-
-    stage('Install boto3 and botocore') {
-            steps {
-                script {
-                    // Install boto3 and botocore using pip3
-                    sh '''
-                    pip3 install boto3 botocore
-                    '''
-                }
-            }
-        }
-
   	stage('create inventory'){
       agent {
         docker {

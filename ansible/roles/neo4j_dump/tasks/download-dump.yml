@@ -1,3 +1,11 @@
+- name: Install required Python libraries using pip3
+  pip:
+    name:
+      - boto3
+      - botocore
+    state: present
+    executable: pip3 
+    
 - name: ensure restore directory exists
   file:
     path: "{{ restore_directory }}"
