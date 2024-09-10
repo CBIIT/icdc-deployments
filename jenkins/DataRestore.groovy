@@ -23,7 +23,7 @@ pipeline {
         defaultValue: 'dev', 
         description: 'Choose the environment to build', 
         type: 'PT_SINGLE_SELECT',
-        value: 'dev,dev2,qa,stage,prod' )
+        value: 'dev,dev2,qa,qa2,stage,prod' )
     string(defaultValue: "", 
         description: 'Name of the dump file to use', 
         name: 'DumpFileName')
