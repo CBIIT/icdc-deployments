@@ -4,8 +4,8 @@
     state: directory
 
 - name: Download Neo4j dump file from S3
-  #amazon.aws.s3_object:
-  amazon.aws.aws_s3:
+  amazon.aws.s3_object:
+  #amazon.aws.aws_s3:
     bucket: "{{s3_bucket_name}}"
     object: "/{{s3_folder_name}}/{{dump_file_name}}"
     dest: "/{{restore_directory }}/{{restore_file}}"
