@@ -39,7 +39,7 @@ pipeline {
 	  TIER      = "${params.Environment}"
     SLACK_SECRET  = "icdc_slack_url"
     PROJECT       = "icdc"
-    S3_BUCKET = "${TIER == 'dev' || TIER == 'qa' ? 'crdc-' + env.PROJECT + '-dev-neo4j-data-backup' : 'crdc-' + env.PROJECT + '-prod-neo4j-data-backup'}"
+    S3_BUCKET = "${TIER == 'dev' || TIER == 'qa' || TIER == 'qa2' ? 'crdc-' + env.PROJECT + '-dev-neo4j-data-backup' : 'crdc-' + env.PROJECT + '-prod-neo4j-data-backup'}"
     //S3_BUCKET     = "crdc-${env.PROJECT}-prod-neo4j-data-backup"
  }
 
