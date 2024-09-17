@@ -20,7 +20,7 @@ pipeline {
         string(
 	        defaultValue: '',
 		    description: 'The image tag to deploy',
-		    name: 'Files_Tag')
+		    name: 'FilesTag')
 
 		extendedChoice(
             name: 'Environment',
@@ -46,7 +46,7 @@ pipeline {
 	  REGION       = "us-east-1"
 	  PROGRAM      = "crdc"
       ECR_REPO     = "${env.PROGRAM}-${env.PROJECT}-${env.APP}"
-	  IMAGE_TAG    = "${params.Files_Tag}"
+	  IMAGE_TAG    = "${params.FilesTag}"
   }
 
   stages{
@@ -142,7 +142,7 @@ pipeline {
         }
 
 	    environment {
-            FILES_VERSION = "${params.Files_Tag}"
+            FILES_VERSION = "${params.FilesTag}"
         }
 
  		steps {
