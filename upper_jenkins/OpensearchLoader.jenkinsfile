@@ -7,10 +7,10 @@ pipeline {
 	parameters {
 	extendedChoice(
             name: 'Environment',
-            defaultValue: 'dev',
+            defaultValue: 'stage',
             description: 'Choose the environment to build',
             type: 'PT_SINGLE_SELECT',
-            value: 'dev,qa' )
+            value: 'stage,prod' )
     gitParameter(branchFilter: 'origin/(.*)', 
         defaultValue: 'master',
         name: 'Dataloader_Branch', 
