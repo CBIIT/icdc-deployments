@@ -1,8 +1,8 @@
 pipeline {
     agent {
         node {
-            label 'commons-docker-ncias-p2790-c'
-            //label 'slave-ncias-d2940-c'
+            //label 'commons-docker-ncias-p2790-c'
+            label 'slave-ncias-d2940-c'
         }
     }
     parameters {
