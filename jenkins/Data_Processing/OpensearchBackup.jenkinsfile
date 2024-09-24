@@ -3,7 +3,7 @@ import groovy.json.JsonOutput
 
 def getLabelForEnvironment(environment) {
 	if (environment == "stage" || environment == "prod"){
-		return "commons-docker-ncias-p3305-c"
+		return "commons-docker-ncias-p2790-c"
 	}else {
 		return "slave-ncias-d2940-c"
 	}
