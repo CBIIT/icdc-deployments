@@ -23,7 +23,7 @@ pipeline {
         description: 'The environment to back up from.', 
         defaultValue: 'dev', 
         type: 'PT_SINGLE_SELECT',
-        value: 'dev,dev2,qa,qa2' )
+        value: 'dev,dev2,qa,qa2,stage,prod' )
 
     string(name: 'SNAPSHOT_NAME',
         description: 'Snapshot name used for backup/restore operation.')
