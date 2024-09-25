@@ -88,7 +88,7 @@ pipeline {
 
   	}
 
-  	stage('opensearch_backup'){
+  	stage('opensearch restore'){
  		  steps{
         wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]){
              ansiblePlaybook( 
