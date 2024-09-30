@@ -1,0 +1,117 @@
+@Library('datacommons-jenkins-shared-library@v1.1') _
+import groovy.json.JsonOutput
+
+def getLabelForEnvironment(environment) {
+	if (environment == "stage" || environment == "prod"){
+		return "commons-docker-ncias-p2790-c"
+	}else {
+		return "slave-ncias-d2940-c"
+	}
+}
+
+
+pipeline {
+	agent {
+		node {
+			label getLabelForEnvironment(params.Environment)
+		}
+	}
+
+	parameters {
+    extendedChoice( 
+        name: 'Environment', 
+        description: 'The environment to restore to.', 
+        defaultValue: 'dev', 
+        type: 'PT_SINGLE_SELECT',
+        value: 'dev,dev2,qa,qa2,stage,prod' )
+
+    string(name: 'SNAPSHOT_NAME',
+        description: 'Snapshot name used for backup/restore operation.')
+
+    string(name: 'INDICES',
+        description: 'Indices to be backed up from Opensearch. Values should comma seperated. If left blank all indices will be selected.')
+
+    string(name: 'S3_BUCKET',
+        description: 'S3 bucket which holds the snapshot.',
+        defaultValue: "crdc-prod-icdc-opensearch-snapshot-bucket")
+  }
+
+  options {
+  	ansiColor('xterm')
+  }
+
+  environment {
+    PROGRAM       = "crdc"
+	  PROJECT       = "icdc"
+	  SLACK_SECRET  = "icdc_slack_url"
+	  ENV           = "${params.Environment}"
+    SNAPSHOT_NAME = "${params.SNAPSHOT_NAME}"
+    INDICES       = "${params.INDICES}"
+    S3_BUCKET     = "${params.S3_BUCKET}"
+    REGION        = "us-east-1"
+	  DEPLOY_REPO   = "icdc-deployments"
+  }
+  stages{
+      stage('checkout'){
+      steps {
+
+        checkout( poll: false, 
+          changelog:false,
+          scm: [$class: 'GitSCM', 
+          //branches: [[name: '*/main']], 
+          branches: [[name: '*/os_snapshot']],
+          doGenerateSubmoduleConfigurations: false, 
+          extensions: [[$class: 'DisableRemotePoll'],
+          [$class: 'PathRestriction', excludedRegions: '*'], 
+          [$class: 'RelativeTargetDirectory', 
+          relativeTargetDir: "icdc-deployments"]],
+          submoduleCfg: [], 
+          userRemoteConfigs:
+          [[url: "https://github.com/CBIIT/${env.DEPLOY_REPO}"]]])
+
+        }
+ 
+    }
+
+    stage('Set Environment Variables'){
+
+ 		steps {
+
+ 			script {
+
+				// set account number
+				env.AWS_ACCOUNT = sh(label: 'Get account number', returnStdout: true, script: "aws sts get-caller-identity --query \"Account\" --output text").trim()
+
+			}
+
+ 		}
+
+  	}
+
+  	stage('opensearch restore'){
+ 		  steps{
+        wrap([$class: 'AnsiColorBuildWrapper', colorMapName: "xterm"]){
+             ansiblePlaybook( 
+                playbook: '${WORKSPACE}/icdc-deployments/ansible/playbooks/dataloader/opensearchrestore.yml',
+                inventory: '${WORKSPACE}/icdc-deployments/ansible/playbooks/hosts',
+                extraVars: [
+                    //role_arn: "arn:aws:iam::${AWS_ACCOUNT}:role/power-user-crdc-dev-icdc-opensearch-snapshot"
+                    role_arn: "arn:aws:iam:::role/power-user-crdc-dev-icdc-opensearch-snapshot"
+                    ],
+                  hostKeyChecking: false,
+                  colorized: true,
+                  extras: '-vvv')
+        }
+      }
+    }
+  }
+  post {
+
+    cleanup {
+
+        cleanWs()
+
+    }
+
+  }
+}
