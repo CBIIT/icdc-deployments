@@ -1,14 +1,20 @@
+@Library('datacommons-jenkins-shared-library@v1.1') _
+
+def getLabelForEnvironment(environment) {
+	if (environment == "stage" || environment == "prod"){
+		return "commons-docker-ncias-p3305-c"
+	}else {
+		return "slave-ncias-d2940-c"
+	}
+}
+
+
 pipeline {
-	
-  agent {
-
+	agent {
 		node {
-			//label 'slave-ncias-d2320-c'
-      label 'slave-ncias-d2940-c'
+			label getLabelForEnvironment(params.Environment)
 		}
-
-  }
-
+	}
 	parameters {
     gitParameter(branchFilter: 'origin/(.*)', 
         defaultValue: 'master', 
