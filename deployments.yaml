@@ -6,9 +6,9 @@ services:
     image: 14.8.1.170
     buildNumber: '170'
   frontend:
-    version: v4.1.0_.354
-    image: v4.1.0_.354
-    buildNumber: '354'
+    version: Jbrowse_http_issue.355
+    image: Jbrowse_http_issue.355
+    buildNumber: '355'
   files:
     version: 2.3.1.83
     image: 2.3.1.83
