@@ -8,7 +8,7 @@ services:
   frontend:
     version: v4.1.0.361
     image: v4.1.0.361
-    buildNumber: '356'
+    buildNumber: '361'
   files:
     version: 2.3.1.83
     image: 2.3.1.83
