@@ -6,9 +6,9 @@ services:
     image: 14.8.1.170
     buildNumber: '170'
   frontend:
-    version: migrate-to-mui-v5.362
-    image: migrate-to-mui-v5.362
-    buildNumber: '362'
+    version: mui-v5-migration-v2.365
+    image: mui-v5-migration-v2.365
+    buildNumber: '365'
   files:
     version: 2.3.1.83
     image: 2.3.1.83
