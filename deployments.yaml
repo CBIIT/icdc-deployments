@@ -6,9 +6,9 @@ services:
     image: 14.8.1.170
     buildNumber: '170'
   frontend:
-    version: final-cut-migrate-to-v6.366
-    image: final-cut-migrate-to-v6.366
-    buildNumber: '366'
+    version: typescript-conversion.367
+    image: typescript-conversion.367
+    buildNumber: '367'
   files:
     version: 2.3.1.83
     image: 2.3.1.83
