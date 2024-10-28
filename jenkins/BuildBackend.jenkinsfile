@@ -132,6 +132,9 @@ pipeline {
   	}
 
   	stage('Test'){
+		environment {
+                 TRIVY_OPTIONS = "--db-repository public.ecr.aws/aquasecurity/trivy-db --java-db-repository public.ecr.aws/aquasecurity/trivy-java-db --timeout 15m"
+               }
 
  		steps {
 
@@ -149,7 +152,7 @@ pipeline {
 				# Test image for vulnerabilities
                 echo "Testing Image with Trivy: $ECR_REPO:$CODE_BRANCH.$BUILD_NUMBER"
 
-				docker run --rm --name trivy -u root -v /var/run/docker.sock:/var/run/docker.sock bitnami/trivy:latest image --exit-code $EXIT_CODE --timeout 15m --severity HIGH,CRITICAL $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER
+				docker run --rm --name trivy -u root -v /var/run/docker.sock:/var/run/docker.sock bitnami/trivy:latest image $TRIVY_OPTIONS --exit-code $EXIT_CODE --timeout 15m --severity HIGH,CRITICAL $REPO_URL:$CODE_BRANCH.$BUILD_NUMBER
 
 				'''
 
