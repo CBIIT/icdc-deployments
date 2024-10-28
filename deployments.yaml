@@ -10,9 +10,9 @@ services:
     image: typescript-conversion.378
     buildNumber: '378'
   files:
-    version: 2.3.1.84
-    image: 2.3.1.84
-    buildNumber: '84'
+    version: 2.3.1.86
+    image: 2.3.1.86
+    buildNumber: '86'
   interoperation:
     version: 1.0.0.122
     image: 1.0.0.122
