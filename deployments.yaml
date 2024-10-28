@@ -6,9 +6,9 @@ services:
     image: 14.8.1.170
     buildNumber: '170'
   frontend:
-    version: typescript-conversion.378
-    image: typescript-conversion.378
-    buildNumber: '378'
+    version: 4.2.0.build.381
+    image: 4.2.0.build.381
+    buildNumber: '381'
   files:
     version: 2.3.1.86
     image: 2.3.1.86
