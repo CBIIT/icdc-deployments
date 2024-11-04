@@ -6,9 +6,9 @@ services:
     image: 14.8.1.170
     buildNumber: '170'
   frontend:
-    version: ICDC-3693.388
-    image: ICDC-3693.388
-    buildNumber: '388'
+    version: ICDC-3695.389
+    image: ICDC-3695.389
+    buildNumber: '389'
   files:
     version: 2.3.1.86
     image: 2.3.1.86
