@@ -6,9 +6,9 @@ services:
     image: 14.8.1.172
     buildNumber: '172'
   frontend:
-    version: test-icdc-3764-and-icdc-3765.395
-    image: test-icdc-3764-and-icdc-3765.395
-    buildNumber: '395'
+    version: test-icdc-3764-and-icdc-3765.396
+    image: test-icdc-3764-and-icdc-3765.396
+    buildNumber: '396'
   files:
     version: 2.3.1.86
     image: 2.3.1.86
