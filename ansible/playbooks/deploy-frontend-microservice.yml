@@ -135,8 +135,9 @@
           - name: REACT_APP_INTEROP_SERVICE_URL
             value: "{% if tier == 'prod' %}https://{{subdomain}}.{{domain_name}}/api/interoperation/graphql{% else %}https://{{subdomain}}-{{tier}}.{{domain_name}}/api/interoperation/graphql{% endif %}"
             #value: "https://caninecommons-test.cancer.gov/api/interoperation/graphql"
-          #- name: REACT_APP_LOGIN_URL
-          #  value: "{{ backend_fence_login }}"
+          - name: REACT_APP_LOGIN_URL
+            value: "https://nci-crdc-staging.datacommons.io/user/oauth2/authorize?client_id=HADoUzN9BWzbzwxdu0soRvRHSnegiWaoShVhB09O&response_type=code&redirect_uri=https://clinical-{{ tier }}.datacommons.cancer.gov/login&scope=openid%20user%20data"
+
           #- name: REACT_APP_USER_LOGOUT_URL
           #  value: "{{ backend_fence_logout }}"
           # Static Content
