@@ -14,9 +14,9 @@ services:
     image: 2.3.1.86
     buildNumber: '86'
   interoperation:
-    version: 1.0.1.129
-    image: 1.0.1.129
-    buildNumber: '129'
+    version: 1.0.2.131
+    image: 1.0.2.131
+    buildNumber: '131'
   data-retriever:
     version: main.4
     image: main.4
