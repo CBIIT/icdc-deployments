@@ -27,3 +27,4 @@
         neo4j_ip: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project }}/{{ tier }}.neo4j_ip', nested=true, region='us-east-1' ) }}"
         neo4j_password: "{{ lookup('amazon.aws.aws_secret', 'bento/{{ project }}/{{ tier }}.neo4j_password', nested=true, region='us-east-1' ) }}"
         loading_mode: "upsert"
+        max_violations: 200000
