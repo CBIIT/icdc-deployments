@@ -72,7 +72,6 @@
         #react_app_backend_version: "https://{{subdomain}}-{{tier}}.{{domain_name}}/version"
         ## Readme Content ##
         react_app_readme_data:
-          
           dev: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/My_Files_Cart_Page_README.md"
           dev2: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/dev/My_Files_Cart_Page_README.md"
           qa: "https://raw.githubusercontent.com/CBIIT/icdc-readMe-content/qa/My_Files_Cart_Page_README.md"
