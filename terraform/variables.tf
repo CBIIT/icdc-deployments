@@ -1,4 +1,3 @@
-
 variable "stack_name" {
   description = "name of the project"
   type = string
