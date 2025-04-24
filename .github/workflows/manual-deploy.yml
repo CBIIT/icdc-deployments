@@ -15,7 +15,6 @@ on:
       frontend_image:
       backend_image:
       files_image:
-      authn_image:
       interoperation_image:
       cdk_command:
         description: 'Which CDK Command To Run'
