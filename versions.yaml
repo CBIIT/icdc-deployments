@@ -1,0 +1,11 @@
+Notes: Service Versions
+project: bento
+services:
+  backend:
+    version: 14.11.0.190
+  frontend:
+    version: 4.2.0.441
+  files:
+    version: 2.3.2.87
+  interoperation:
+    version: 1.0.2.131
