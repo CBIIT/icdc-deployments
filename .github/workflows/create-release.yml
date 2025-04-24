@@ -1,0 +1,214 @@
+name: ICDC Create Release
+permissions: 
+  contents: write
+  id-token: write
+on:
+  workflow_dispatch:
+
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('CDK_Release-{0}.{1}', github.ref_name, github.run_id) || '' }}
+jobs:
+  build:
+    name: Create icdc Release
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+    - name: Check out code
+      uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5     # v2.7.0
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@b64ffcaf5b410884ad320a9cfac8866006a109aa     # v4.8.0
+      with:
+        python-version: "3.9"
+
+    - name: Set up Node
+      uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7     # v3.8.2
+      with:
+        node-version: "20"
+ 
+    - name: Install Python dependencies and CDK
+      run: |
+        python -m pip install --upgrade pip
+        # install stack Python dependencies
+        cd awscdk/bento && pip3 install --ignore-installed --break-system-packages -r requirements.txt
+        npm install -g aws-cdk@2.155.0
+
+    - name: AWS OIDC Authentication
+      id: aws-auth
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502     # v4.0.2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        role-session-name: ${{ github.actor }}
+    
+    - name: Get config files
+      id: get-config
+      env:
+        FRONTEND_IMAGE:
+        BACKEND_IMAGE:
+        FILES_IMAGE:
+        INTEROPERATION_IMAGE:
+      shell: bash
+      run: |
+        vars=$(python3 scripts/readYML.py versions.yaml)
+        for v in $vars; do command="export $v"; eval $command;  done
+
+        FRONTEND_IMAGE=$IMAGE_FRONTEND
+        BACKEND_IMAGE=$IMAGE_BACKEND
+        FILES_IMAGE=$IMAGE_FILES
+        INTEROPERATION_IMAGE=$INTEROPERATION_AUTHZ
+
+        echo "FRONTEND_IMAGE=$FRONTEND_IMAGE" >> $GITHUB_ENV
+
+        cd awscdk/bento/
+
+        for tier in qa stage prod
+        do
+          CONFIG_ENV=$tier
+          echo "Creating Config File for $CONFIG_ENV"
+
+          aws s3api get-object --bucket crdc-icdc-cdk-config-bucket --key config.ini.$CONFIG_ENV ./config.ini.$CONFIG_ENV
+
+          envsubst < config.ini.$CONFIG_ENV > config.ini.$CONFIG_ENV.edited
+        done
+
+    - name: Set Version Tag
+      run: |
+        # Get all tags for the repo and find the latest tag for the version being built
+        git fetch --tags --force --quiet
+        tag=$(git tag -l ${{ env.FRONTEND_IMAGE }}* | tail -1)
+        if  [ ! -z "$tag" ];
+        then
+          # Increment the build number if a tag is found
+          build_num=$(echo "${tag##*.}")
+          build_num=$((build_num+1))
+          echo "VERSION_TAG=${{ env.FRONTEND_IMAGE }}.$build_num" >> $GITHUB_ENV
+        else
+          # If no tag is found create a new tag name
+          build_num=1
+          echo "VERSION_TAG=${{ env.FRONTEND_IMAGE }}.$build_num" >> $GITHUB_ENV
+        fi
+      
+    
+    - name: Execute CDK
+      id: execute-cdk
+      env:
+        AWS_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      shell: bash
+      run: |
+
+        cd awscdk/bento
+
+        for tier in qa stage prod
+        do
+          echo "Executing CDK for ${tier}"
+          cp config.ini.$tier.edited config.ini
+          cdk synth -q
+
+          mv cdk.out $tier.$VERSION_TAG
+          echo "Built CDK app: $tier.$VERSION_TAG"
+        done
+
+    # QA Tier
+    - name: Delete Old Artifacts
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.DEV_PAT }}
+        script: |
+          const res = await github.rest.actions.listArtifactsForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          })
+        
+          res.data.artifacts
+            .filter(({ name }) => name === 'qa.${{ env.VERSION_TAG }}')
+            .forEach(({ id }) => {
+              github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: id,
+              })
+            })
+
+    - name: Archive qa template
+      id: archive-qa-app
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02     # v4.6.2
+      with:
+        name: qa.${{ env.VERSION_TAG }}
+        path: |
+          awscdk/bento/qa.${{ env.VERSION_TAG }}
+
+    # Stage Tier
+    - name: Delete Old Artifacts
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.DEV_PAT }}
+        script: |
+          const res = await github.rest.actions.listArtifactsForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          })
+    
+          res.data.artifacts
+            .filter(({ name }) => name === 'stage.${{ env.VERSION_TAG }}')
+            .forEach(({ id }) => {
+              github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: id,
+              })
+            })
+
+    - name: Archive stage template
+      id: archive-stage-app
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02     # v4.6.2
+      with:
+        name: stage.${{ env.VERSION_TAG }}
+        path: |
+          awscdk/bento/stage.${{ env.VERSION_TAG }}
+
+    # Prod Tier
+    - name: Delete Old Artifacts
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.DEV_PAT }}
+        script: |
+          const res = await github.rest.actions.listArtifactsForRepo({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+          })
+    
+          res.data.artifacts
+            .filter(({ name }) => name === 'prod.${{ env.VERSION_TAG }}')
+            .forEach(({ id }) => {
+              github.rest.actions.deleteArtifact({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                artifact_id: id,
+              })
+            })
+
+    - name: Archive prod template
+      id: archive-prod-app
+      uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02     # v4.6.2
+      with:
+        name: prod.${{ env.VERSION_TAG }}
+        path: |
+          awscdk/bento/prod.${{ env.VERSION_TAG }}
+
+    - name: Create Git tag for Image
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "github-actions@users.noreply.github.com"
+        git tag ${{ env.VERSION_TAG }}
+        git push origin ${{ env.VERSION_TAG }}
+
+    - name: Slack Notification
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      uses: act10ns/slack@87c73aef9f8838eb6feae81589a6b1487a4a9e08     # v1.6.0
+      with:
+        status: ${{ job.status }}
+        steps: ${{ toJson(steps) }}
+        message: "Built app: Bento ${{ env.VERSION_TAG }}"
+      if: always()

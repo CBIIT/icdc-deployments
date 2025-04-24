@@ -1,0 +1,14 @@
+FROM node:20.17.0-alpine3.20
+#FROM node:20.15.1-alpine3.20
+
+# Update to the latest npm
+RUN npm install npm@latest -g
+#RUN npm install -g npm@10
+
+# add python and pip
+RUN apk add --no-cache python3 py3-pip
+
+# install aws-cdk and set its log level to debug
+RUN npm install -g aws-cdk@2.155.0
+
+WORKDIR /app

@@ -1,0 +1,138 @@
+name: ICDC Deploy Release
+permissions: 
+  contents: write
+  id-token: write
+  actions: read
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Which Tier to Deploy'
+        type: environment
+        default: dev
+      release_number:
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('CDK_Release_Deploy-{0}.{1}', inputs.release_number, inputs.environment) || '' }}
+jobs:
+  icdc-diff:
+    name: Show icdc Release Changeset
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+    - name: Set up Node
+      id: node-setup
+      uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7     # v3.8.2
+      with:
+        node-version: "20"
+ 
+    - name: Install CDK
+      id: install-cdk
+      run: |
+        npm install -g aws-cdk@2.155.0
+
+    - name: Find artifact
+      id: find-artifact
+      shell: bash
+      run: |
+        cdk_app=${{ inputs.environment }}.${{ inputs.release_number }}
+
+        response=$(curl -L \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        https://api.github.com/repos/CBIIT/icdc-deployments/actions/artifacts)
+
+        run_id=$(echo "$response" | jq ".artifacts[] | select(.name == \"$cdk_app\") | .workflow_run.id")
+        echo "run_id=$run_id" >> $GITHUB_OUTPUT
+
+    - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e     # v4.2.1
+      id: get-cdk-app
+      with:
+        name: ${{ inputs.environment }}.${{ inputs.release_number }}
+        path: ${{ inputs.environment }}.${{ inputs.release_number }}
+        repository: CBIIT/icdc-deployments
+        run-id: ${{ steps.find-artifact.outputs.run_id }}
+        github-token: ${{ github.token }}
+
+    - name: AWS OIDC Authentication
+      id: aws-auth
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502     # v4.0.2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        role-session-name: ${{ github.actor }}
+
+    - name: Diff Stack Resources
+      id: diff-cdk-stack
+      env:
+        AWS_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      run: |
+        cdk diff --app ${{ inputs.environment }}.${{ inputs.release_number }}
+
+  icdc-deploy:
+    name: ICDC CDK Deploy
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    needs: icdc-diff
+    if: success() # Only proceed if diff job succeeds
+
+    steps:
+    - name: Set up Node
+      id: node-setup
+      uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7     # v3.8.2
+      with:
+        node-version: "20"
+  
+    - name: Install CDK
+      id: install-cdk
+      run: |
+        npm install -g aws-cdk@2.155.0
+
+    - name: Find artifact
+      id: find-artifact
+      shell: bash
+      run: |
+        cdk_app=${{ inputs.environment }}.${{ inputs.release_number }}
+
+        response=$(curl -L \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        https://api.github.com/repos/CBIIT/icdc-deployments/actions/artifacts)
+
+        run_id=$(echo "$response" | jq ".artifacts[] | select(.name == \"$cdk_app\") | .workflow_run.id")
+        echo "run_id=$run_id" >> $GITHUB_OUTPUT
+
+    - uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e     # v4.2.1
+      id: get-cdk-app
+      with:
+        name: ${{ inputs.environment }}.${{ inputs.release_number }}
+        path: ${{ inputs.environment }}.${{ inputs.release_number }}
+        repository: CBIIT/icdc-deployments
+        run-id: ${{ steps.find-artifact.outputs.run_id }}
+        github-token: ${{ github.token }}
+
+    - name: AWS OIDC Authentication
+      id: aws-auth
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502     # v4.0.2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        role-session-name: ${{ github.actor }}
+
+    - name: Deploy Stack Resources
+      id: deploy
+      env:
+        AWS_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+      run: |
+        cdk deploy --app ${{ inputs.environment }}.${{ inputs.release_number }} --require-approval=never --force
+
+    - name: Slack Notification
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      uses: act10ns/slack@87c73aef9f8838eb6feae81589a6b1487a4a9e08     # v1.6.0
+      with:
+        status: ${{ job.status }}
+        steps: ${{ toJson(steps) }}
+      if: always()

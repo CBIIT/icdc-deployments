@@ -1,0 +1,138 @@
+name: ICDC CDK Manual Workflow
+permissions: 
+  contents: write
+  id-token: write
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Update Dev or create a custom environment named after the branch you are building from'
+        type: choice
+        default: dev
+        options:
+          - dev
+          - custom_tier
+      frontend_image:
+      backend_image:
+      files_image:
+      authn_image:
+      interoperation_image:
+      cdk_command:
+        description: 'Which CDK Command To Run'
+        required: true
+        default: 'diff'
+        type: choice
+        options:
+          - diff
+          - synth
+          - deploy
+          - destroy
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('CDK_Run-{0}-branch-{1}', tojson(inputs), github.ref_name) || '' }}
+jobs:
+  build:
+    name: Deploy icdc
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+    - name: Check out code
+      uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5     # v2.7.0
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@b64ffcaf5b410884ad320a9cfac8866006a109aa     # v4.8.0
+      with:
+        python-version: "3.9"
+
+    - name: Set up Node
+      uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7     # v3.8.2
+      with:
+        node-version: "20"
+ 
+    - name: Install Python dependencies and CDK
+      run: |
+        python -m pip install --upgrade pip
+        # install stack Python dependencies
+        cd awscdk/bento && pip3 install --ignore-installed --break-system-packages -r requirements.txt
+        npm install -g aws-cdk@2.155.0
+
+    - name: AWS OIDC Authentication
+      id: aws-auth
+      uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502     # v4.0.2
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+        aws-region: ${{ secrets.AWS_REGION }}
+        role-session-name: ${{ github.actor }}
+    
+    - name: Get config files
+      id: get-config
+      env:
+        ENV_NAME: ${{ inputs.environment }}
+        FRONTEND_IMAGE: ${{ inputs.frontend_image }}
+        BACKEND_IMAGE: ${{ inputs.backend_image }}
+        FILES_IMAGE: ${{ inputs.files_image }}
+        INTEROPERATION_IMAGE: ${{ inputs.interoperation_image }}
+        BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+      run: |
+        if [[ "$ENV_NAME" =~ ^(dev|qa|stage|prod)$ ]]; then
+          echo "Environment is $ENV_NAME"
+        else
+          BRANCH_NAME=$(echo $BRANCH_NAME | tr '_' '-')
+          echo "Environment is $ENV_NAME"
+          echo "Updated branch name is $BRANCH_NAME"
+        fi
+
+        vars=$(python3 scripts/readYML.py versions.yaml)
+        for v in $vars; do command="export $v"; eval $command;  done
+
+        FRONTEND_IMAGE="${FRONTEND_IMAGE:-$IMAGE_FRONTEND}"
+        echo "FRONTEND_IMAGE=$FRONTEND_IMAGE" >> $GITHUB_ENV
+        BACKEND_IMAGE="${BACKEND_IMAGE:-$IMAGE_BACKEND}"
+        echo "BACKEND_IMAGE=$BACKEND_IMAGE" >> $GITHUB_ENV
+        FILES_IMAGE="${FILES_IMAGE:-$IMAGE_FILES}"
+        echo "FILES_IMAGE=$FILES_IMAGE" >> $GITHUB_ENV
+        INTEROPERATION_IMAGE="${INTEROPERATION_IMAGE:-$IMAGE_INTEROPERATION}"
+        echo "INTEROPERATION_IMAGE=$INTEROPERATION_IMAGE" >> $GITHUB_ENV
+        
+        cd awscdk/bento/
+        aws s3api get-object --bucket crdc-icdc-cdk-config-bucket --key config.ini.$ENV_NAME ./config.ini.$ENV_NAME
+        
+        envsubst < config.ini.$ENV_NAME > config.ini
+
+    - name: Execute CDK
+      id: execute-cdk
+      env:
+        AWS_DEFAULT_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+        AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        ENV_NAME: ${{ inputs.environment }}
+        CDK_CMD: ${{ inputs.cdk_command }}
+      run: |
+
+        cd awscdk/bento && cdk $CDK_CMD --require-approval=never --force
+
+    - name: Update versions file
+      env:
+        CDK_CMD: ${{ inputs.cdk_command }}
+        ENV_NAME: ${{ inputs.environment }}
+      run: |
+        if [ "${CDK_CMD}" == "deploy" ] && [ "${ENV_NAME}" == "dev" ]; then
+          echo "Updating versions.yaml file"
+          python3 scripts/writeYML.py versions.yaml
+        else
+          echo "Skipping versions.yaml file update"
+        fi
+
+        git config --local user.name actions-user
+        git config --local user.email "actions@github.com"
+        if ! git diff --exit-code; then
+            git add versions.yaml
+            git commit -am "GH Action - Versions File updated $(date)"
+            git push -f origin ${{ github.head_ref || github.ref_name }}
+        fi
+  
+    - name: Slack Notification
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      uses: act10ns/slack@87c73aef9f8838eb6feae81589a6b1487a4a9e08     # v1.6.0
+      with:
+        status: ${{ job.status }}
+        steps: ${{ toJson(steps) }}
+      if: always()
