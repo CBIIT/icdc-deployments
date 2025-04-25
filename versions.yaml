@@ -1,5 +1,5 @@
 Notes: Service Versions
-project: bento
+project: icdc
 services:
   backend:
     version: 14.11.0.190
