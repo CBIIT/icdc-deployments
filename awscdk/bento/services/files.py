@@ -98,18 +98,44 @@ class filesService:
         )
     )
 
-    # Sumo Logic FireLens Log Router Container
-    sumo_logic_container = taskDefinition.add_firelens_log_router(
-        "sumologic-firelens",
-        image=ecs.ContainerImage.from_registry("public.ecr.aws/aws-observability/aws-for-fluent-bit:stable"),
-        firelens_config=ecs.FirelensConfig(
-            type=ecs.FirelensLogRouterType.FLUENTBIT,
-            options=ecs.FirelensOptions(
-                enable_ecs_log_metadata=True
-            )
-        ),
-    essential=True
-    )
+    # # For Sumo Logs use
+    
+    # files_container = taskDefinition.add_container(
+    #     service,
+    #     image=ecs.ContainerImage.from_ecr_repository(repository=ecr_repo, tag=config[service]['image']),
+    #     cpu=config.getint(service, 'cpu'),
+    #     memory_limit_mib=config.getint(service, 'memory'),
+    #     port_mappings=[ecs.PortMapping(container_port=config.getint(service, 'port'), name=service)],
+    #     command=command,
+    #     environment=environment,
+    #     secrets=secrets,
+    #     logging=ecs.LogDrivers.firelens(
+    #         options={
+    #             "Name": "http",
+    #             "Host": config['sumologic']['collector_endpoint'],
+    #             "URI": "/receiver/v1/http/{}".format(config['sumologic']['collector_token']),
+    #             "Port": "443",
+    #             "tls": "on",
+    #             "tls.verify": "off",
+    #             "Retry_Limit": "2",
+    #             "Format": "json_lines"
+    #         }
+    #     )
+    # )
+
+
+    # # Sumo Logic FireLens Log Router Container
+    # sumo_logic_container = taskDefinition.add_firelens_log_router(
+    #     "sumologic-firelens",
+    #     image=ecs.ContainerImage.from_registry("public.ecr.aws/aws-observability/aws-for-fluent-bit:stable"),
+    #     firelens_config=ecs.FirelensConfig(
+    #         type=ecs.FirelensLogRouterType.FLUENTBIT,
+    #         options=ecs.FirelensOptions(
+    #             enable_ecs_log_metadata=True
+    #         )
+    #     ),
+    # essential=True
+    # )
 
     # New Relic Container
     new_relic_container = taskDefinition.add_container(
