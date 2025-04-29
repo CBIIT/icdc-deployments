@@ -27,7 +27,6 @@ class backendService:
             "NEO4J_URL":"bolt://{}:7687".format(config['db']['neo4j_ip']),
             "NEO4J_GRAPHQL_ENDPOINT":"http://{}:7474/graphql/".format(config['db']['neo4j_ip']),
             "NEO4J_USER":config['db']['neo4j_user'],
-            "NEO4J_PASSWORD":config['db']['neo4j_password'],
             "REDIS_ENABLE":"true",
             "REDIS_AUTH_ENABLED":"true",
             "REDIS_FILTER_ENABLE":"true",
