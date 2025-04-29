@@ -25,7 +25,7 @@ class filesService:
             "DATE":"2025-04-23",
             "NEO4J_URI":"bolt://{}:7687".format(config['db']['neo4j_ip']),
             "PROJECT":"ICDC",
-            "URL_SRC":config[service]['url_src'],  
+            #"URL_SRC":config[service]['url_src'],  
             "VERSION":config[service]['image'],
         }
 
