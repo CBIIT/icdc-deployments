@@ -25,13 +25,12 @@ class filesService:
             "DATE":"2025-04-23",
             "NEO4J_URI":"bolt://{}:7687".format(config['db']['neo4j_ip']),
             "PROJECT":"ICDC",
-            #"URL_SRC":config[service]['url_src'],  
+            "URL_SRC":config[service]['url_src'],  
             "VERSION":config[service]['image'],
         }
 
     secrets={
             "NEW_RELIC_LICENSE_KEY":ecs.Secret.from_secrets_manager(secretsmanager.Secret.from_secret_name_v2(self, "files_newrelic", secret_name='monitoring/newrelic'), 'api_key'),
-            "URL_SRC":ecs.Secret.from_secrets_manager(self.secret, 'indexd_url'),
             "INDEXD_URL":ecs.Secret.from_secrets_manager(self.secret, 'indexd_url'),
             "NEO4J_PASSWORD":ecs.Secret.from_secrets_manager(self.secret, 'neo4j_password'),
             "NEO4J_USER":ecs.Secret.from_secrets_manager(self.secret, 'neo4j_user'),
