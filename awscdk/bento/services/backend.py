@@ -26,7 +26,6 @@ class backendService:
             "ES_SCHEMA":"es-schema-icdc.graphql",
             "NEO4J_URL":"bolt://{}:7687".format(config['db']['neo4j_ip']),
             "NEO4J_GRAPHQL_ENDPOINT":"http://{}:7474/graphql/".format(config['db']['neo4j_ip']),
-            "NEO4J_USER":config['db']['neo4j_user'],
             "REDIS_ENABLE":"true",
             "REDIS_AUTH_ENABLED":"true",
             "REDIS_FILTER_ENABLE":"true",
@@ -38,7 +37,6 @@ class backendService:
             "NEW_RELIC_DISTRIBUTED_TRACING_ENABLED": "true",
             "NEW_RELIC_LOG_FILE_NAME":"STDOUT",
             "NEW_RELIC_LABELS":"Project:{};Environment:{}".format(config['main']['project'], config['main']['tier']),
-            "JAVA_OPTS":"-javaagent:/usr/local/tomcat/newrelic/newrelic.jar",
             "MYSQL_SESSION_ENABLED":"false",
         }
 
