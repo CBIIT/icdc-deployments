@@ -84,7 +84,7 @@ class Stack(Stack):
                 source_sg = ec2.SecurityGroup.from_security_group_id(
                     self, f"SourceSG-{sg_id}", security_group_id=sg_id
                 )
-                self.osDomain.connections.allow_from(source_sg, ec2.Port.https())
+                self.osDomain.connections.allow_from(source_sg, ec2.Port.tcp(443))
 
         # Cloudfront
         # self.cfOrigin = s3.Bucket(self, "CFBucket",
