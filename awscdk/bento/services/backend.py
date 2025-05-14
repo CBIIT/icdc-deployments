@@ -4,6 +4,8 @@ from aws_cdk import aws_elasticloadbalancingv2 as elbv2
 from aws_cdk import aws_ecs as ecs
 from aws_cdk import aws_ecr as ecr
 from aws_cdk import aws_secretsmanager as secretsmanager
+from aws_cdk import aws_ec2 as ec2
+
 
 class backendService:
   def createService(self, config):
