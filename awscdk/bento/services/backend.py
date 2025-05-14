@@ -197,3 +197,5 @@ class backendService:
         priority=int(config[service]['priority_rule_number']),
         listener=self.listener,
         target_groups=[ecsTarget])
+    
+    self.osDomain.connections.allow_from(ecsService, ec2.Port.HTTPS)

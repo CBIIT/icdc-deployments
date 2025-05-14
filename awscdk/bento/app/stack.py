@@ -76,7 +76,15 @@ class Stack(Stack):
             principals=[iam.AnyPrincipal()],
         )
         self.osDomain.add_access_policies(os_policy)
-        self.osDomain.connections.allow_from(ec2.Peer.ipv4("172.16.0.219/32"), ec2.Port.HTTPS)
+        
+        # Allow access from SGs defined in config
+        if config.has_option('main', 'opensearch_allowed_sg_ids'):
+            sg_ids = [sg.strip() for sg in config['main']['opensearch_allowed_sg_ids'].split(',')]
+            for sg_id in sg_ids:
+                source_sg = ec2.SecurityGroup.from_security_group_id(
+                    self, f"SourceSG-{sg_id}", security_group_id=sg_id
+                )
+                self.osDomain.connections.allow_from(source_sg, ec2.Port.https())
 
         # Cloudfront
         # self.cfOrigin = s3.Bucket(self, "CFBucket",
