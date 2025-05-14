@@ -2,9 +2,9 @@ Notes: Service Versions
 project: icdc
 services:
   backend:
-    version: 14.11.0.190
+    version: 14.12.1.219
   frontend:
-    version: 4.2.0.441
+    version: 4.2.0.443
   files:
     version: 2.3.2.87
   interoperation:
