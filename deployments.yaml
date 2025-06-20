@@ -6,9 +6,9 @@ services:
     image: 14.13.0.220
     buildNumber: '220'
   frontend:
-    version: ICDC-3960.463
-    image: ICDC-3960.463
-    buildNumber: '463'
+    version: 4.2.0.464
+    image: 4.2.0.464
+    buildNumber: '464'
   files:
     version: 2.3.2.87
     image: 2.3.2.87
