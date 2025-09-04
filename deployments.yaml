@@ -6,9 +6,9 @@ services:
     image: 14.13.0.220
     buildNumber: '220'
   frontend:
-    version: 4.3.0.488
-    image: 4.3.0.488
-    buildNumber: '488'
+    version: 4.3.0.489
+    image: 4.3.0.489
+    buildNumber: '489'
   files:
     version: 2.3.2.87
     image: 2.3.2.87
