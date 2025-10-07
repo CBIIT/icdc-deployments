@@ -48,7 +48,7 @@ pipeline {
       ECR_REPO     = "crdc-${env.PROJECT}-${env.SERVICE}"
 	  DEPLOY_JOB   = "DeployDataRetriever"
 	  SLACK_SECRET = "icdc_slack_url"
-	  CODE_REPO    = "${env.PROJECT}-${env.SERVICE}"
+	  CODE_REPO    = "crdc-${env.PROJECT}-${env.SERVICE}"
 	  JOB_PATH     = "_default/_lower/ICDC/_jobs"
 	  REGION       = "us-east-1"
 	  DEPLOY_REPO  = "${env.PROJECT}-deployments"
