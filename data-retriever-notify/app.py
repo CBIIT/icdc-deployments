@@ -3,14 +3,16 @@ import aws_cdk as cdk
 from stacks.notify_stack import NotifyStack
 
 app = cdk.App()
-
-# Define environment (default to dev)
 env_name = app.node.try_get_context("env") or "dev"
 
 NotifyStack(
     app,
     f"DataRetrieverNotifyStack-{env_name}",
     env_name=env_name,
+    env=cdk.Environment(
+        account=cdk.Aws.ACCOUNT_ID,
+        region="us-east-1"
+    ),
 )
 
 app.synth()
