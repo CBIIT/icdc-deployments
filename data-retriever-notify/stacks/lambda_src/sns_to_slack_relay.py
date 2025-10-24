@@ -25,7 +25,7 @@ def post_to_slack(payload):
     urllib.request.urlopen(req)
 
 def format_console_link(region, cluster_arn, task_arn):
-    """Generate direct link to ECS task in AWS console."""
+    """Generate a direct link to the ECS task in AWS console."""
     return f"https://{region}.console.aws.amazon.com/ecs/v2/clusters/{cluster_arn.split('/')[-1]}/tasks/{task_arn.split('/')[-1]}/details"
 
 def lambda_handler(event, context):
@@ -47,7 +47,7 @@ def lambda_handler(event, context):
         reason = first.get("reason", "N/A")
 
         is_success = (exit_code == 0)
-        title = "Data Retriever Succeeded" if is_success else "Data Retriever Failed"
+        title = "✅ Data Retriever Succeeded" if is_success else "❌ Data Retriever Failed"
         color = "#36a64f" if is_success else "#ff0000"
 
         text = "\n".join([

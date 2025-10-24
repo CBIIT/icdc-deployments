@@ -4,7 +4,7 @@ from stacks.notify_stack import NotifyStack
 
 app = cdk.App()
 
-# Read environment context (default to dev)
+# Define environment (default to dev)
 env_name = app.node.try_get_context("env") or "dev"
 
 NotifyStack(
