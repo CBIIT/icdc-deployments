@@ -159,20 +159,34 @@ pipeline {
 		}
 
 		stage('load-es-data') {
+			agent {
+				docker {
+					image 'cbiitssrepo/cicd-ansible_4.0'
+					args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
+					reuseNode true
+				}
+			}
+
 			environment {
 				SLACK_URL = "${SLACK_URL}"
 				TIER = "${params.Environment}"
 				PROJECT_NAME = "icdc"
 			}
-            agent {
-                docker {
-                    image 'cbiitssrepo/cicd-ansible_4.0'
-                    args '--net=host -u root -v /var/run/docker.sock:/var/run/docker.sock'
-                    reuseNode true
-                }
-            }
 
 			steps {
+				sh '''
+					echo "Checking Python package versions..."
+					python3 --version
+					python3 -m pip --version
+
+					echo "Installing a NumPy version compatible with the Elasticsearch client..."
+					python3 -m pip install --force-reinstall "numpy<2"
+
+					echo "Verifying imports..."
+					python3 -c "import numpy; print('NumPy version:', numpy.__version__)"
+					python3 -c "from elasticsearch import Elasticsearch, RequestsHttpConnection; print('Elasticsearch import successful')"
+				'''
+
 				wrap([
 					$class: 'AnsiColorBuildWrapper',
 					colorMapName: "xterm"
