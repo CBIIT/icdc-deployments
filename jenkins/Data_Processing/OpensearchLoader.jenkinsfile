@@ -175,15 +175,18 @@ pipeline {
 
 			steps {
 				sh '''
-					echo "Checking Python package versions..."
+					echo "Checking Python version..."
 					python3 --version
 					python3 -m pip --version
 
-					echo "Installing a NumPy version compatible with the Elasticsearch client..."
-					python3 -m pip install --force-reinstall "numpy<2"
+					echo "Installing compatible Python dependencies..."
+					python3 -m pip install --no-cache-dir --force-reinstall \
+						"numpy<2" \
+						"elasticsearch<8"
 
-					echo "Verifying imports..."
+					echo "Verifying Python dependencies..."
 					python3 -c "import numpy; print('NumPy version:', numpy.__version__)"
+					python3 -c "import elasticsearch; print('Elasticsearch version:', elasticsearch.__version__)"
 					python3 -c "from elasticsearch import Elasticsearch, RequestsHttpConnection; print('Elasticsearch import successful')"
 				'''
 
